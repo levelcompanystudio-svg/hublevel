@@ -9,7 +9,7 @@ Este arquivo orienta assistentes de IA e colaboradores que forem trabalhar neste
 - Nome do projeto: HubLevel
 - Produto: plataforma interna de gestao (SaaS)
 - Stack tecnica: React 19, TypeScript 6, Vite 8, Tailwind CSS 4, Supabase
-- Status: frontend base configurado (Etapa 1 concluida)
+- Status: Autenticação Supabase configurada (Etapa 2 concluída)
 
 Atualize esta secao assim que o projeto tiver codigo, dependencias, scripts, arquitetura ou decisoes tecnicas relevantes.
 

@@ -6,10 +6,10 @@ Este arquivo orienta assistentes de IA e colaboradores que forem trabalhar neste
 
 ## Estado Atual do Projeto
 
-- Nome do projeto: PROJETO 1
-- Produto: a definir
-- Stack tecnica: a definir
-- Status: documentacao inicial criada antes da implementacao
+- Nome do projeto: HubLevel
+- Produto: plataforma interna de gestao (SaaS)
+- Stack tecnica: React 19, TypeScript 6, Vite 8, Tailwind CSS 4, Supabase
+- Status: frontend base configurado (Etapa 1 concluida)
 
 Atualize esta secao assim que o projeto tiver codigo, dependencias, scripts, arquitetura ou decisoes tecnicas relevantes.
 
@@ -181,31 +181,42 @@ Consulte `docs/git-mcp.md` para o plano tecnico completo de Git/GitHub MCP, bran
 
 ## Comandos do Projeto
 
-Preencha conforme a stack for definida.
-
 ```powershell
 # instalar dependencias
-# exemplo: npm install
+npm install
 
-# rodar em desenvolvimento
-# exemplo: npm run dev
+# rodar em desenvolvimento (http://localhost:5173)
+npm run dev
 
-# executar testes
-# exemplo: npm test
+# verificacao de tipos TypeScript
+npm run check
+
+# lint
+npm run lint
 
 # build de producao
-# exemplo: npm run build
+npm run build
+
+# preview do build de producao
+npm run preview
 ```
 
-## Estrutura Esperada
-
-Ainda nao ha uma estrutura tecnica definida. Quando houver codigo, documente aqui os principais diretorios, por exemplo:
+## Estrutura do Projeto
 
 ```text
-src/        Codigo-fonte da aplicacao
-tests/      Testes automatizados
-docs/       Documentacao complementar
-public/     Arquivos estaticos
+src/
+  app/          Shell da aplicacao (App.tsx)
+  components/
+    ui/         Componentes de design system compartilhados
+  features/     Modulos de funcionalidade (vazio, preparado)
+  lib/          Utilitarios e clients (supabase.ts, env.ts)
+  routes/       Definicoes de rotas (vazio, preparado)
+  styles/       Estilos globais e tokens de design (globals.css)
+  types/        Tipos TypeScript compartilhados
+  main.tsx      Ponto de entrada da aplicacao
+public/         Arquivos estaticos (favicon)
+docs/           Documentacao complementar
+supabase/       Migrations e configuracao Supabase
 ```
 
 ## Padroes de Implementacao

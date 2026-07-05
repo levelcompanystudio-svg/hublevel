@@ -3,12 +3,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '../features/app/layout/AppLayout';
 import { canAccessPath } from '../features/app/navigation/navigation.config';
 import { AccessDeniedPlaceholder } from '../features/app/placeholders/AccessDeniedPlaceholder';
-import { DashboardPlaceholder } from '../features/app/placeholders/DashboardPlaceholder';
 import { ModulePlaceholder } from '../features/app/placeholders/ModulePlaceholder';
 import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceholder';
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
 import { LoginPage } from '../features/auth/LoginPage';
 import { useAuth } from '../features/auth/useAuth';
+import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRoutes: React.FC = () => {
@@ -55,7 +55,7 @@ export const AppRoutes: React.FC = () => {
         }
       >
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardPlaceholder />} />
+        <Route path="dashboard" element={<DashboardPage />} />
         <Route path="clientes" element={<RolePage path="/app/clientes" page="clientes" />} />
         <Route path="servicos" element={<RolePage path="/app/servicos" page="servicos" />} />
         <Route path="contratos" element={<RolePage path="/app/contratos" page="contratos" />} />

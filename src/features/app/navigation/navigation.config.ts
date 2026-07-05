@@ -1,0 +1,69 @@
+import type { RoleName } from '../../auth/auth.types';
+import type { NavigationItem } from './navigation.types';
+
+export const navigationItems: NavigationItem[] = [
+  {
+    path: '/app/dashboard',
+    label: 'Dashboard',
+    description: 'Visao geral da operacao',
+    icon: 'D',
+    roles: ['admin', 'gestor', 'colaborador'],
+  },
+  {
+    path: '/app/clientes',
+    label: 'Clientes',
+    description: 'Carteira de clientes',
+    icon: 'C',
+    roles: ['admin', 'gestor'],
+  },
+  {
+    path: '/app/servicos',
+    label: 'Servicos',
+    description: 'Catalogo de ofertas',
+    icon: 'S',
+    roles: ['admin', 'gestor'],
+  },
+  {
+    path: '/app/contratos',
+    label: 'Contratos',
+    description: 'Controle administrativo',
+    icon: 'K',
+    roles: ['admin'],
+  },
+  {
+    path: '/app/financeiro',
+    label: 'Financeiro',
+    description: 'Receita e cobrancas',
+    icon: 'F',
+    roles: ['admin'],
+  },
+  {
+    path: '/app/tarefas',
+    label: 'Tarefas',
+    description: 'Execucao operacional',
+    icon: 'T',
+    roles: ['admin', 'gestor', 'colaborador'],
+  },
+  {
+    path: '/app/configuracoes',
+    label: 'Configuracoes',
+    description: 'Parametros do sistema',
+    icon: 'A',
+    roles: ['admin'],
+  },
+];
+
+export function getNavigationForRole(role?: RoleName): NavigationItem[] {
+  if (!role) return [];
+  return navigationItems.filter((item) => item.roles.includes(role));
+}
+
+export function canAccessPath(role: RoleName | undefined, path: string): boolean {
+  if (!role) return false;
+  const item = navigationItems.find((entry) => entry.path === path);
+  return item ? item.roles.includes(role) : true;
+}
+
+export function getNavigationItem(pathname: string): NavigationItem | undefined {
+  return navigationItems.find((item) => item.path === pathname);
+}

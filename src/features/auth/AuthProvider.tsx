@@ -11,7 +11,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string): Promise<UserProfile> => {
     try {
       const { data, error: fetchError } = await supabase
         .from('profiles')
@@ -24,9 +24,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (!data) {
-        setProfile(null);
-        setError('Perfil de usuário não encontrado no banco de dados.');
-        return null;
+        throw new Error('Perfil de usuario nao encontrado no banco de dados.');
+      }
+
+      if (!data.roles?.name) {
+        throw new Error('Perfil de usuario sem papel de acesso vinculado.');
       }
 
       const userProfile: UserProfile = {
@@ -37,10 +39,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         status: data.status,
         created_at: data.created_at,
         updated_at: data.updated_at,
-        roles: data.roles ? {
+        roles: {
           name: data.roles.name,
           description: data.roles.description,
-        } : undefined,
+        },
       };
 
       setProfile(userProfile);
@@ -48,10 +50,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return userProfile;
     } catch (err: unknown) {
       console.error('Error fetching user profile:', err);
-      const message = err instanceof Error ? err.message : 'Erro ao carregar o perfil do usuário.';
+      const message = err instanceof Error ? err.message : 'Erro ao carregar o perfil do usuario.';
       setError(message);
       setProfile(null);
-      return null;
+      throw err;
     }
   };
 
@@ -63,21 +65,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
 
+        if (!isMounted) return;
+
         if (session?.user) {
-          if (isMounted) {
-            setUser(session.user);
-          }
+          setUser(session.user);
           await fetchProfile(session.user.id);
         } else {
-          if (isMounted) {
-            setUser(null);
-            setProfile(null);
-          }
+          setUser(null);
+          setProfile(null);
+          setError(null);
         }
       } catch (err: unknown) {
         console.error('Error initializing auth session:', err);
         if (isMounted) {
-          const message = err instanceof Error ? err.message : 'Erro ao inicializar sessão de autenticação.';
+          const message = err instanceof Error ? err.message : 'Erro ao inicializar sessao de autenticacao.';
+          setUser(null);
+          setProfile(null);
           setError(message);
         }
       } finally {
@@ -87,21 +90,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
-    initSession();
+    void initSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted) return;
 
-      setLoading(true);
-      if (session?.user) {
-        setUser(session.user);
-        await fetchProfile(session.user.id);
-      } else {
+      if (!session?.user) {
         setUser(null);
         setProfile(null);
         setError(null);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      setLoading(true);
+      setUser(session.user);
+
+      void fetchProfile(session.user.id)
+        .catch(() => {
+          setUser(null);
+        })
+        .finally(() => {
+          if (isMounted) {
+            setLoading(false);
+          }
+        });
     });
 
     return () => {
@@ -120,15 +133,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (signInError) throw signInError;
+      if (!data.user) throw new Error('Sessao de usuario nao retornada pelo Supabase.');
 
-      if (data.user) {
-        setUser(data.user);
-        await fetchProfile(data.user.id);
-      }
+      setUser(data.user);
+      await fetchProfile(data.user.id);
     } catch (err: unknown) {
       console.error('Error in signIn:', err);
       const message = err instanceof Error ? err.message : 'Erro ao realizar login.';
       setError(message);
+      setUser(null);
+      setProfile(null);
       throw err;
     } finally {
       setLoading(false);
@@ -145,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
     } catch (err: unknown) {
       console.error('Error signing out:', err);
-      const message = err instanceof Error ? err.message : 'Erro ao encerrar a sessão.';
+      const message = err instanceof Error ? err.message : 'Erro ao encerrar a sessao.';
       setError(message);
     } finally {
       setLoading(false);

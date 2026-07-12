@@ -12,6 +12,9 @@ import { ClientDetailsPage } from '../features/clients/pages/ClientDetailsPage';
 import { ClientFormPage } from '../features/clients/pages/ClientFormPage';
 import { ClientListPage } from '../features/clients/pages/ClientListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
+import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
+import { ServiceListPage } from '../features/services/pages/ServiceListPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRoutes: React.FC = () => {
@@ -63,7 +66,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="clientes/novo" element={<ClientFormPage />} />
         <Route path="clientes/:id" element={<ClientDetailsPage />} />
         <Route path="clientes/:id/editar" element={<ClientFormPage />} />
-        <Route path="servicos" element={<RolePage path="/app/servicos" page="servicos" />} />
+        <Route path="servicos" element={<ServiceListPage />} />
+        <Route path="servicos/novo" element={<ServiceFormPage />} />
+        <Route path="servicos/:id" element={<ServiceDetailsPage />} />
+        <Route path="servicos/:id/editar" element={<ServiceFormPage />} />
         <Route path="contratos" element={<RolePage path="/app/contratos" page="contratos" />} />
         <Route path="financeiro" element={<RolePage path="/app/financeiro" page="financeiro" />} />
         <Route path="tarefas" element={<RolePage path="/app/tarefas" page="tarefas" />} />

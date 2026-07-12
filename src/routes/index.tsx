@@ -8,6 +8,9 @@ import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceh
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
 import { LoginPage } from '../features/auth/LoginPage';
 import { useAuth } from '../features/auth/useAuth';
+import { ClientDetailsPage } from '../features/clients/pages/ClientDetailsPage';
+import { ClientFormPage } from '../features/clients/pages/ClientFormPage';
+import { ClientListPage } from '../features/clients/pages/ClientListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -56,7 +59,10 @@ export const AppRoutes: React.FC = () => {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="clientes" element={<RolePage path="/app/clientes" page="clientes" />} />
+        <Route path="clientes" element={<ClientListPage />} />
+        <Route path="clientes/novo" element={<ClientFormPage />} />
+        <Route path="clientes/:id" element={<ClientDetailsPage />} />
+        <Route path="clientes/:id/editar" element={<ClientFormPage />} />
         <Route path="servicos" element={<RolePage path="/app/servicos" page="servicos" />} />
         <Route path="contratos" element={<RolePage path="/app/contratos" page="contratos" />} />
         <Route path="financeiro" element={<RolePage path="/app/financeiro" page="financeiro" />} />

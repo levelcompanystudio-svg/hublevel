@@ -15,17 +15,17 @@ export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
         [
           'group flex items-center gap-3 rounded-md border px-3 py-2.5 text-sm transition',
           isActive
-            ? 'border-indigo-500/40 bg-indigo-500/10 text-indigo-100'
-            : 'border-transparent text-slate-400 hover:border-slate-800 hover:bg-slate-900 hover:text-slate-100',
+            ? 'border-sidebar-ring bg-sidebar-accent text-sidebar-accent-foreground shadow-sm shadow-black/20'
+            : 'border-transparent text-muted-foreground hover:border-sidebar-border hover:bg-sidebar-accent/70 hover:text-sidebar-foreground',
         ].join(' ')
       }
     >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-900 text-xs font-bold text-slate-300 group-hover:text-indigo-200">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-sidebar-border bg-sidebar text-xs font-bold text-sidebar-foreground group-hover:text-sidebar-accent-foreground">
         {item.icon}
       </span>
       <span className="min-w-0">
         <span className="block truncate font-medium">{item.label}</span>
-        <span className="block truncate text-xs text-slate-500">{item.description}</span>
+        <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
       </span>
     </NavLink>
   );

@@ -26,7 +26,7 @@ export function ServiceTable({ services, canEdit }: ServiceTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] border-collapse text-left">
-          <thead className="border-b border-slate-800 bg-slate-900/70 text-xs uppercase text-slate-500">
+          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Nome</th>
               <th className="px-5 py-3 font-semibold">Categoria</th>
@@ -36,17 +36,17 @@ export function ServiceTable({ services, canEdit }: ServiceTableProps) {
               <th className="px-5 py-3 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-border">
             {services.map((service) => (
-              <tr key={service.id} className="bg-slate-950/40">
+              <tr key={service.id} className="bg-card">
                 <td className="px-5 py-4">
-                  <p className="text-sm font-semibold text-slate-100">{service.name}</p>
-                  <p className="mt-1 line-clamp-1 text-xs text-slate-500">
+                  <p className="text-sm font-semibold text-foreground">{service.name}</p>
+                  <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                     {service.description || 'Sem descricao'}
                   </p>
                 </td>
-                <td className="px-5 py-4 text-sm text-slate-400">{service.category || '-'}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{formatPrice(service.default_price)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{service.category || '-'}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{formatPrice(service.default_price)}</td>
                 <td className="px-5 py-4">
                   <BillingCycleBadge cycle={service.billing_cycle} />
                 </td>

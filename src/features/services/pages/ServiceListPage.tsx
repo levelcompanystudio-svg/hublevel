@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { FilterBar } from '../../../components/layout/FilterBar';
+import { PageHeader } from '../../../components/layout/PageHeader';
+import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { listServices } from '../services.api';
 import type { Service } from '../services.types';
-import { ServiceHeader } from '../components/ServiceHeader';
 import { ServiceTable } from '../components/ServiceTable';
 
 export function ServiceListPage() {
@@ -51,18 +55,38 @@ export function ServiceListPage() {
     return <AccessDeniedPlaceholder />;
   }
 
+  const activeServices = services.filter((service) => service.status === 'ativo').length;
+  const inactiveServices = services.filter((service) => service.status === 'inativo').length;
+
   return (
     <div className="space-y-6">
-      <ServiceHeader
+      <PageHeader
+        eyebrow="Catalogo"
         title="Servicos"
         description="Catalogo interno de servicos da Level Company para operacao e contratos futuros."
-        actionLabel={canEdit ? 'Novo servico' : undefined}
-        actionTo={canEdit ? '/app/servicos/novo' : undefined}
+        action={canEdit ? (
+          <Link to="/app/servicos/novo">
+            <Button type="button" variant="primary">Novo servico</Button>
+          </Link>
+        ) : undefined}
       />
 
       {loading && <LoadingState title="Carregando servicos" />}
       {error && <ErrorState description={error} />}
-      {!loading && !error && <ServiceTable services={services} canEdit={canEdit} />}
+      {!loading && !error && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <SummaryCard label="Total de servicos" value={services.length} tone="brand" />
+            <SummaryCard label="Servicos ativos" value={activeServices} tone="success" />
+            <SummaryCard label="Servicos inativos" value={inactiveServices} />
+          </div>
+          <FilterBar label="Filtros visuais">
+            <Badge tone="brand">{canEdit ? 'Todos os status' : 'Apenas ativos'}</Badge>
+            <Badge>Catalogo interno</Badge>
+          </FilterBar>
+          <ServiceTable services={services} canEdit={canEdit} />
+        </>
+      )}
     </div>
   );
 }

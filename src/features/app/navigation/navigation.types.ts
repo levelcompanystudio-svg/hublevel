@@ -6,4 +6,5 @@ export interface NavigationItem {
   description: string;
   icon: string;
   roles: RoleName[];
+  group: 'Dashboard' | 'Operacao' | 'Administracao';
 }

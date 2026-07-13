@@ -24,7 +24,7 @@ export function FinanceTable({ records }: FinanceTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[820px] border-collapse text-left">
-          <thead className="border-b border-slate-800 bg-slate-900/70 text-xs uppercase text-slate-500">
+          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Cliente</th>
               <th className="px-5 py-3 font-semibold">Descricao</th>
@@ -35,14 +35,14 @@ export function FinanceTable({ records }: FinanceTableProps) {
               <th className="px-5 py-3 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-border">
             {records.map((record) => (
-              <tr key={record.id} className="bg-slate-950/40">
-                <td className="px-5 py-4 text-sm text-slate-300">{clientName(record)}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{record.description || '-'}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{formatMonth(record.competence_month)}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{formatCurrency(record.amount)}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{formatDate(record.due_date)}</td>
+              <tr key={record.id} className="bg-card">
+                <td className="px-5 py-4 text-sm text-foreground">{clientName(record)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{record.description || '-'}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{formatCurrency(record.amount)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(record.due_date)}</td>
                 <td className="px-5 py-4"><FinanceStatusBadge status={record.status} /></td>
                 <td className="px-5 py-4">
                   <div className="flex justify-end gap-2">

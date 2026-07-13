@@ -12,14 +12,14 @@ export function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    primary: 'border-indigo-500 bg-indigo-600 text-white hover:bg-indigo-500',
-    secondary: 'border-slate-800 bg-slate-900 text-slate-100 hover:bg-slate-800',
-    ghost: 'border-transparent bg-transparent text-slate-300 hover:bg-slate-900',
+    primary: 'border-primary bg-primary text-primary-foreground shadow-sm shadow-black/20 hover:brightness-110',
+    secondary: 'border-border bg-muted text-foreground hover:border-primary/50 hover:bg-sidebar-accent',
+    ghost: 'border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
   };
 
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-md border px-3.5 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${className}`}
       {...props}
     >
       {children}

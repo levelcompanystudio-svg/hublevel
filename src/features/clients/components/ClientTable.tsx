@@ -25,7 +25,7 @@ export function ClientTable({ clients }: ClientTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] border-collapse text-left">
-          <thead className="border-b border-slate-800 bg-slate-900/70 text-xs uppercase text-slate-500">
+          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Cliente</th>
               <th className="px-5 py-3 font-semibold">Responsavel</th>
@@ -35,18 +35,18 @@ export function ClientTable({ clients }: ClientTableProps) {
               <th className="px-5 py-3 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-border">
             {clients.map((client) => (
-              <tr key={client.id} className="bg-slate-950/40">
+              <tr key={client.id} className="bg-card">
                 <td className="px-5 py-4">
-                  <p className="text-sm font-semibold text-slate-100">{client.company_name}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="text-sm font-semibold text-foreground">{client.company_name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {client.trade_name || client.segment || 'Sem nome fantasia'}
                   </p>
                 </td>
                 <td className="px-5 py-4">
-                  <p className="text-sm text-slate-300">{client.responsible?.name ?? 'Sem responsavel'}</p>
-                  <p className="mt-1 text-xs text-slate-500">{client.responsible?.email ?? '-'}</p>
+                  <p className="text-sm text-foreground">{client.responsible?.name ?? 'Sem responsavel'}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{client.responsible?.email ?? '-'}</p>
                 </td>
                 <td className="px-5 py-4">
                   <ClientStatusBadge status={client.status} />
@@ -54,7 +54,7 @@ export function ClientTable({ clients }: ClientTableProps) {
                 <td className="px-5 py-4">
                   <ClientHealthBadge status={client.health_status} />
                 </td>
-                <td className="px-5 py-4 text-sm text-slate-400">
+                <td className="px-5 py-4 text-sm text-muted-foreground">
                   {client.start_date || '-'}
                 </td>
                 <td className="px-5 py-4">

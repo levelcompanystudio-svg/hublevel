@@ -22,8 +22,8 @@ export function AppTopbar({
   const item = getNavigationItem(location.pathname);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             type="button"
@@ -35,22 +35,22 @@ export function AppTopbar({
             <span className="text-lg">=</span>
           </Button>
           <div className="min-w-0">
-            <h1 className="truncate text-base font-semibold text-slate-100 sm:text-lg">
+            <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">
               {item?.label ?? 'HubLevel'}
             </h1>
-            <p className="hidden truncate text-xs text-slate-500 sm:block">
+            <p className="hidden truncate text-xs text-muted-foreground sm:block">
               {item?.description ?? 'Ambiente interno de gestao'}
             </p>
           </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          <div className="hidden text-right sm:block">
-            <p className="text-xs font-semibold text-slate-200">{userName ?? 'Usuario'}</p>
-            <p className="text-xs text-slate-500">Sessao ativa</p>
+          <div className="hidden rounded-lg border border-border bg-card px-3 py-2 text-right sm:block">
+            <p className="text-xs font-semibold text-foreground">{userName ?? 'Usuario'}</p>
+            <p className="text-xs text-muted-foreground">Sessao ativa</p>
           </div>
           <Badge tone="brand">{role ?? 'perfil'}</Badge>
-          <Button type="button" onClick={onLogout} disabled={loading}>
+          <Button type="button" variant="ghost" onClick={onLogout} disabled={loading}>
             {loading ? 'Saindo...' : 'Sair'}
           </Button>
         </div>

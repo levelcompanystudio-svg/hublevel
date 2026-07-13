@@ -10,7 +10,7 @@ export function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="hidden md:fixed md:inset-y-0 md:flex">
         <AppSidebar role={profile?.roles?.name} userName={profile?.name} />
       </div>
@@ -30,7 +30,7 @@ export function AppLayout() {
           onLogout={() => void signOut()}
           onOpenMenu={() => setMobileMenuOpen(true)}
         />
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <main className="mx-auto w-full max-w-[1500px] px-4 py-7 sm:px-6 lg:px-8 xl:px-10">
           <Outlet />
         </main>
       </div>

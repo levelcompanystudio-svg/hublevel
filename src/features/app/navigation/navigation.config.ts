@@ -8,6 +8,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Visao geral da operacao',
     icon: 'D',
     roles: ['admin', 'gestor', 'colaborador'],
+    group: 'Dashboard',
   },
   {
     path: '/app/clientes',
@@ -15,6 +16,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Carteira de clientes',
     icon: 'C',
     roles: ['admin', 'gestor'],
+    group: 'Operacao',
   },
   {
     path: '/app/servicos',
@@ -22,6 +24,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Catalogo de ofertas',
     icon: 'S',
     roles: ['admin', 'gestor'],
+    group: 'Operacao',
   },
   {
     path: '/app/contratos',
@@ -29,6 +32,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Controle administrativo',
     icon: 'K',
     roles: ['admin'],
+    group: 'Administracao',
   },
   {
     path: '/app/financeiro',
@@ -36,6 +40,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Receita e cobrancas',
     icon: 'F',
     roles: ['admin'],
+    group: 'Administracao',
   },
   {
     path: '/app/tarefas',
@@ -43,6 +48,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Execucao operacional',
     icon: 'T',
     roles: ['admin', 'gestor', 'colaborador'],
+    group: 'Operacao',
   },
   {
     path: '/app/configuracoes',
@@ -50,6 +56,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Parametros do sistema',
     icon: 'A',
     roles: ['admin'],
+    group: 'Administracao',
   },
 ];
 

@@ -23,7 +23,7 @@ export function TaskTable({ tasks, canEdit }: TaskTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[820px] border-collapse text-left">
-          <thead className="border-b border-slate-800 bg-slate-900/70 text-xs uppercase text-slate-500">
+          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Tarefa</th>
               <th className="px-5 py-3 font-semibold">Cliente</th>
@@ -34,18 +34,18 @@ export function TaskTable({ tasks, canEdit }: TaskTableProps) {
               <th className="px-5 py-3 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-border">
             {tasks.map((task) => (
-              <tr key={task.id} className="bg-slate-950/40">
+              <tr key={task.id} className="bg-card">
                 <td className="px-5 py-4">
-                  <p className="text-sm font-semibold text-slate-100">{task.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">{task.category || 'Sem categoria'}</p>
+                  <p className="text-sm font-semibold text-foreground">{task.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{task.category || 'Sem categoria'}</p>
                 </td>
-                <td className="px-5 py-4 text-sm text-slate-400">{clientName(task)}</td>
-                <td className="px-5 py-4 text-sm text-slate-400">{profileName(task.assignee)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{clientName(task)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{profileName(task.assignee)}</td>
                 <td className="px-5 py-4"><TaskPriorityBadge priority={task.priority} /></td>
                 <td className="px-5 py-4"><TaskStatusBadge status={task.status} /></td>
-                <td className="px-5 py-4 text-sm text-slate-400">{formatDate(task.due_date)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(task.due_date)}</td>
                 <td className="px-5 py-4">
                   <div className="flex justify-end gap-2">
                     <Link to={`/app/tarefas/${task.id}`}><Button type="button" variant="ghost">Ver</Button></Link>

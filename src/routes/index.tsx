@@ -12,9 +12,15 @@ import { ClientDetailsPage } from '../features/clients/pages/ClientDetailsPage';
 import { ClientFormPage } from '../features/clients/pages/ClientFormPage';
 import { ClientListPage } from '../features/clients/pages/ClientListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { FinanceDetailsPage } from '../features/finance/pages/FinanceDetailsPage';
+import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
+import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
 import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
 import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
 import { ServiceListPage } from '../features/services/pages/ServiceListPage';
+import { TaskDetailsPage } from '../features/tasks/pages/TaskDetailsPage';
+import { TaskFormPage } from '../features/tasks/pages/TaskFormPage';
+import { TaskListPage } from '../features/tasks/pages/TaskListPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRoutes: React.FC = () => {
@@ -71,8 +77,14 @@ export const AppRoutes: React.FC = () => {
         <Route path="servicos/:id" element={<ServiceDetailsPage />} />
         <Route path="servicos/:id/editar" element={<ServiceFormPage />} />
         <Route path="contratos" element={<RolePage path="/app/contratos" page="contratos" />} />
-        <Route path="financeiro" element={<RolePage path="/app/financeiro" page="financeiro" />} />
-        <Route path="tarefas" element={<RolePage path="/app/tarefas" page="tarefas" />} />
+        <Route path="financeiro" element={<FinanceListPage />} />
+        <Route path="financeiro/novo" element={<FinanceFormPage />} />
+        <Route path="financeiro/:id" element={<FinanceDetailsPage />} />
+        <Route path="financeiro/:id/editar" element={<FinanceFormPage />} />
+        <Route path="tarefas" element={<TaskListPage />} />
+        <Route path="tarefas/novo" element={<TaskFormPage />} />
+        <Route path="tarefas/:id" element={<TaskDetailsPage />} />
+        <Route path="tarefas/:id/editar" element={<TaskFormPage />} />
         <Route path="configuracoes" element={<RolePage path="/app/configuracoes" page="configuracoes" />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

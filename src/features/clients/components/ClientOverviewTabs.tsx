@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Card } from '../../../components/ui';
 import type { Client } from '../clients.types';
@@ -29,14 +29,20 @@ function formatDate(value: string | null) {
 export function ClientOverviewTabs({ client }: ClientOverviewTabsProps) {
   const [activeTab, setActiveTab] = useState<TabName>('Visao geral');
 
+  useEffect(() => {
+    setActiveTab('Visao geral');
+  }, [client.id]);
+
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto rounded-lg border border-border bg-card p-2">
-        <div className="flex min-w-max gap-2">
+        <div className="flex min-w-max gap-2" role="tablist" aria-label="Abas do cliente">
           {tabs.map((tab) => (
             <button
               key={tab}
               type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
               onClick={() => setActiveTab(tab)}
               className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
                 activeTab === tab

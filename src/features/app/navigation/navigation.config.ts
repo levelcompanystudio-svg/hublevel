@@ -51,6 +51,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/acompanhamento',
+    label: 'Acompanhamento',
+    description: 'Atualizacoes semanais por cliente',
+    icon: 'U',
+    roles: ['admin', 'gestor'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

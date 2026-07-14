@@ -6,6 +6,7 @@ import type { Client } from '../clients.types';
 import { ClientHealthBadge } from './ClientHealthBadge';
 import { ClientServicesTab } from './ClientServicesTab';
 import { ClientStatusBadge } from './ClientStatusBadge';
+import { ClientUpdatesTab } from './ClientUpdatesTab';
 
 interface ClientOverviewTabsProps {
   client: Client;
@@ -97,6 +98,8 @@ export function ClientOverviewTabs({ client, role }: ClientOverviewTabsProps) {
         </div>
       ) : activeTab === 'Servicos' ? (
         <ClientServicesTab clientId={client.id} canManage={role === 'admin'} />
+      ) : activeTab === 'Acompanhamento' ? (
+        <ClientUpdatesTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : (
         <EmptyState
           title={`${activeTab} em desenvolvimento`}

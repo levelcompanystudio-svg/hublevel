@@ -24,6 +24,9 @@ import { ServiceListPage } from '../features/services/pages/ServiceListPage';
 import { TaskDetailsPage } from '../features/tasks/pages/TaskDetailsPage';
 import { TaskFormPage } from '../features/tasks/pages/TaskFormPage';
 import { TaskListPage } from '../features/tasks/pages/TaskListPage';
+import { UpdateDetailsPage } from '../features/updates/pages/UpdateDetailsPage';
+import { UpdateFormPage } from '../features/updates/pages/UpdateFormPage';
+import { UpdateListPage } from '../features/updates/pages/UpdateListPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRoutes: React.FC = () => {
@@ -91,6 +94,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="tarefas/novo" element={<TaskFormPage />} />
         <Route path="tarefas/:id" element={<TaskDetailsPage />} />
         <Route path="tarefas/:id/editar" element={<TaskFormPage />} />
+        <Route path="acompanhamento" element={<UpdateListPage />} />
+        <Route path="acompanhamento/novo" element={<UpdateFormPage />} />
+        <Route path="acompanhamento/:id" element={<UpdateDetailsPage />} />
+        <Route path="acompanhamento/:id/editar" element={<UpdateFormPage />} />
         <Route path="configuracoes" element={<RolePage path="/app/configuracoes" page="configuracoes" />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

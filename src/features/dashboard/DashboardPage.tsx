@@ -14,7 +14,7 @@ export function DashboardPage() {
       <PageHeader
         eyebrow="Visao geral"
         title="Dashboard"
-        description="Painel operacional por papel. Os indicadores permanecem zerados ate a implementacao dos modulos correspondentes."
+        description="Painel operacional por papel, com indicadores calculados a partir dos dados reais de clientes, tarefas, reunioes e acompanhamento."
       />
 
       {role === 'admin' && <AdminDashboard />}

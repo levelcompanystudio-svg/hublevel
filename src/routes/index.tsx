@@ -11,6 +11,9 @@ import { useAuth } from '../features/auth/useAuth';
 import { ClientDetailsPage } from '../features/clients/pages/ClientDetailsPage';
 import { ClientFormPage } from '../features/clients/pages/ClientFormPage';
 import { ClientListPage } from '../features/clients/pages/ClientListPage';
+import { ContractDetailsPage } from '../features/contracts/pages/ContractDetailsPage';
+import { ContractFormPage } from '../features/contracts/pages/ContractFormPage';
+import { ContractListPage } from '../features/contracts/pages/ContractListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { FinanceDetailsPage } from '../features/finance/pages/FinanceDetailsPage';
 import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
@@ -76,7 +79,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="servicos/novo" element={<ServiceFormPage />} />
         <Route path="servicos/:id" element={<ServiceDetailsPage />} />
         <Route path="servicos/:id/editar" element={<ServiceFormPage />} />
-        <Route path="contratos" element={<RolePage path="/app/contratos" page="contratos" />} />
+        <Route path="contratos" element={<ContractListPage />} />
+        <Route path="contratos/novo" element={<ContractFormPage />} />
+        <Route path="contratos/:id" element={<ContractDetailsPage />} />
+        <Route path="contratos/:id/editar" element={<ContractFormPage />} />
         <Route path="financeiro" element={<FinanceListPage />} />
         <Route path="financeiro/novo" element={<FinanceFormPage />} />
         <Route path="financeiro/:id" element={<FinanceDetailsPage />} />
@@ -107,44 +113,13 @@ export const AppRoutes: React.FC = () => {
   );
 };
 
-type PlaceholderPage =
-  | 'clientes'
-  | 'servicos'
-  | 'contratos'
-  | 'financeiro'
-  | 'tarefas'
-  | 'configuracoes';
+type PlaceholderPage = 'configuracoes';
 
 const placeholderContent: Record<PlaceholderPage, {
   title: string;
   description: string;
   upcoming: string[];
 }> = {
-  clientes: {
-    title: 'Clientes',
-    description: 'Gestao da carteira de clientes e responsaveis.',
-    upcoming: ['Listagem por papel', 'Cadastro de cliente', 'Detalhe operacional'],
-  },
-  servicos: {
-    title: 'Servicos',
-    description: 'Catalogo de servicos e vinculos com clientes.',
-    upcoming: ['Catalogo administrativo', 'Servicos contratados', 'Status por cliente'],
-  },
-  contratos: {
-    title: 'Contratos',
-    description: 'Controle administrativo de contratos. Area restrita a Admin.',
-    upcoming: ['Vigencia', 'Aviso previo', 'Documentos vinculados'],
-  },
-  financeiro: {
-    title: 'Financeiro',
-    description: 'Controle financeiro administrativo. Area restrita a Admin.',
-    upcoming: ['Cobrancas', 'Pagamentos', 'Resumo de receita'],
-  },
-  tarefas: {
-    title: 'Tarefas',
-    description: 'Execucao operacional da equipe.',
-    upcoming: ['Minhas tarefas', 'Filtros por status', 'Atualizacao de progresso'],
-  },
   configuracoes: {
     title: 'Configuracoes',
     description: 'Parametros e administracao do HubLevel.',

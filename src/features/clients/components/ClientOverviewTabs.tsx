@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Card } from '../../../components/ui';
+import type { RoleName } from '../../auth/auth.types';
 import type { Client } from '../clients.types';
 import { ClientHealthBadge } from './ClientHealthBadge';
+import { ClientServicesTab } from './ClientServicesTab';
 import { ClientStatusBadge } from './ClientStatusBadge';
 
 interface ClientOverviewTabsProps {
   client: Client;
+  role?: RoleName;
 }
 
 const tabs = [
@@ -26,7 +29,7 @@ function formatDate(value: string | null) {
   return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR');
 }
 
-export function ClientOverviewTabs({ client }: ClientOverviewTabsProps) {
+export function ClientOverviewTabs({ client, role }: ClientOverviewTabsProps) {
   const [activeTab, setActiveTab] = useState<TabName>('Visao geral');
 
   useEffect(() => {
@@ -92,6 +95,8 @@ export function ClientOverviewTabs({ client }: ClientOverviewTabsProps) {
             </p>
           </Card>
         </div>
+      ) : activeTab === 'Servicos' ? (
+        <ClientServicesTab clientId={client.id} canManage={role === 'admin'} />
       ) : (
         <EmptyState
           title={`${activeTab} em desenvolvimento`}

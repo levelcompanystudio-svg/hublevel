@@ -74,7 +74,7 @@ export function ClientDetailsPage() {
             <SummaryCard label="Inicio da parceria" value={formatDate(client.start_date)} tone="brand" />
           </div>
 
-          <ClientOverviewTabs client={client} />
+          <ClientOverviewTabs client={client} role={role} />
         </>
       )}
     </div>

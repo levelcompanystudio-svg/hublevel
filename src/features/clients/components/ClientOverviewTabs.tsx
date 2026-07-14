@@ -4,6 +4,7 @@ import { Card } from '../../../components/ui';
 import type { RoleName } from '../../auth/auth.types';
 import type { Client } from '../clients.types';
 import { ClientHealthBadge } from './ClientHealthBadge';
+import { ClientMeetingsTab } from './ClientMeetingsTab';
 import { ClientServicesTab } from './ClientServicesTab';
 import { ClientStatusBadge } from './ClientStatusBadge';
 import { ClientUpdatesTab } from './ClientUpdatesTab';
@@ -19,6 +20,7 @@ const tabs = [
   'Financeiro',
   'Tarefas',
   'Acompanhamento',
+  'Reunioes',
   'Checklist',
   'Historico',
 ] as const;
@@ -100,6 +102,8 @@ export function ClientOverviewTabs({ client, role }: ClientOverviewTabsProps) {
         <ClientServicesTab clientId={client.id} canManage={role === 'admin'} />
       ) : activeTab === 'Acompanhamento' ? (
         <ClientUpdatesTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
+      ) : activeTab === 'Reunioes' ? (
+        <ClientMeetingsTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : (
         <EmptyState
           title={`${activeTab} em desenvolvimento`}

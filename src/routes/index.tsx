@@ -18,6 +18,9 @@ import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { FinanceDetailsPage } from '../features/finance/pages/FinanceDetailsPage';
 import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
 import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
+import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
+import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
+import { MeetingListPage } from '../features/meetings/pages/MeetingListPage';
 import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
 import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
 import { ServiceListPage } from '../features/services/pages/ServiceListPage';
@@ -98,6 +101,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="acompanhamento/novo" element={<UpdateFormPage />} />
         <Route path="acompanhamento/:id" element={<UpdateDetailsPage />} />
         <Route path="acompanhamento/:id/editar" element={<UpdateFormPage />} />
+        <Route path="reunioes" element={<MeetingListPage />} />
+        <Route path="reunioes/novo" element={<MeetingFormPage />} />
+        <Route path="reunioes/:id" element={<MeetingDetailsPage />} />
+        <Route path="reunioes/:id/editar" element={<MeetingFormPage />} />
         <Route path="configuracoes" element={<RolePage path="/app/configuracoes" page="configuracoes" />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

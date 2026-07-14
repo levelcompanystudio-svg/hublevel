@@ -59,6 +59,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/reunioes',
+    label: 'Reunioes',
+    description: 'Agenda CS e consultorias por cliente',
+    icon: 'R',
+    roles: ['admin', 'gestor'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

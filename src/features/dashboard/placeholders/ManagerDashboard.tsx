@@ -30,10 +30,10 @@ export function ManagerDashboard() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-100">Foco operacional</h3>
+              <h3 className="text-sm font-semibold text-foreground">Foco operacional</h3>
               <Badge tone="brand">Gestor</Badge>
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Area preparada para priorizar clientes sem acompanhamento recente, tarefas vencidas e reunioes da semana.
             </p>
           </div>

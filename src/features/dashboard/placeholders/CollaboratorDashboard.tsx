@@ -28,10 +28,10 @@ export function CollaboratorDashboard() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-100">Prioridades pessoais</h3>
+              <h3 className="text-sm font-semibold text-foreground">Prioridades pessoais</h3>
               <Badge tone="brand">Colaborador</Badge>
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Area preparada para destacar atividades pendentes sem expor financeiro, contratos ou clientes globais.
             </p>
           </div>

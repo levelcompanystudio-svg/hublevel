@@ -80,7 +80,7 @@ export function TaskDetailsPage() {
                   <TaskStatusBadge status={task.status} />
                   <TaskPriorityBadge priority={task.priority} />
                 </div>
-                <p className="mt-4 text-sm text-slate-500">{task.description || 'Sem descricao cadastrada.'}</p>
+                <p className="mt-4 text-sm text-muted-foreground">{task.description || 'Sem descricao cadastrada.'}</p>
               </div>
               {canEditGeneral && (
                 <Link to={`/app/tarefas/${task.id}/editar`}>
@@ -96,9 +96,9 @@ export function TaskDetailsPage() {
               <InfoItem label="Categoria" value={task.category ?? '-'} />
               <InfoItem label="Concluida em" value={task.completed_at ? new Intl.DateTimeFormat('pt-BR').format(new Date(task.completed_at)) : '-'} />
             </div>
-            <div className="mt-6 rounded-md border border-slate-800 bg-slate-900/50 p-4">
-              <p className="text-xs font-semibold uppercase text-slate-500">Observacoes</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{task.notes || 'Nenhuma observacao cadastrada.'}</p>
+            <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">Observacoes</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{task.notes || 'Nenhuma observacao cadastrada.'}</p>
             </div>
           </Card>
           {canUpdateStatusOnly && (
@@ -112,9 +112,9 @@ export function TaskDetailsPage() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-900/60 p-3">
-      <p className="text-xs font-medium uppercase text-slate-500">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-slate-100">{value}</p>
+    <div className="rounded-lg border border-border bg-muted/40 p-3">
+      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }

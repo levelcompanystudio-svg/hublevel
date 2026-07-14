@@ -33,10 +33,10 @@ export function AdminDashboard() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-100">Resumo executivo</h3>
+              <h3 className="text-sm font-semibold text-foreground">Resumo executivo</h3>
               <Badge tone="brand">Admin</Badge>
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Area preparada para consolidar alertas criticos, tendencias e acompanhamento financeiro quando os modulos forem implementados.
             </p>
           </div>

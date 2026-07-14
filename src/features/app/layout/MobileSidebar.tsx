@@ -16,10 +16,10 @@ export function MobileSidebar({ open, role, userName, onClose }: MobileSidebarPr
       <button
         type="button"
         aria-label="Fechar menu"
-        className="absolute inset-0 bg-black/60"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative h-full w-72 max-w-[85vw]">
+      <div className="relative h-full w-72 max-w-[85vw] shadow-2xl shadow-black/40">
         <AppSidebar role={role} userName={userName} onNavigate={onClose} />
       </div>
     </div>

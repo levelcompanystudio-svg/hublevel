@@ -9,6 +9,6 @@ const labels: Record<FinancialStatus, string> = {
 };
 
 export function FinanceStatusBadge({ status }: { status: FinancialStatus }) {
-  const tone = status === 'pago' ? 'success' : status === 'atrasado' ? 'brand' : 'neutral';
+  const tone = status === 'pago' ? 'success' : status === 'atrasado' ? 'destructive' : status === 'previsto' ? 'warning' : 'neutral';
   return <Badge tone={tone}>{labels[status]}</Badge>;
 }

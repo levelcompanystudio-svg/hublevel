@@ -22,7 +22,7 @@ export function PaymentForm({ values, loading = false, onChange, onSubmit }: Pay
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <h3 className="text-sm font-semibold text-slate-100">Registrar pagamento</h3>
+        <h3 className="text-sm font-semibold text-foreground">Registrar pagamento</h3>
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           <Field label="Valor" required>
             <input required type="number" min="0.01" step="0.01" value={values.amount} onChange={(event) => setField('amount', event.target.value)} className={inputClassName} />
@@ -53,12 +53,12 @@ export function PaymentForm({ values, loading = false, onChange, onSubmit }: Pay
   );
 }
 
-const inputClassName = 'w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-900 disabled:text-slate-500';
+const inputClassName = 'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground';
 
 function Field({ label, required = false, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase text-slate-500">{label}{required ? ' *' : ''}</span>
+      <span className="mb-2 block text-xs font-semibold uppercase text-muted-foreground">{label}{required ? ' *' : ''}</span>
       {children}
     </label>
   );

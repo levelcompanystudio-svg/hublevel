@@ -12,8 +12,8 @@ export function ServiceHeader({ title, description, actionLabel, actionTo }: Ser
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-100">{title}</h2>
-        <p className="mt-2 max-w-2xl text-sm text-slate-500">{description}</p>
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>
       </div>
       {actionLabel && actionTo && (
         <Link to={actionTo}>

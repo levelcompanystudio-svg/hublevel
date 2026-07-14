@@ -9,10 +9,10 @@ export function LoadingState({
 }: LoadingStateProps) {
   return (
     <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 text-center">
-      <div className="h-9 w-9 animate-spin rounded-full border-2 border-slate-700 border-t-indigo-400" />
+      <div className="h-9 w-9 animate-spin rounded-full border-2 border-border border-t-primary" />
       <div>
-        <p className="text-sm font-semibold text-slate-100">{title}</p>
-        <p className="mt-1 text-xs text-slate-500">{description}</p>
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
     </div>
   );

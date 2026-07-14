@@ -71,7 +71,7 @@ export function ServiceDetailsPage() {
         <Card>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm text-slate-500">{service.description || 'Sem descricao cadastrada'}</p>
+              <p className="text-sm text-muted-foreground">{service.description || 'Sem descricao cadastrada'}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <ServiceStatusBadge status={service.status} />
                 <BillingCycleBadge cycle={service.billing_cycle} />
@@ -91,9 +91,9 @@ export function ServiceDetailsPage() {
             <InfoItem label="Atualizado em" value={formatDate(service.updated_at)} />
           </div>
 
-          <div className="mt-6 rounded-md border border-slate-800 bg-slate-900/50 p-4">
-            <p className="text-xs font-semibold uppercase text-slate-500">Observacoes</p>
-            <p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">
+          <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">Observacoes</p>
+            <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
               {service.notes || 'Nenhuma observacao cadastrada.'}
             </p>
           </div>
@@ -105,9 +105,9 @@ export function ServiceDetailsPage() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-900/60 p-3">
-      <p className="text-xs font-medium uppercase text-slate-500">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-slate-100">{value}</p>
+    <div className="rounded-lg border border-border bg-muted/40 p-3">
+      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }

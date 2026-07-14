@@ -12,7 +12,7 @@ export function DashboardPlaceholder() {
     >
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <Card>
-          <h3 className="text-sm font-semibold text-slate-100">Sessao atual</h3>
+          <h3 className="text-sm font-semibold text-foreground">Sessao atual</h3>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <InfoItem label="Nome" value={profile?.name ?? 'Carregando'} />
             <InfoItem label="Email" value={profile?.email ?? 'Carregando'} />
@@ -22,8 +22,8 @@ export function DashboardPlaceholder() {
         </Card>
 
         <Card>
-          <h3 className="text-sm font-semibold text-slate-100">Escopo atual</h3>
-          <p className="mt-3 text-sm text-slate-500">
+          <h3 className="text-sm font-semibold text-foreground">Escopo atual</h3>
+          <p className="mt-3 text-sm text-muted-foreground">
             Layout principal, navegacao por papel e placeholders. Nenhuma query de negocio foi adicionada.
           </p>
         </Card>
@@ -34,9 +34,9 @@ export function DashboardPlaceholder() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-900/60 p-3">
-      <p className="text-xs font-medium uppercase text-slate-500">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-slate-100">{value}</p>
+    <div className="rounded-md border border-border bg-muted/40 p-3">
+      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }

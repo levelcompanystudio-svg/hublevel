@@ -18,7 +18,7 @@ export function TaskStatusUpdateForm({ status, loading = false, onChange, onSubm
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <h3 className="text-sm font-semibold text-slate-100">Atualizar status</h3>
+        <h3 className="text-sm font-semibold text-foreground">Atualizar status</h3>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row">
           <select value={status} onChange={(event) => onChange(event.target.value as TaskStatus)} className={inputClassName}>
             <option value="a_fazer">Pendente</option>
@@ -35,4 +35,4 @@ export function TaskStatusUpdateForm({ status, loading = false, onChange, onSubm
   );
 }
 
-const inputClassName = 'w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 sm:max-w-xs';
+const inputClassName = 'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary sm:max-w-xs';

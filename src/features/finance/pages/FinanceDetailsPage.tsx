@@ -82,8 +82,8 @@ export function FinanceDetailsPage() {
           <Card>
             <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <p className="text-sm text-slate-500">{clientName(record)}</p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-100">{record.description || 'Sem descricao'}</h3>
+                <p className="text-sm text-muted-foreground">{clientName(record)}</p>
+                <h3 className="mt-2 text-lg font-semibold text-foreground">{record.description || 'Sem descricao'}</h3>
                 <div className="mt-4"><FinanceStatusBadge status={record.status} /></div>
               </div>
               <Link to={`/app/financeiro/${record.id}/editar`}>
@@ -96,9 +96,9 @@ export function FinanceDetailsPage() {
               <InfoItem label="Vencimento" value={formatDate(record.due_date)} />
               <InfoItem label="Data de pagamento" value={formatDate(record.payment_date)} />
             </div>
-            <div className="mt-6 rounded-md border border-slate-800 bg-slate-900/50 p-4">
-              <p className="text-xs font-semibold uppercase text-slate-500">Observacoes</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{record.notes || 'Nenhuma observacao cadastrada.'}</p>
+            <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">Observacoes</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{record.notes || 'Nenhuma observacao cadastrada.'}</p>
             </div>
           </Card>
           <PaymentsList payments={payments} />
@@ -111,9 +111,9 @@ export function FinanceDetailsPage() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-900/60 p-3">
-      <p className="text-xs font-medium uppercase text-slate-500">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-slate-100">{value}</p>
+    <div className="rounded-lg border border-border bg-muted/40 p-3">
+      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }

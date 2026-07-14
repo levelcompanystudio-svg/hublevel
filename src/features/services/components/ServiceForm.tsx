@@ -119,7 +119,7 @@ export function ServiceForm({
   );
 }
 
-const inputClassName = 'w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-900 disabled:text-slate-500';
+const inputClassName = 'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground';
 
 function Field({
   label,
@@ -132,7 +132,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase text-slate-500">
+      <span className="mb-2 block text-xs font-semibold uppercase text-muted-foreground">
         {label}
         {required ? ' *' : ''}
       </span>

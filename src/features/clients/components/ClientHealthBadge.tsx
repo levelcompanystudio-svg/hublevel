@@ -8,6 +8,6 @@ const labels: Record<ClientHealthStatus, string> = {
 };
 
 export function ClientHealthBadge({ status }: { status: ClientHealthStatus }) {
-  const tone = status === 'saudavel' ? 'success' : status === 'atencao' ? 'brand' : 'neutral';
+  const tone = status === 'saudavel' ? 'success' : status === 'atencao' ? 'warning' : 'destructive';
   return <Badge tone={tone}>{labels[status]}</Badge>;
 }

@@ -9,6 +9,6 @@ const labels: Record<TaskPriority, string> = {
 };
 
 export function TaskPriorityBadge({ priority }: { priority: TaskPriority }) {
-  const tone = priority === 'urgente' || priority === 'alta' ? 'brand' : 'neutral';
+  const tone = priority === 'urgente' ? 'destructive' : priority === 'alta' ? 'warning' : 'neutral';
   return <Badge tone={tone}>{labels[priority]}</Badge>;
 }

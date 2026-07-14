@@ -23,20 +23,20 @@ export function TaskTable({ tasks, canEdit }: TaskTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[820px] border-collapse text-left">
-          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
+          <thead className="border-b border-border bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3 font-semibold">Tarefa</th>
-              <th className="px-5 py-3 font-semibold">Cliente</th>
-              <th className="px-5 py-3 font-semibold">Responsavel</th>
-              <th className="px-5 py-3 font-semibold">Prioridade</th>
-              <th className="px-5 py-3 font-semibold">Status</th>
-              <th className="px-5 py-3 font-semibold">Prazo</th>
-              <th className="px-5 py-3 text-right font-semibold">Acoes</th>
+              <th className="px-5 py-3.5 font-semibold">Tarefa</th>
+              <th className="px-5 py-3.5 font-semibold">Cliente</th>
+              <th className="px-5 py-3.5 font-semibold">Responsavel</th>
+              <th className="px-5 py-3.5 font-semibold">Prioridade</th>
+              <th className="px-5 py-3.5 font-semibold">Status</th>
+              <th className="px-5 py-3.5 font-semibold">Prazo</th>
+              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {tasks.map((task) => (
-              <tr key={task.id} className="bg-card">
+              <tr key={task.id} className="bg-card transition-colors hover:bg-muted/30">
                 <td className="px-5 py-4">
                   <p className="text-sm font-semibold text-foreground">{task.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{task.category || 'Sem categoria'}</p>

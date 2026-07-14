@@ -20,11 +20,11 @@ export function ModulePlaceholder({ title, description, upcoming }: ModulePlaceh
         </Card>
 
         <Card>
-          <h3 className="text-sm font-semibold text-slate-100">Proximas entregas</h3>
-          <ul className="mt-4 space-y-3 text-sm text-slate-400">
+          <h3 className="text-sm font-semibold text-foreground">Proximas entregas</h3>
+          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             {upcoming.map((item) => (
               <li key={item} className="flex gap-2">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 <span>{item}</span>
               </li>
             ))}

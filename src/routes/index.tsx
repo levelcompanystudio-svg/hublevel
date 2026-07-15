@@ -1,9 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '../features/app/layout/AppLayout';
-import { canAccessPath } from '../features/app/navigation/navigation.config';
-import { AccessDeniedPlaceholder } from '../features/app/placeholders/AccessDeniedPlaceholder';
-import { ModulePlaceholder } from '../features/app/placeholders/ModulePlaceholder';
 import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceholder';
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
 import { LoginPage } from '../features/auth/LoginPage';
@@ -27,6 +24,7 @@ import { MeetingListPage } from '../features/meetings/pages/MeetingListPage';
 import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
 import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
 import { ServiceListPage } from '../features/services/pages/ServiceListPage';
+import { SettingsPage } from '../features/settings/pages/SettingsPage';
 import { TaskDetailsPage } from '../features/tasks/pages/TaskDetailsPage';
 import { TaskFormPage } from '../features/tasks/pages/TaskFormPage';
 import { TaskListPage } from '../features/tasks/pages/TaskListPage';
@@ -112,7 +110,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="documentos/novo" element={<DocumentFormPage />} />
         <Route path="documentos/:id" element={<DocumentDetailsPage />} />
         <Route path="documentos/:id/editar" element={<DocumentFormPage />} />
-        <Route path="configuracoes" element={<RolePage path="/app/configuracoes" page="configuracoes" />} />
+        <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>
 
@@ -133,28 +131,3 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
-
-type PlaceholderPage = 'configuracoes';
-
-const placeholderContent: Record<PlaceholderPage, {
-  title: string;
-  description: string;
-  upcoming: string[];
-}> = {
-  configuracoes: {
-    title: 'Configuracoes',
-    description: 'Parametros e administracao do HubLevel.',
-    upcoming: ['Usuarios', 'Fontes de aquisicao', 'Catalogos controlados'],
-  },
-};
-
-function RolePage({ path, page }: { path: string; page: PlaceholderPage }) {
-  const { profile } = useAuth();
-  const content = placeholderContent[page];
-
-  if (!canAccessPath(profile?.roles?.name, path)) {
-    return <AccessDeniedPlaceholder />;
-  }
-
-  return <ModulePlaceholder {...content} />;
-}

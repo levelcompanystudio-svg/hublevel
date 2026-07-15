@@ -6,61 +6,59 @@ import { ClientStatusBadge } from './ClientStatusBadge';
 
 interface ClientDetailHeroProps {
   client: Client;
+  canManage: boolean;
 }
 
-function formatDate(value: string | null) {
-  if (!value) return 'Sem data';
-  return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR');
-}
-
-export function ClientDetailHero({ client }: ClientDetailHeroProps) {
+export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
   return (
     <Card className="overflow-hidden bg-gradient-to-br from-primary/10 via-card to-card">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-muted-foreground">
-            Clientes &gt; {client.company_name}
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">{client.company_name}</h2>
-          {client.trade_name && (
-            <p className="mt-2 text-base text-muted-foreground">{client.trade_name}</p>
-          )}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="truncate text-xl font-bold tracking-tight text-foreground">{client.company_name}</h2>
+            {client.trade_name && (
+              <span className="truncate text-sm text-muted-foreground">{client.trade_name}</span>
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <ClientStatusBadge status={client.status} />
             <ClientHealthBadge status={client.health_status} />
             {client.segment && (
-              <span className="rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+              <span className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                 {client.segment}
               </span>
             )}
+            <span className="text-xs text-muted-foreground">
+              Responsavel: {client.responsible?.name ?? 'Nao definido'}
+            </span>
           </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap gap-2">
           <Link to="/app/clientes">
-            <Button type="button" variant="secondary">Voltar</Button>
+            <Button type="button" variant="ghost">Voltar</Button>
           </Link>
+          {canManage && (
+            <>
+              <Link to={`/app/tarefas/novo?client_id=${client.id}`}>
+                <Button type="button" variant="secondary">Nova tarefa</Button>
+              </Link>
+              <Link to={`/app/acompanhamento/novo?client_id=${client.id}`}>
+                <Button type="button" variant="secondary">Nova atualizacao</Button>
+              </Link>
+              <Link to={`/app/reunioes/novo?client_id=${client.id}`}>
+                <Button type="button" variant="secondary">Nova reuniao</Button>
+              </Link>
+              <Link to={`/app/documentos/novo?client_id=${client.id}`}>
+                <Button type="button" variant="secondary">Novo documento</Button>
+              </Link>
+            </>
+          )}
           <Link to={`/app/clientes/${client.id}/editar`}>
             <Button type="button" variant="primary">Editar</Button>
           </Link>
         </div>
       </div>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <HeroItem label="Responsavel" value={client.responsible?.name ?? 'Nao definido'} />
-        <HeroItem label="Inicio da parceria" value={formatDate(client.start_date)} />
-        <HeroItem label="Status" value={client.status} />
-        <HeroItem label="Saude" value={client.health_status} />
-      </div>
     </Card>
-  );
-}
-
-function HeroItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-background/60 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-2 truncate text-sm font-semibold capitalize text-foreground">{value}</p>
-    </div>
   );
 }

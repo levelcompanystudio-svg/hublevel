@@ -4,6 +4,7 @@ import { AlertListPage } from '../features/alerts/pages/AlertListPage';
 import { AppLayout } from '../features/app/layout/AppLayout';
 import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceholder';
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
+import { ChecklistPage } from '../features/checklist/pages/ChecklistPage';
 import { LoginPage } from '../features/auth/LoginPage';
 import { useAuth } from '../features/auth/useAuth';
 import { ClientDetailsPage } from '../features/clients/pages/ClientDetailsPage';
@@ -112,6 +113,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="documentos/:id" element={<DocumentDetailsPage />} />
         <Route path="documentos/:id/editar" element={<DocumentFormPage />} />
         <Route path="alertas" element={<AlertListPage />} />
+        <Route path="checklist" element={<ChecklistPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

@@ -3,6 +3,7 @@ import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Card } from '../../../components/ui';
 import type { RoleName } from '../../auth/auth.types';
 import type { Client } from '../clients.types';
+import { ClientChecklistTab } from './ClientChecklistTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
 import { ClientHealthBadge } from './ClientHealthBadge';
 import { ClientMeetingsTab } from './ClientMeetingsTab';
@@ -112,6 +113,8 @@ export function ClientOverviewTabs({ client, role }: ClientOverviewTabsProps) {
           canCreate={role === 'admin' || role === 'gestor'}
           canEdit={role === 'admin'}
         />
+      ) : activeTab === 'Checklist' ? (
+        <ClientChecklistTab clientId={client.id} />
       ) : (
         <EmptyState
           title={`${activeTab} em desenvolvimento`}

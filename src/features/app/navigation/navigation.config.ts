@@ -83,6 +83,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/checklist',
+    label: 'Checklist',
+    description: 'Entregaveis e pendencias por cliente',
+    icon: 'X',
+    roles: ['admin', 'gestor', 'colaborador'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

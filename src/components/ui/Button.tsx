@@ -13,9 +13,9 @@ export function Button({
 }: ButtonProps) {
   const variants = {
     primary:
-      'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/30 hover:brightness-110 active:brightness-95',
+      'border-primary/60 bg-gradient-to-b from-primary to-primary/85 text-primary-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_8px_20px_-6px_var(--color-primary)] hover:brightness-110 hover:shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_10px_24px_-6px_var(--color-primary)] active:brightness-95',
     secondary:
-      'border-border bg-muted text-foreground hover:border-primary/40 hover:bg-sidebar-accent active:brightness-95',
+      'border-border bg-surface text-foreground hover:border-primary/40 hover:bg-card-elevated active:brightness-95',
     ghost:
       'border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground active:brightness-95',
   };

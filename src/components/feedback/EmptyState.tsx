@@ -5,8 +5,8 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description }: EmptyStateProps) {
   return (
-    <div className="rounded-xl border border-dashed border-border bg-muted/30 p-10 text-center">
-      <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-card text-xs font-bold text-primary shadow-sm">
+    <div className="rounded-xl border border-dashed border-border bg-surface/60 p-10 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-xs font-bold text-primary shadow-[0_0_24px_-6px_var(--color-primary)]">
         HL
       </div>
       <p className="text-sm font-semibold text-foreground">{title}</p>

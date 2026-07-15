@@ -19,12 +19,12 @@ export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
     <aside className="flex h-full w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       <div className="border-b border-sidebar-border px-5 py-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-sidebar-border bg-gradient-to-br from-sidebar-primary to-sidebar-primary/70 text-sm font-bold text-sidebar-primary-foreground shadow-md shadow-black/30">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-gradient-to-br from-primary to-primary/60 text-sm font-bold text-primary-foreground shadow-[0_0_28px_-6px_var(--color-primary)]">
             HL
           </div>
           <div className="min-w-0">
             <p className="truncate text-[15px] font-bold tracking-tight text-sidebar-foreground">HubLevel</p>
-            <p className="truncate text-xs text-muted-foreground">Operacao interna</p>
+            <p className="truncate text-xs text-muted-foreground">Central operacional</p>
           </div>
         </div>
       </div>
@@ -48,8 +48,8 @@ export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
       </nav>
 
       <div className="border-t border-sidebar-border px-3 py-4">
-        <div className="flex items-center gap-2 rounded-xl border border-sidebar-border bg-sidebar-accent/60 p-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-xs font-bold text-sidebar-primary-foreground">
+        <div className="flex items-center gap-2 rounded-xl border border-sidebar-border bg-black/20 p-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-xs font-bold text-primary">
             {initials}
           </div>
           <div className="min-w-0 flex-1">

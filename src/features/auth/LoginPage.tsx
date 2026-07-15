@@ -22,8 +22,6 @@ export const LoginPage: React.FC = () => {
 
     try {
       await signIn(email, password);
-      // O redirect será disparado de acordo com o estado do perfil do usuário logado.
-      // Mas podemos redirecionar explicitamente para /app/dashboard se tudo der certo
       navigate('/app/dashboard', { replace: true });
     } catch (err: unknown) {
       console.error('Error signing in:', err);
@@ -42,61 +40,27 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 relative min-h-screen">
-      {/* Background decorations */}
+    <div className="relative flex min-h-screen flex-1 flex-col items-center justify-center bg-background px-6 py-12 text-foreground">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
-          className="animate-pulse-glow absolute -top-40 -right-40 h-96 w-96 rounded-full opacity-20"
-          style={{
-            background: 'radial-gradient(circle, var(--color-brand-500), transparent 70%)',
-          }}
+          className="animate-pulse-glow absolute -top-40 -right-40 h-96 w-96 rounded-full opacity-30"
+          style={{ background: 'radial-gradient(circle, var(--color-primary), transparent 70%)' }}
         />
         <div
-          className="animate-pulse-glow absolute -bottom-32 -left-32 h-80 w-80 rounded-full opacity-15"
-          style={{
-            background: 'radial-gradient(circle, var(--color-brand-400), transparent 70%)',
-            animationDelay: '1.5s',
-          }}
+          className="animate-pulse-glow absolute -bottom-32 -left-32 h-80 w-80 rounded-full opacity-20"
+          style={{ background: 'radial-gradient(circle, var(--color-primary), transparent 70%)', animationDelay: '1.5s' }}
         />
       </div>
 
       <div className="relative z-10 w-full max-w-md animate-fade-in">
-        {/* Brand logo & title */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="animate-float glass flex h-16 w-16 items-center justify-center rounded-2xl mb-4">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                d="M20 4L4 12v16l16 8 16-8V12L20 4z"
-                stroke="var(--color-brand-400)"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M20 4v16m0 0L4 12m16 8l16-8M20 20v16"
-                stroke="var(--color-brand-500)"
-                strokeWidth="1.5"
-                opacity="0.6"
-              />
-              <circle
-                cx="20"
-                cy="20"
-                r="4"
-                fill="var(--color-brand-400)"
-                opacity="0.8"
-              />
-            </svg>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="animate-float mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary to-primary/60 text-xl font-bold text-primary-foreground shadow-[0_0_40px_-6px_var(--color-primary)]">
+            HL
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">
+          <h1 className="mb-2 text-3xl font-bold tracking-tight">
             <span
               style={{
-                background: 'linear-gradient(135deg, var(--color-brand-300), var(--color-brand-500))',
+                background: 'linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 70%, white), var(--color-primary))',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -105,34 +69,20 @@ export const LoginPage: React.FC = () => {
               HubLevel
             </span>
           </h1>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Faça login na plataforma interna de gestão
-          </p>
+          <p className="text-sm text-muted-foreground">Acesse sua central operacional</p>
         </div>
 
-        {/* Card containing login form */}
-        <div className="glass w-full rounded-2xl p-8">
+        <div className="glass w-full rounded-2xl p-8 shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_24px_48px_-20px_rgba(0,0,0,0.7)]">
           <form onSubmit={handleLogin} className="space-y-6">
             {errorMsg && (
-              <div
-                className="rounded-lg p-4 text-sm flex gap-2 items-start border"
-                style={{
-                  backgroundColor: 'oklch(0.65 0.20 25 / 0.1)',
-                  borderColor: 'var(--color-error)',
-                  color: 'var(--color-error)',
-                }}
-              >
-                <span className="font-bold">⚠️</span>
+              <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                <span className="font-bold">!</span>
                 <span>{errorMsg}</span>
               </div>
             )}
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-semibold uppercase tracking-wider mb-2"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <label htmlFor="email" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 E-mail
               </label>
               <input
@@ -141,24 +91,14 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                className="w-full rounded-lg px-4 py-3 outline-none text-sm border focus:ring-2 focus:ring-offset-2 transition"
-                style={{
-                  backgroundColor: 'oklch(0.13 0.01 260 / 0.5)',
-                  borderColor: 'var(--color-border-subtle)',
-                  color: 'var(--color-text-primary)',
-                  boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.2)',
-                }}
+                className="w-full rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-60"
                 placeholder="seu.email@hublevel.com"
                 required
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-xs font-semibold uppercase tracking-wider mb-2"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <label htmlFor="password" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Senha
               </label>
               <input
@@ -167,13 +107,7 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="w-full rounded-lg px-4 py-3 outline-none text-sm border focus:ring-2 focus:ring-offset-2 transition"
-                style={{
-                  backgroundColor: 'oklch(0.13 0.01 260 / 0.5)',
-                  borderColor: 'var(--color-border-subtle)',
-                  color: 'var(--color-text-primary)',
-                  boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.2)',
-                }}
+                className="w-full rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-60"
                 placeholder="••••••••"
                 required
               />
@@ -182,16 +116,11 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full font-semibold rounded-lg py-3 px-4 transition duration-200 cursor-pointer flex items-center justify-center gap-2 border text-sm"
-              style={{
-                backgroundColor: loading ? 'oklch(0.28 0.10 250 / 0.5)' : 'var(--color-brand-600)',
-                color: 'white',
-                borderColor: 'var(--color-brand-500)',
-              }}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary/60 bg-gradient-to-b from-primary to-primary/85 px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_10px_24px_-8px_var(--color-primary)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>

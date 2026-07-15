@@ -112,28 +112,31 @@ export function ClientListPage() {
           <ClientSummaryGrid clients={clients} />
 
           <FilterBar label={role === 'admin' ? 'Todos os clientes' : 'Minha carteira'}>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {filters.map((filter) => (
                 <button
                   key={filter.value}
                   type="button"
                   onClick={() => setActiveFilter(filter.value)}
-                  className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
                     activeFilter === filter.value
-                      ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border bg-muted text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                      ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
+                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
                   }`}
                 >
                   {filter.label}
                 </button>
               ))}
             </div>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Buscar por nome, segmento ou responsavel"
-              className="min-h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary sm:w-80"
-            />
+            <div className="relative w-full sm:w-80">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">⌕</span>
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar por nome, segmento ou responsavel"
+                className="min-h-9 w-full rounded-full border border-border bg-background pl-8 pr-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+              />
+            </div>
           </FilterBar>
 
           {filteredClients.length > 0 ? (

@@ -9,12 +9,12 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, eyebrow, action }: PageHeaderProps) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border bg-card px-6 py-6 text-card-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_12px_28px_-16px_rgba(0,0,0,0.5)]">
+    <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-card-elevated to-card px-6 py-6 text-card-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_16px_32px_-18px_rgba(0,0,0,0.65)]">
       <div
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-80"
         style={{
           background:
-            'radial-gradient(480px circle at 0% 0%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 65%)',
+            'radial-gradient(560px circle at 0% 0%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 65%)',
         }}
       />
       <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

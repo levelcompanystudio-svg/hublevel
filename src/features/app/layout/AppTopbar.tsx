@@ -22,8 +22,8 @@ export function AppTopbar({
   const item = getNavigationItem(location.pathname);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-      <div className="flex h-[68px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-md">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             type="button"
@@ -45,7 +45,7 @@ export function AppTopbar({
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          <div className="hidden items-center gap-2.5 rounded-lg border border-border bg-card py-1.5 pl-1.5 pr-3 sm:flex">
+          <div className="hidden items-center gap-2.5 rounded-lg border border-border bg-surface py-1.5 pl-1.5 pr-3 sm:flex">
             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-[11px] font-bold text-primary">
               {(userName ?? 'U').trim().charAt(0).toUpperCase()}
             </span>

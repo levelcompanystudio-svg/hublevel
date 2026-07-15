@@ -8,7 +8,7 @@ interface MetricCardProps {
 
 export function MetricCard({ title, value, description }: MetricCardProps) {
   return (
-    <Card className="min-h-36 transition hover:border-primary/40">
+    <Card className="min-h-36 transition hover:border-primary/40 hover:bg-card-elevated">
       <div className="flex h-full flex-col justify-between gap-5">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>

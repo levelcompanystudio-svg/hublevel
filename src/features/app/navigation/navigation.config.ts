@@ -99,6 +99,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Gestao',
   },
   {
+    path: '/app/performance',
+    label: 'Performance',
+    description: 'Investimento, leads e satisfacao (aguardando integracao)',
+    icon: 'P',
+    roles: ['admin', 'gestor'],
+    group: 'Gestao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

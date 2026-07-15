@@ -11,6 +11,7 @@ import { ClientDeliverablesTab } from './ClientDeliverablesTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
 import { ClientFinanceTab } from './ClientFinanceTab';
 import { ClientMeetingsTab } from './ClientMeetingsTab';
+import { ClientMetricsTab } from './ClientMetricsTab';
 import { ClientOperationSummary } from './ClientOperationSummary';
 import { ClientOverviewSummary } from './ClientOverviewSummary';
 import { ClientServicesTab } from './ClientServicesTab';
@@ -36,6 +37,7 @@ const allTabs = [
   'Entregaveis',
   'Documentos',
   'Checklist',
+  'Metricas',
   'Financeiro',
   'Contratos',
   'Historico',
@@ -108,6 +110,8 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         />
       ) : activeTab === 'Checklist' ? (
         <ClientChecklistTab clientId={client.id} />
+      ) : activeTab === 'Metricas' ? (
+        <ClientMetricsTab clientId={client.id} />
       ) : activeTab === 'Financeiro' && role === 'admin' ? (
         <ClientFinanceTab clientId={client.id} />
       ) : activeTab === 'Contratos' && role === 'admin' ? (

@@ -75,6 +75,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/alertas',
+    label: 'Alertas',
+    description: 'Riscos operacionais calculados em tempo real',
+    icon: 'L',
+    roles: ['admin', 'gestor'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

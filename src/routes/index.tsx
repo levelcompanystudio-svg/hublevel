@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AlertListPage } from '../features/alerts/pages/AlertListPage';
 import { AppLayout } from '../features/app/layout/AppLayout';
 import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceholder';
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
@@ -110,6 +111,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="documentos/novo" element={<DocumentFormPage />} />
         <Route path="documentos/:id" element={<DocumentDetailsPage />} />
         <Route path="documentos/:id/editar" element={<DocumentFormPage />} />
+        <Route path="alertas" element={<AlertListPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

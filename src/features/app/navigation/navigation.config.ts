@@ -67,6 +67,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/documentos',
+    label: 'Documentos',
+    description: 'Contratos, propostas e arquivos por cliente',
+    icon: 'Dc',
+    roles: ['admin', 'gestor'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

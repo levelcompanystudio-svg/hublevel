@@ -9,9 +9,17 @@ interface AppSidebarProps {
   onNavigate?: () => void;
 }
 
+const groups = ['Visao Geral', 'Operacao', 'Gestao', 'Administracao'] as const;
+
+const groupLabels: Record<(typeof groups)[number], string> = {
+  'Visao Geral': 'Visão Geral',
+  Operacao: 'Operação',
+  Gestao: 'Gestão',
+  Administracao: 'Administração',
+};
+
 export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
   const items = getNavigationForRole(role);
-  const groups = ['Dashboard', 'Operacao', 'Administracao'] as const;
   const { theme, toggleTheme } = useTheme();
   const initials = getInitials(userName);
 
@@ -36,7 +44,7 @@ export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
 
           return (
             <div key={group}>
-              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">{group}</p>
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">{groupLabels[group]}</p>
               <div className="mt-2 space-y-1">
                 {groupItems.map((item) => (
                   <AppNavItem key={item.path} item={item} onNavigate={onNavigate} />

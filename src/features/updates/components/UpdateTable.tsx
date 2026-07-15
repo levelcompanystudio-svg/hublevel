@@ -24,7 +24,7 @@ export function UpdateTable({ updates }: UpdateTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[860px] border-collapse text-left">
-          <thead className="border-b border-border bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+          <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-5 py-3.5 font-semibold">Atualizacao</th>
               <th className="px-5 py-3.5 font-semibold">Cliente</th>
@@ -36,12 +36,16 @@ export function UpdateTable({ updates }: UpdateTableProps) {
           </thead>
           <tbody className="divide-y divide-border">
             {updates.map((update) => (
-              <tr key={update.id} className="bg-card transition-colors hover:bg-muted/30">
+              <tr key={update.id} className="bg-card transition-colors hover:bg-card-elevated">
                 <td className="px-5 py-4">
                   <p className="text-sm font-semibold text-foreground">{update.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{update.category || 'Sem categoria'}</p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{clientName(update)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">
+                  <Link to={`/app/clientes/${update.client_id}`} className="text-primary hover:underline">
+                    {clientName(update)}
+                  </Link>
+                </td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{responsibleName(update)}</td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(update.update_date)}</td>
                 <td className="px-5 py-4"><UpdateStatusBadge status={update.status} /></td>

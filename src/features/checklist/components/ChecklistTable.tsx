@@ -45,7 +45,15 @@ export function ChecklistTable({ items }: ChecklistTableProps) {
                   <p className="text-sm font-semibold text-foreground">{item.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{item.category || 'Sem categoria'}</p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{clientName(item)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">
+                  {item.client_id ? (
+                    <Link to={`/app/clientes/${item.client_id}`} className="text-primary hover:underline">
+                      {clientName(item)}
+                    </Link>
+                  ) : (
+                    clientName(item)
+                  )}
+                </td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{profileName(item.assignee)}</td>
                 <td className="px-5 py-4"><TaskPriorityBadge priority={item.priority} /></td>
                 <td className="px-5 py-4"><ChecklistStatusBadge bucket={getChecklistBucket(item)} /></td>

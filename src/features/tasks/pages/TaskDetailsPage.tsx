@@ -89,7 +89,7 @@ export function TaskDetailsPage() {
               )}
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <InfoItem label="Cliente" value={clientName(task)} />
+              <InfoItem label="Cliente" value={clientName(task)} to={task.client_id ? `/app/clientes/${task.client_id}` : undefined} />
               <InfoItem label="Responsavel" value={profileName(task.assignee)} />
               <InfoItem label="Criado por" value={profileName(task.creator)} />
               <InfoItem label="Prazo" value={formatDate(task.due_date)} />
@@ -110,11 +110,17 @@ export function TaskDetailsPage() {
   );
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({ label, value, to }: { label: string; value: string; to?: string }) {
   return (
     <div className="rounded-lg border border-border bg-muted/40 p-3">
       <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
+      {to ? (
+        <Link to={to} className="mt-1 block truncate text-sm font-semibold text-primary hover:underline">
+          {value}
+        </Link>
+      ) : (
+        <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
+      )}
     </div>
   );
 }

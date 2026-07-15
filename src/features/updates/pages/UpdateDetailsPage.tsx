@@ -65,7 +65,9 @@ export function UpdateDetailsPage() {
         <Card>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">{clientName(update)}</p>
+              <Link to={`/app/clientes/${update.client_id}`} className="text-sm text-primary hover:underline">
+                {clientName(update)}
+              </Link>
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <UpdateStatusBadge status={update.status} />
                 {update.sent_to_client && <Badge tone="success">Enviada ao cliente</Badge>}

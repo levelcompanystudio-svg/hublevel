@@ -82,7 +82,9 @@ export function FinanceDetailsPage() {
           <Card>
             <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">{clientName(record)}</p>
+                <Link to={`/app/clientes/${record.client_id}`} className="text-sm text-primary hover:underline">
+                  {clientName(record)}
+                </Link>
                 <h3 className="mt-2 text-lg font-semibold text-foreground">{record.description || 'Sem descricao'}</h3>
                 <div className="mt-4"><FinanceStatusBadge status={record.status} /></div>
               </div>

@@ -43,7 +43,11 @@ export function DocumentTable({ documents, canEdit }: DocumentTableProps) {
                     {document.description || 'Sem descricao'}
                   </p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{clientName(document)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">
+                  <Link to={`/app/clientes/${document.client_id}`} className="text-primary hover:underline">
+                    {clientName(document)}
+                  </Link>
+                </td>
                 <td className="px-5 py-4"><DocumentTypeBadge type={document.type} /></td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(document.created_at)}</td>
                 <td className="px-5 py-4">

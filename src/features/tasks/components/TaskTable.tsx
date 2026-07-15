@@ -41,7 +41,15 @@ export function TaskTable({ tasks, canEdit }: TaskTableProps) {
                   <p className="text-sm font-semibold text-foreground">{task.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{task.category || 'Sem categoria'}</p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{clientName(task)}</td>
+                <td className="px-5 py-4 text-sm text-muted-foreground">
+                  {task.client_id ? (
+                    <Link to={`/app/clientes/${task.client_id}`} className="text-primary hover:underline">
+                      {clientName(task)}
+                    </Link>
+                  ) : (
+                    clientName(task)
+                  )}
+                </td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{profileName(task.assignee)}</td>
                 <td className="px-5 py-4"><TaskPriorityBadge priority={task.priority} /></td>
                 <td className="px-5 py-4"><TaskStatusBadge status={task.status} /></td>

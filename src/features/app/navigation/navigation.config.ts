@@ -8,7 +8,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Visao geral da operacao',
     icon: 'D',
     roles: ['admin', 'gestor', 'colaborador'],
-    group: 'Dashboard',
+    group: 'Visao Geral',
   },
   {
     path: '/app/clientes',
@@ -25,22 +25,6 @@ export const navigationItems: NavigationItem[] = [
     icon: 'S',
     roles: ['admin', 'gestor'],
     group: 'Operacao',
-  },
-  {
-    path: '/app/contratos',
-    label: 'Contratos',
-    description: 'Controle administrativo',
-    icon: 'K',
-    roles: ['admin'],
-    group: 'Administracao',
-  },
-  {
-    path: '/app/financeiro',
-    label: 'Financeiro',
-    description: 'Receita e cobrancas',
-    icon: 'F',
-    roles: ['admin'],
-    group: 'Administracao',
   },
   {
     path: '/app/tarefas',
@@ -75,20 +59,36 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
-    path: '/app/alertas',
-    label: 'Alertas',
-    description: 'Riscos operacionais calculados em tempo real',
-    icon: 'L',
-    roles: ['admin', 'gestor'],
-    group: 'Operacao',
-  },
-  {
     path: '/app/checklist',
     label: 'Checklist',
     description: 'Entregaveis e pendencias por cliente',
     icon: 'X',
     roles: ['admin', 'gestor', 'colaborador'],
     group: 'Operacao',
+  },
+  {
+    path: '/app/contratos',
+    label: 'Contratos',
+    description: 'Controle administrativo',
+    icon: 'K',
+    roles: ['admin'],
+    group: 'Gestao',
+  },
+  {
+    path: '/app/financeiro',
+    label: 'Financeiro',
+    description: 'Receita e cobrancas',
+    icon: 'F',
+    roles: ['admin'],
+    group: 'Gestao',
+  },
+  {
+    path: '/app/alertas',
+    label: 'Alertas',
+    description: 'Riscos operacionais calculados em tempo real',
+    icon: 'L',
+    roles: ['admin', 'gestor'],
+    group: 'Gestao',
   },
   {
     path: '/app/configuracoes',
@@ -112,5 +112,14 @@ export function canAccessPath(role: RoleName | undefined, path: string): boolean
 }
 
 export function getNavigationItem(pathname: string): NavigationItem | undefined {
-  return navigationItems.find((item) => item.path === pathname);
+  const exactMatch = navigationItems.find((item) => item.path === pathname);
+  if (exactMatch) return exactMatch;
+
+  // Rotas aninhadas (detalhe/novo/editar) nao tem entrada propria no menu;
+  // resolve para o item de navegacao pai mais especifico (ex.: /app/clientes/:id/editar -> Clientes).
+  const parentMatches = navigationItems
+    .filter((item) => pathname.startsWith(`${item.path}/`))
+    .sort((a, b) => b.path.length - a.path.length);
+
+  return parentMatches[0];
 }

@@ -38,7 +38,11 @@ export function FinanceTable({ records }: FinanceTableProps) {
           <tbody className="divide-y divide-border">
             {records.map((record) => (
               <tr key={record.id} className="bg-card transition-colors hover:bg-card-elevated">
-                <td className="px-5 py-4 text-sm text-foreground">{clientName(record)}</td>
+                <td className="px-5 py-4 text-sm text-foreground">
+                  <Link to={`/app/clientes/${record.client_id}`} className="text-primary hover:underline">
+                    {clientName(record)}
+                  </Link>
+                </td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{record.description || '-'}</td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
                 <td className="px-5 py-4 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(record.amount)}</td>

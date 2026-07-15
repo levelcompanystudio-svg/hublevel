@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
@@ -12,6 +12,8 @@ import { TaskHeader } from '../components/TaskHeader';
 
 export function TaskFormPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const preselectedClientId = searchParams.get('client_id') ?? '';
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [values, setValues] = useState<TaskFormValues>(emptyTaskFormValues);
@@ -60,7 +62,7 @@ export function TaskFormPage() {
           });
         } else {
           setCompletedAt(null);
-          setValues(emptyTaskFormValues);
+          setValues({ ...emptyTaskFormValues, client_id: preselectedClientId });
         }
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao preparar formulario de tarefa.');
@@ -72,7 +74,7 @@ export function TaskFormPage() {
     return () => {
       active = false;
     };
-  }, [canEdit, id, profile, role]);
+  }, [canEdit, id, preselectedClientId, profile, role]);
 
   async function handleSubmit() {
     if (!profile) return;

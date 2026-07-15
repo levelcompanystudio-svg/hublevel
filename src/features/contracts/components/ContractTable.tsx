@@ -24,7 +24,7 @@ export function ContractTable({ contracts }: ContractTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[860px] border-collapse text-left">
-          <thead className="border-b border-border bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+          <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-5 py-3.5 font-semibold">Contrato</th>
               <th className="px-5 py-3.5 font-semibold">Vigencia</th>
@@ -36,10 +36,15 @@ export function ContractTable({ contracts }: ContractTableProps) {
           </thead>
           <tbody className="divide-y divide-border">
             {contracts.map((contract) => (
-              <tr key={contract.id} className="bg-card transition-colors hover:bg-muted/30">
+              <tr key={contract.id} className="bg-card transition-colors hover:bg-card-elevated">
                 <td className="px-5 py-4">
                   <p className="text-sm font-semibold text-foreground">{contractLabel(contract)}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{clientName(contract)}</p>
+                  <Link
+                    to={`/app/clientes/${contract.client_id}`}
+                    className="mt-1 block text-xs text-primary hover:underline"
+                  >
+                    {clientName(contract)}
+                  </Link>
                 </td>
                 <td className="px-5 py-4 text-sm text-muted-foreground">
                   {formatDate(contract.start_date)} - {contract.end_date ? formatDate(contract.end_date) : 'Sem termino'}

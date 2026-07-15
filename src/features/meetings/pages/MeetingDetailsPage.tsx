@@ -66,7 +66,13 @@ export function MeetingDetailsPage() {
         <Card>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">{clientName(meeting)}</p>
+              {meeting.client_id ? (
+                <Link to={`/app/clientes/${meeting.client_id}`} className="text-sm text-primary hover:underline">
+                  {clientName(meeting)}
+                </Link>
+              ) : (
+                <p className="text-sm text-muted-foreground">{clientName(meeting)}</p>
+              )}
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <MeetingStatusBadge status={meeting.status} />
                 <MeetingTypeBadge type={meeting.type} />

@@ -9,6 +9,7 @@ import { ClientHealthBadge } from './ClientHealthBadge';
 import { ClientMeetingsTab } from './ClientMeetingsTab';
 import { ClientServicesTab } from './ClientServicesTab';
 import { ClientStatusBadge } from './ClientStatusBadge';
+import { ClientTasksTab } from './ClientTasksTab';
 import { ClientUpdatesTab } from './ClientUpdatesTab';
 
 interface ClientOverviewTabsProps {
@@ -103,6 +104,8 @@ export function ClientOverviewTabs({ client, role }: ClientOverviewTabsProps) {
         </div>
       ) : activeTab === 'Servicos' ? (
         <ClientServicesTab clientId={client.id} canManage={role === 'admin'} />
+      ) : activeTab === 'Tarefas' ? (
+        <ClientTasksTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Acompanhamento' ? (
         <ClientUpdatesTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Reunioes' ? (

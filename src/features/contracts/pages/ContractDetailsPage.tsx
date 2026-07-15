@@ -67,7 +67,9 @@ export function ContractDetailsPage() {
         <Card>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">{clientName(contract)}</p>
+              <Link to={`/app/clientes/${contract.client_id}`} className="text-sm text-primary hover:underline">
+                {clientName(contract)}
+              </Link>
               <div className="mt-4">
                 <ContractStatusBadge status={contract.status} />
               </div>

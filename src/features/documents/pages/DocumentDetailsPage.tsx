@@ -66,7 +66,9 @@ export function DocumentDetailsPage() {
         <Card>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">{clientName(doc)}</p>
+              <Link to={`/app/clientes/${doc.client_id}`} className="text-sm text-primary hover:underline">
+                {clientName(doc)}
+              </Link>
               <div className="mt-4">
                 <DocumentTypeBadge type={doc.type} />
               </div>

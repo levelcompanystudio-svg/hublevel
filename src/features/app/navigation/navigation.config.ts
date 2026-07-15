@@ -51,6 +51,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Operacao',
   },
   {
+    path: '/app/entregaveis',
+    label: 'Entregaveis',
+    description: 'Tarefas, documentos e atualizacoes de entrega por cliente',
+    icon: 'E',
+    roles: ['admin', 'gestor'],
+    group: 'Operacao',
+  },
+  {
     path: '/app/documentos',
     label: 'Documentos',
     description: 'Contratos, propostas e arquivos por cliente',
@@ -61,7 +69,7 @@ export const navigationItems: NavigationItem[] = [
   {
     path: '/app/checklist',
     label: 'Checklist',
-    description: 'Entregaveis e pendencias por cliente',
+    description: 'Pendencias operacionais por cliente',
     icon: 'X',
     roles: ['admin', 'gestor', 'colaborador'],
     group: 'Operacao',

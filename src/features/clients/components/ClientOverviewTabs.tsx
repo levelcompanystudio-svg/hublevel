@@ -7,6 +7,7 @@ import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overvi
 import type { Client } from '../clients.types';
 import { ClientChecklistTab } from './ClientChecklistTab';
 import { ClientContractsTab } from './ClientContractsTab';
+import { ClientDeliverablesTab } from './ClientDeliverablesTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
 import { ClientFinanceTab } from './ClientFinanceTab';
 import { ClientMeetingsTab } from './ClientMeetingsTab';
@@ -32,6 +33,7 @@ const allTabs = [
   'Tarefas',
   'Acompanhamento',
   'Reunioes',
+  'Entregaveis',
   'Documentos',
   'Checklist',
   'Financeiro',
@@ -96,6 +98,8 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         <ClientUpdatesTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Reunioes' ? (
         <ClientMeetingsTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
+      ) : activeTab === 'Entregaveis' ? (
+        <ClientDeliverablesTab clientId={client.id} />
       ) : activeTab === 'Documentos' ? (
         <ClientDocumentsTab
           clientId={client.id}

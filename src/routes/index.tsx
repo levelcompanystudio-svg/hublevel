@@ -14,6 +14,7 @@ import { ContractDetailsPage } from '../features/contracts/pages/ContractDetails
 import { ContractFormPage } from '../features/contracts/pages/ContractFormPage';
 import { ContractListPage } from '../features/contracts/pages/ContractListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { DeliverableListPage } from '../features/deliverables/pages/DeliverableListPage';
 import { DocumentDetailsPage } from '../features/documents/pages/DocumentDetailsPage';
 import { DocumentFormPage } from '../features/documents/pages/DocumentFormPage';
 import { DocumentListPage } from '../features/documents/pages/DocumentListPage';
@@ -114,6 +115,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="documentos/:id/editar" element={<DocumentFormPage />} />
         <Route path="alertas" element={<AlertListPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
+        <Route path="entregaveis" element={<DeliverableListPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

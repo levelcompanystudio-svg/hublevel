@@ -10,6 +10,7 @@ import { ClientContractsTab } from './ClientContractsTab';
 import { ClientDeliverablesTab } from './ClientDeliverablesTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
 import { ClientFinanceTab } from './ClientFinanceTab';
+import { ClientHistoryTab } from './ClientHistoryTab';
 import { ClientIntegrationsTab } from './ClientIntegrationsTab';
 import { ClientLandingPageTab } from './ClientLandingPageTab';
 import { ClientMeetingsTab } from './ClientMeetingsTab';
@@ -124,6 +125,8 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         <ClientFinanceTab clientId={client.id} />
       ) : activeTab === 'Contratos' && role === 'admin' ? (
         <ClientContractsTab clientId={client.id} />
+      ) : activeTab === 'Historico' ? (
+        <ClientHistoryTab clientId={client.id} />
       ) : (
         <EmptyState
           title={`${activeTab} em desenvolvimento`}

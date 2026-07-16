@@ -1,12 +1,23 @@
-import { Badge, Card } from '../../../components/ui';
-import type { LandingPageBriefingValues } from '../landing-page.types';
+import type { ReactNode } from 'react';
+import { Badge, Button, Card } from '../../../components/ui';
+import type { LandingPageBriefingValues, LandingPageStatus } from '../landing-page.types';
 
 interface LandingPageBriefingFormProps {
   values: LandingPageBriefingValues;
+  status: LandingPageStatus | null;
+  saving: boolean;
   onChange: (values: LandingPageBriefingValues) => void;
+  onSubmit: () => void;
 }
 
-export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefingFormProps) {
+const statusLabels: Record<LandingPageStatus, string> = {
+  draft: 'Rascunho',
+  ready: 'Pronto',
+  published: 'Publicado',
+  archived: 'Arquivado',
+};
+
+export function LandingPageBriefingForm({ values, status, saving, onChange, onSubmit }: LandingPageBriefingFormProps) {
   function setField<K extends keyof LandingPageBriefingValues>(key: K, value: LandingPageBriefingValues[K]) {
     onChange({ ...values, [key]: value });
   }
@@ -15,11 +26,11 @@ export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefin
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold text-foreground">Briefing da landing page</h3>
-        <Badge tone="warning">Rascunho local</Badge>
+        <Badge tone={status === 'published' ? 'success' : 'warning'}>{statusLabels[status ?? 'draft']}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Esta estrutura ainda nao salva no banco. Os campos abaixo ficam apenas nesta tela, na sua sessao atual, e sao
-        perdidos ao trocar de aba ou recarregar a pagina. Geracao por IA e publicacao serao implementadas futuramente.
+        O briefing e salvo no banco por cliente. Geracao por IA, criacao real da LP e publicacao ainda nao estao
+        disponiveis.
       </p>
 
       <div className="mt-6 space-y-6">
@@ -65,55 +76,31 @@ export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefin
 
         <Section title="Oferta">
           <div className="sm:col-span-2">
-            <Field label="Tagline / slogan">
+            <Field label="Headline">
               <input
-                value={values.tagline}
-                onChange={(event) => setField('tagline', event.target.value)}
+                value={values.headline}
+                onChange={(event) => setField('headline', event.target.value)}
                 className={inputClassName}
                 placeholder="Frase de impacto principal"
               />
             </Field>
           </div>
-          <Field label="Oferta principal">
-            <input
-              value={values.mainOffer}
-              onChange={(event) => setField('mainOffer', event.target.value)}
-              className={inputClassName}
-            />
-          </Field>
-          <Field label="Publico-alvo">
-            <input
-              value={values.targetAudience}
-              onChange={(event) => setField('targetAudience', event.target.value)}
-              className={inputClassName}
-            />
-          </Field>
+          <div className="sm:col-span-2">
+            <Field label="Subheadline">
+              <input
+                value={values.subheadline}
+                onChange={(event) => setField('subheadline', event.target.value)}
+                className={inputClassName}
+                placeholder="Complemento da headline"
+              />
+            </Field>
+          </div>
           <div className="sm:col-span-2">
             <Field label="Descricao da oferta">
               <textarea
                 value={values.offerDescription}
                 onChange={(event) => setField('offerDescription', event.target.value)}
                 className={`${inputClassName} min-h-24 resize-y`}
-              />
-            </Field>
-          </div>
-          <div className="sm:col-span-2">
-            <Field label="Diferenciais">
-              <textarea
-                value={values.differentiators}
-                onChange={(event) => setField('differentiators', event.target.value)}
-                className={`${inputClassName} min-h-20 resize-y`}
-                placeholder="O que torna esta oferta diferente da concorrencia"
-              />
-            </Field>
-          </div>
-          <div className="sm:col-span-2">
-            <Field label="Prova social">
-              <textarea
-                value={values.socialProof}
-                onChange={(event) => setField('socialProof', event.target.value)}
-                className={`${inputClassName} min-h-20 resize-y`}
-                placeholder="Depoimentos, numeros, cases de sucesso"
               />
             </Field>
           </div>
@@ -128,12 +115,56 @@ export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefin
               placeholder="(DDD) 00000-0000"
             />
           </Field>
+          <Field label="E-mail de contato">
+            <input
+              type="email"
+              value={values.contactEmail}
+              onChange={(event) => setField('contactEmail', event.target.value)}
+              className={inputClassName}
+              placeholder="contato@cliente.com"
+            />
+          </Field>
           <Field label="CTA principal">
             <input
               value={values.mainCta}
               onChange={(event) => setField('mainCta', event.target.value)}
               className={inputClassName}
               placeholder="Ex.: Falar no WhatsApp, Agendar diagnostico"
+            />
+          </Field>
+        </Section>
+
+        <Section title="Identidade visual">
+          <Field label="Cor primaria">
+            <input
+              value={values.primaryColor}
+              onChange={(event) => setField('primaryColor', event.target.value)}
+              className={inputClassName}
+              placeholder="#7C3AED"
+            />
+          </Field>
+          <Field label="Cor secundaria">
+            <input
+              value={values.secondaryColor}
+              onChange={(event) => setField('secondaryColor', event.target.value)}
+              className={inputClassName}
+              placeholder="#111827"
+            />
+          </Field>
+          <Field label="URL do logo">
+            <input
+              value={values.logoUrl}
+              onChange={(event) => setField('logoUrl', event.target.value)}
+              className={inputClassName}
+              placeholder="https://..."
+            />
+          </Field>
+          <Field label="URL da imagem hero">
+            <input
+              value={values.heroImageUrl}
+              onChange={(event) => setField('heroImageUrl', event.target.value)}
+              className={inputClassName}
+              placeholder="https://..."
             />
           </Field>
         </Section>
@@ -145,15 +176,15 @@ export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefin
                 value={values.faq}
                 onChange={(event) => setField('faq', event.target.value)}
                 className={`${inputClassName} min-h-24 resize-y`}
-                placeholder="Uma pergunta e resposta por linha"
+                placeholder="Uma pergunta/resposta por linha"
               />
             </Field>
           </div>
           <div className="sm:col-span-2">
             <Field label="Observacoes">
               <textarea
-                value={values.notes}
-                onChange={(event) => setField('notes', event.target.value)}
+                value={values.observations}
+                onChange={(event) => setField('observations', event.target.value)}
                 className={`${inputClassName} min-h-20 resize-y`}
                 placeholder="Contexto adicional para quem for montar a LP"
               />
@@ -161,13 +192,19 @@ export function LandingPageBriefingForm({ values, onChange }: LandingPageBriefin
           </div>
         </Section>
       </div>
+
+      <div className="mt-6 flex justify-end border-t border-border pt-5">
+        <Button type="button" variant="primary" disabled={saving} onClick={onSubmit}>
+          {saving ? 'Salvando...' : 'Salvar briefing'}
+        </Button>
+      </div>
     </Card>
   );
 }
 
 const inputClassName = 'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary';
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="border-t border-border pt-5 first:border-t-0 first:pt-0">
       <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
@@ -176,7 +213,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="mb-2 block text-xs font-semibold uppercase text-muted-foreground">{label}</span>

@@ -119,7 +119,7 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
       ) : activeTab === 'Integracoes' ? (
         <ClientIntegrationsTab clientId={client.id} />
       ) : activeTab === 'Landing Page' ? (
-        <ClientLandingPageTab client={client} />
+        <ClientLandingPageTab client={client} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Financeiro' && role === 'admin' ? (
         <ClientFinanceTab clientId={client.id} />
       ) : activeTab === 'Contratos' && role === 'admin' ? (

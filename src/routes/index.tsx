@@ -22,6 +22,7 @@ import { FinanceDetailsPage } from '../features/finance/pages/FinanceDetailsPage
 import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
 import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
 import { IntegrationsOverviewPage } from '../features/integrations/pages/IntegrationsOverviewPage';
+import { PlannerOverviewPage } from '../features/landing-pages/pages/PlannerOverviewPage';
 import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
 import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
 import { MeetingListPage } from '../features/meetings/pages/MeetingListPage';
@@ -120,6 +121,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="entregaveis" element={<DeliverableListPage />} />
         <Route path="performance" element={<PerformanceOverviewPage />} />
         <Route path="integracoes" element={<IntegrationsOverviewPage />} />
+        <Route path="planejador" element={<PlannerOverviewPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

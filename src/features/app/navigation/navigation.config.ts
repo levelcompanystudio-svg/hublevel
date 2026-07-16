@@ -115,6 +115,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Gestao',
   },
   {
+    path: '/app/planejador',
+    label: 'Planejador',
+    description: 'Briefing de landing page por cliente (rascunho local)',
+    icon: 'Pl',
+    roles: ['admin', 'gestor'],
+    group: 'Gestao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

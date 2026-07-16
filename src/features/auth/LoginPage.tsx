@@ -27,7 +27,7 @@ export const LoginPage: React.FC = () => {
       console.error('Error signing in:', err);
       if (err instanceof Error) {
         if (err.message === 'Invalid login credentials') {
-          setErrorMsg('Credenciais inválidas. Verifique seu e-mail e senha.');
+          setErrorMsg('Credenciais invalidas. Verifique seu e-mail e senha.');
         } else {
           setErrorMsg(err.message);
         }
@@ -108,7 +108,7 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
                 className="w-full rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-60"
-                placeholder="••••••••"
+                placeholder="********"
                 required
               />
             </div>

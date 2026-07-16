@@ -124,7 +124,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
+    // Nao alterna o `loading` global aqui de proposito: esse estado tambem controla o
+    // spinner de tela cheia em AppRoutes, e altera-lo durante uma tentativa de login
+    // desmonta o <LoginPage /> (perdendo o `errorMsg` local) e remonta uma instancia nova
+    // assim que a chamada termina. Em caso de sucesso, `onAuthStateChange` ja assume o
+    // controle de `loading` normalmente.
     setError(null);
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -144,13 +148,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setProfile(null);
       throw err;
-    } finally {
-      setLoading(false);
     }
   };
 
   const signOut = async () => {
-    setLoading(true);
+    // Mesmo motivo do signIn: `onAuthStateChange` ja seta `loading=false` assim que a
+    // sessao vira null, entao nao precisamos alternar o loading global aqui.
     try {
       const { error: signOutError } = await supabase.auth.signOut();
       if (signOutError) throw signOutError;
@@ -161,8 +164,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Error signing out:', err);
       const message = err instanceof Error ? err.message : 'Erro ao encerrar a sessao.';
       setError(message);
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -4,9 +4,12 @@ import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Badge } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
+import { generateLandingPageCopy, getLatestLandingPageAiGeneration } from '../../landing-pages/landing-page-ai.api';
+import type { LandingPageAiGeneration } from '../../landing-pages/landing-page-ai.types';
 import { createClientLandingPage, getClientLandingPage, updateClientLandingPage } from '../../landing-pages/landing-page.api';
 import { LandingPageBriefingForm } from '../../landing-pages/components/LandingPageBriefingForm';
 import { LandingPageFutureActions } from '../../landing-pages/components/LandingPageFutureActions';
+import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
 import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPageLeadsInfo';
 import { initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
 import type { ClientLandingPage, LandingPageBriefingValues } from '../../landing-pages/landing-page.types';
@@ -26,6 +29,9 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [generation, setGeneration] = useState<LandingPageAiGeneration | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -39,10 +45,14 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
       try {
         setLoading(true);
         setError(null);
-        const existing = await getClientLandingPage(client.id);
+        const [existing, latestGeneration] = await Promise.all([
+          getClientLandingPage(client.id),
+          getLatestLandingPageAiGeneration(client.id),
+        ]);
         if (!active) return;
         setPage(existing);
         setValues(existing ? landingPageToValues(existing) : initialValuesForClient(client));
+        setGeneration(latestGeneration);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar briefing da landing page.');
       } finally {
@@ -76,6 +86,21 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
     }
   }
 
+  async function handleGenerate() {
+    if (!canManage || !page) return;
+
+    try {
+      setGenerating(true);
+      setGenerateError(null);
+      const result = await generateLandingPageCopy(client.id);
+      setGeneration(result);
+    } catch (err: unknown) {
+      setGenerateError(err instanceof Error ? err.message : 'Erro ao gerar conteudo com IA.');
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   if (!canManage) return <AccessDeniedPlaceholder />;
 
   if (loading) return <LoadingState title="Carregando briefing da landing page" />;
@@ -98,9 +123,16 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         onSubmit={() => void handleSubmit()}
       />
       <div className="grid gap-4 lg:grid-cols-2">
-        <LandingPageFutureActions />
+        <LandingPageFutureActions
+          canGenerate={canManage}
+          generating={generating}
+          generateDisabledReason={!page ? 'Salve o briefing antes de gerar com IA' : undefined}
+          generateError={generateError}
+          onGenerate={() => void handleGenerate()}
+        />
         <LandingPageLeadsInfo />
       </div>
+      {generation && <LandingPageGeneratedContent generation={generation} />}
     </div>
   );
 }

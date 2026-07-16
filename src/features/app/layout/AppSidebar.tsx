@@ -1,3 +1,4 @@
+import { Moon, Sun } from 'lucide-react';
 import type { RoleName } from '../../auth/auth.types';
 import { useTheme } from '../../theme/useTheme';
 import { getNavigationForRole } from '../navigation/navigation.config';
@@ -69,9 +70,9 @@ export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
             title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar text-sm text-sidebar-accent-foreground transition hover:border-primary/50 hover:bg-sidebar-accent hover:text-primary"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar text-sidebar-accent-foreground transition hover:border-primary/50 hover:bg-sidebar-accent hover:text-primary"
           >
-            {theme === 'dark' ? '☀' : '☾'}
+            {theme === 'dark' ? <Sun className="h-4 w-4" aria-hidden="true" /> : <Moon className="h-4 w-4" aria-hidden="true" />}
           </button>
         </div>
       </div>

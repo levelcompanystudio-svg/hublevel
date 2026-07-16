@@ -1,3 +1,4 @@
+import { LogOut, Menu } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { Badge, Button } from '../../../components/ui';
 import type { RoleName } from '../../auth/auth.types';
@@ -32,7 +33,7 @@ export function AppTopbar({
             onClick={onOpenMenu}
             aria-label="Abrir menu"
           >
-            <span className="text-lg">=</span>
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div className="min-w-0">
             <h1 className="truncate text-base font-bold tracking-tight text-foreground sm:text-lg">
@@ -59,6 +60,7 @@ export function AppTopbar({
           </div>
           <Badge tone="brand">{role ?? 'perfil'}</Badge>
           <Button type="button" variant="secondary" onClick={onLogout} disabled={loading}>
+            <LogOut className="h-4 w-4" aria-hidden="true" />
             {loading ? 'Saindo...' : 'Sair'}
           </Button>
         </div>

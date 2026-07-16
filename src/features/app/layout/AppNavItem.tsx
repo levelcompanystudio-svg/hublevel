@@ -20,29 +20,34 @@ export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
         ].join(' ')
       }
     >
-      {({ isActive }) => (
-        <>
-          <span
-            className={`absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary transition-opacity ${
-              isActive ? 'opacity-100' : 'opacity-0'
-            }`}
-            aria-hidden="true"
-          />
-          <span
-            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-[11px] font-bold transition ${
-              isActive
-                ? 'border-primary/40 bg-primary text-primary-foreground'
-                : 'border-sidebar-border bg-sidebar text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
-            }`}
-          >
-            {item.icon}
-          </span>
-          <span className="min-w-0">
-            <span className="block truncate font-medium">{item.label}</span>
-            <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
-          </span>
-        </>
-      )}
+      {({ isActive }) => {
+        const Icon = item.icon;
+        return (
+          <>
+            <span
+              className={`absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary transition-opacity ${
+                isActive ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden="true"
+            />
+            <span
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition ${
+                isActive
+                  ? 'border-primary/40 bg-primary text-primary-foreground'
+                  : 'border-sidebar-border bg-sidebar text-muted-foreground group-hover:border-primary/30 group-hover:text-sidebar-accent-foreground'
+              }`}
+            >
+              <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className={`block truncate ${isActive ? 'font-semibold text-sidebar-foreground' : 'font-medium'}`}>
+                {item.label}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
+            </span>
+          </>
+        );
+      }}
     </NavLink>
   );
 }

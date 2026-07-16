@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
@@ -76,7 +77,7 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             {errorMsg && (
               <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
-                <span className="font-bold">!</span>
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{errorMsg}</span>
               </div>
             )}

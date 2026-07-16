@@ -107,6 +107,14 @@ export const navigationItems: NavigationItem[] = [
     group: 'Gestao',
   },
   {
+    path: '/app/integracoes',
+    label: 'Integracoes',
+    description: 'Meta Ads, Google Ads, CRM e WhatsApp (nao conectado)',
+    icon: 'I',
+    roles: ['admin', 'gestor'],
+    group: 'Gestao',
+  },
+  {
     path: '/app/configuracoes',
     label: 'Configuracoes',
     description: 'Parametros do sistema',

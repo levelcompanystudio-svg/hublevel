@@ -14,6 +14,8 @@ import { ContractDetailsPage } from '../features/contracts/pages/ContractDetails
 import { ContractFormPage } from '../features/contracts/pages/ContractFormPage';
 import { ContractListPage } from '../features/contracts/pages/ContractListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { DeliverableDetailsPage } from '../features/deliverables/pages/DeliverableDetailsPage';
+import { DeliverableFormPage } from '../features/deliverables/pages/DeliverableFormPage';
 import { DeliverableListPage } from '../features/deliverables/pages/DeliverableListPage';
 import { DocumentDetailsPage } from '../features/documents/pages/DocumentDetailsPage';
 import { DocumentFormPage } from '../features/documents/pages/DocumentFormPage';
@@ -119,6 +121,9 @@ export const AppRoutes: React.FC = () => {
         <Route path="alertas" element={<AlertListPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
         <Route path="entregaveis" element={<DeliverableListPage />} />
+        <Route path="entregaveis/novo" element={<DeliverableFormPage />} />
+        <Route path="entregaveis/:id" element={<DeliverableDetailsPage />} />
+        <Route path="entregaveis/:id/editar" element={<DeliverableFormPage />} />
         <Route path="performance" element={<PerformanceOverviewPage />} />
         <Route path="integracoes" element={<IntegrationsOverviewPage />} />
         <Route path="planejador" element={<PlannerOverviewPage />} />

@@ -105,7 +105,7 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
       ) : activeTab === 'Reunioes' ? (
         <ClientMeetingsTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Entregaveis' ? (
-        <ClientDeliverablesTab clientId={client.id} />
+        <ClientDeliverablesTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Documentos' ? (
         <ClientDocumentsTab
           clientId={client.id}

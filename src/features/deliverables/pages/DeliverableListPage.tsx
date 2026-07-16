@@ -1,44 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { FilterBar } from '../../../components/layout/FilterBar';
-import { Badge } from '../../../components/ui';
-import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
+import { PageHeader } from '../../../components/layout/PageHeader';
+import { Badge, Button } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { listDeliverables } from '../deliverables.api';
 import type { Deliverable } from '../deliverables.types';
-import { DeliverableHeader } from '../components/DeliverableHeader';
 import { DeliverableSummary } from '../components/DeliverableSummary';
 import { DeliverableTable } from '../components/DeliverableTable';
-
-type DeliverableFilter = 'todos' | 'pendentes' | 'concluidos' | 'vencidos' | 'documentos' | 'tarefas';
-
-const filters: Array<{ label: string; value: DeliverableFilter }> = [
-  { label: 'Todos', value: 'todos' },
-  { label: 'Pendentes', value: 'pendentes' },
-  { label: 'Concluidos', value: 'concluidos' },
-  { label: 'Vencidos', value: 'vencidos' },
-  { label: 'Documentos', value: 'documentos' },
-  { label: 'Tarefas', value: 'tarefas' },
-];
 
 export function DeliverableListPage() {
   const { profile } = useAuth();
   const role = profile?.roles?.name;
-  // Colaborador nao tem policy de SELECT em `documents`/`updates` (so admin/gestor tem),
-  // entao a visao ficaria incompleta e inconsistente. Bloqueado no modulo global por ora.
-  const canAccess = role === 'admin' || role === 'gestor';
+  // Sem gate de acesso: admin ve tudo, gestor ve os proprios clientes e colaborador ve
+  // apenas os entregaveis atribuidos a ele, tudo resolvido pela RLS da tabela `deliverables`.
+  const canCreate = role === 'admin' || role === 'gestor';
 
   const [items, setItems] = useState<Deliverable[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<DeliverableFilter>('todos');
 
   useEffect(() => {
-    if (!canAccess) {
-      setLoading(false);
-      return;
-    }
     let active = true;
     async function load() {
       try {
@@ -56,32 +39,19 @@ export function DeliverableListPage() {
     return () => {
       active = false;
     };
-  }, [canAccess]);
-
-  const filteredItems = useMemo(() => {
-    switch (activeFilter) {
-      case 'pendentes':
-        return items.filter((item) => item.status === 'pendente' || item.status === 'em_andamento');
-      case 'concluidos':
-        return items.filter((item) => item.status === 'concluido');
-      case 'vencidos':
-        return items.filter((item) => item.status === 'vencido');
-      case 'documentos':
-        return items.filter((item) => item.origin === 'documento');
-      case 'tarefas':
-        return items.filter((item) => item.origin === 'tarefa');
-      default:
-        return items;
-    }
-  }, [activeFilter, items]);
-
-  if (!canAccess) return <AccessDeniedPlaceholder />;
+  }, []);
 
   return (
     <div className="space-y-6">
-      <DeliverableHeader
+      <PageHeader
+        eyebrow="Operacao"
         title="Entregaveis"
-        description="Visao consolidada de tarefas de entrega, documentos operacionais e atualizacoes enviadas ao cliente."
+        description="Entregaveis por cliente: itens combinados, prazos e status de entrega."
+        action={canCreate ? (
+          <Link to="/app/entregaveis/novo">
+            <Button type="button" variant="primary">Novo entregavel</Button>
+          </Link>
+        ) : undefined}
       />
 
       {loading && <LoadingState title="Carregando entregaveis" />}
@@ -89,28 +59,10 @@ export function DeliverableListPage() {
       {!loading && !error && (
         <>
           <DeliverableSummary items={items} />
-
-          <FilterBar label={role === 'admin' ? 'Todos os clientes' : 'Minha carteira'}>
-            <div className="flex flex-wrap gap-1.5">
-              {filters.map((filter) => (
-                <button
-                  key={filter.value}
-                  type="button"
-                  onClick={() => setActiveFilter(filter.value)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                    activeFilter === filter.value
-                      ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-            <Badge>Derivado de tarefas, documentos e atualizacoes</Badge>
-          </FilterBar>
-
-          <DeliverableTable items={filteredItems} />
+          <div className="flex items-center gap-2">
+            <Badge tone="brand">{role === 'colaborador' ? 'Meus entregaveis' : role === 'admin' ? 'Todos os clientes' : 'Minha carteira'}</Badge>
+          </div>
+          <DeliverableTable items={items} canEdit={canCreate} />
         </>
       )}
     </div>

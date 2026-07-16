@@ -1,5 +1,5 @@
 import { Badge } from '../../../components/ui';
-import type { DeliverableOrigin } from '../deliverables.types';
+import type { DeliverableOrigin } from './deliverables-legacy.types';
 
 const labels: Record<DeliverableOrigin, string> = {
   tarefa: 'Tarefa',

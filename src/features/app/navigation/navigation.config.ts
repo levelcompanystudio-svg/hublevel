@@ -71,9 +71,9 @@ export const navigationItems: NavigationItem[] = [
   {
     path: '/app/entregaveis',
     label: 'Entregaveis',
-    description: 'Tarefas, documentos e atualizacoes de entrega por cliente',
+    description: 'Entregaveis por cliente, com prazos, prioridade e status',
     icon: ClipboardCheck,
-    roles: ['admin', 'gestor'],
+    roles: ['admin', 'gestor', 'colaborador'],
     group: 'Operacao',
   },
   {

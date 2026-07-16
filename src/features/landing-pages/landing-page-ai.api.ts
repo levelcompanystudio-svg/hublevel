@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 import type { LandingPageAiGeneration } from './landing-page-ai.types';
 
@@ -43,7 +44,15 @@ export async function generateLandingPageCopy(clientId: string): Promise<Landing
   });
 
   if (error) {
-    throw new Error(error.message || 'Erro ao gerar conteudo com IA.');
+    // FunctionsHttpError.message e generico ("Edge Function returned a non-2xx status code");
+    // o corpo real do erro (ex.: "IA nao configurada", "Salve o briefing antes...") vem em
+    // error.context, que e o Response bruto da function.
+    let message = error.message || 'Erro ao gerar conteudo com IA.';
+    if (error instanceof FunctionsHttpError) {
+      const body = await error.context.json().catch(() => null);
+      if (body?.error) message = body.error;
+    }
+    throw new Error(message);
   }
 
   if (!data?.generation) {

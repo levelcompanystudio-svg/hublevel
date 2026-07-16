@@ -28,8 +28,8 @@ export function AppSidebar({ role, userName, onNavigate }: AppSidebarProps) {
     <aside className="flex h-full w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       <div className="border-b border-sidebar-border px-5 py-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-gradient-to-br from-primary to-primary/60 text-sm font-bold text-primary-foreground shadow-[0_0_28px_-6px_var(--color-primary)]">
-            HL
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-white p-1.5 shadow-[0_0_28px_-6px_var(--color-primary)]">
+            <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full scale-110 object-contain" />
           </div>
           <div className="min-w-0">
             <p className="truncate text-[15px] font-bold tracking-tight text-sidebar-foreground">HubLevel</p>

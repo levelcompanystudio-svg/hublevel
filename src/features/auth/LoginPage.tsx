@@ -1,6 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BackgroundBeams } from '../../components/ui';
 import { useAuth } from './useAuth';
 
 export const LoginPage: React.FC = () => {
@@ -41,22 +42,13 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-1 flex-col items-center justify-center bg-background px-6 py-12 text-foreground">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="animate-pulse-glow absolute -top-40 -right-40 h-96 w-96 rounded-full opacity-30"
-          style={{ background: 'radial-gradient(circle, var(--color-primary), transparent 70%)' }}
-        />
-        <div
-          className="animate-pulse-glow absolute -bottom-32 -left-32 h-80 w-80 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, var(--color-primary), transparent 70%)', animationDelay: '1.5s' }}
-        />
-      </div>
+    <div className="relative flex min-h-screen flex-1 flex-col items-center justify-center overflow-hidden bg-background px-6 py-12 text-foreground">
+      <BackgroundBeams />
 
       <div className="relative z-10 w-full max-w-md animate-fade-in">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="animate-float mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary to-primary/60 text-xl font-bold text-primary-foreground shadow-[0_0_40px_-6px_var(--color-primary)]">
-            HL
+          <div className="animate-float mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-white p-2.5 shadow-[0_0_22px_-8px_var(--color-primary)]">
+            <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full object-contain" />
           </div>
           <h1 className="mb-2 text-3xl font-bold tracking-tight">
             <span
@@ -73,7 +65,16 @@ export const LoginPage: React.FC = () => {
           <p className="text-sm text-muted-foreground">Acesse sua central operacional</p>
         </div>
 
-        <div className="glass w-full rounded-2xl p-8 shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_24px_48px_-20px_rgba(0,0,0,0.7)]">
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40"
+            style={{
+              background:
+                'radial-gradient(circle, color-mix(in oklch, #60A5FA 55%, #A78BFA 20%) 0%, transparent 72%)',
+            }}
+          />
+          <div className="w-full rounded-2xl border border-[rgba(120,100,180,0.12)] bg-card p-8 shadow-[0_10px_28px_rgba(30,20,60,0.09)]">
           <form onSubmit={handleLogin} className="space-y-6">
             {errorMsg && (
               <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
@@ -117,7 +118,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary/60 bg-gradient-to-b from-primary to-primary/85 px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_10px_24px_-8px_var(--color-primary)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary/60 bg-gradient-to-b from-primary to-primary/85 px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_6px_14px_-8px_var(--color-primary)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>
@@ -132,6 +133,7 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
+          </div>
         </div>
       </div>
     </div>

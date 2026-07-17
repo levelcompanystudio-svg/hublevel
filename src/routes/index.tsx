@@ -26,6 +26,7 @@ import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
 import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
 import { IntegrationsOverviewPage } from '../features/integrations/pages/IntegrationsOverviewPage';
 import { PlannerOverviewPage } from '../features/landing-pages/pages/PlannerOverviewPage';
+import { PublicLandingPage } from '../features/landing-pages/pages/PublicLandingPage';
 import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
 import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
 import { MeetingListPage } from '../features/meetings/pages/MeetingListPage';
@@ -55,6 +56,8 @@ export const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
+      <Route path="/lp/:id" element={<PublicLandingPage />} />
+
       <Route
         path="/login"
         element={

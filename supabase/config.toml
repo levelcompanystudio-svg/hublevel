@@ -371,6 +371,12 @@ authorization_url_path = "/oauth/consent"
 # Allow dynamic client registration
 allow_dynamic_registration = false
 
+# get-public-landing-page serve a rota publica /lp/:id (sem login). E a unica function do projeto
+# com verify_jwt = false; ela mesma nao usa nenhum dado de sessao e so devolve campos whitelisted
+# de UMA landing page, via service role key usada estritamente no lado do servidor.
+[functions.get-public-landing-page]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

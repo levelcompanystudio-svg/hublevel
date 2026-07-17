@@ -49,7 +49,12 @@ export function LandingPageFutureActions({
           <Button type="button" variant="secondary" disabled title="Criacao da LP sera implementada futuramente">
             Criar LP
           </Button>
-          <Button type="button" variant="secondary" disabled title="Publicacao sera implementada futuramente">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled
+            title="Publicacao oficial (com controle de status e dominio proprio) sera implementada futuramente. Ja existe um link de preview publico temporario no card de Preview, logo abaixo."
+          >
             Publicar
           </Button>
         </div>

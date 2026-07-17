@@ -4,8 +4,10 @@ import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Badge } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
+import { getLandingPageAiErrorMessage } from '../../landing-pages/landing-page-ai.errors';
 import { generateLandingPageCopy, getLatestLandingPageAiGeneration } from '../../landing-pages/landing-page-ai.api';
 import type { LandingPageAiGeneration } from '../../landing-pages/landing-page-ai.types';
+import { analyzeBriefingDocument } from '../../landing-pages/landing-page-analysis.api';
 import { createClientLandingPage, getClientLandingPage, updateClientLandingPage } from '../../landing-pages/landing-page.api';
 import { LandingPageBriefingAnalysis } from '../../landing-pages/components/LandingPageBriefingAnalysis';
 import { LandingPageBriefingDocuments } from '../../landing-pages/components/LandingPageBriefingDocuments';
@@ -14,8 +16,13 @@ import { LandingPageFutureActions } from '../../landing-pages/components/Landing
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
 import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPageLeadsInfo';
 import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
-import { initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
-import type { ClientLandingPage, LandingPageBriefingValues } from '../../landing-pages/landing-page.types';
+import { applyBriefingAnalysisToValues, initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
+import type {
+  ClientLandingPage,
+  LandingPageBriefingAnalysisResult,
+  LandingPageBriefingAnalysisStatus,
+  LandingPageBriefingValues,
+} from '../../landing-pages/landing-page.types';
 import type { Document } from '../../documents/documents.types';
 import type { Client } from '../clients.types';
 
@@ -37,6 +44,9 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [referenceDocument, setReferenceDocument] = useState<Document | null>(null);
+  const [analysisStatus, setAnalysisStatus] = useState<LandingPageBriefingAnalysisStatus>('idle');
+  const [analysisResult, setAnalysisResult] = useState<LandingPageBriefingAnalysisResult | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -59,6 +69,9 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         setValues(existing ? landingPageToValues(existing) : initialValuesForClient(client));
         setGeneration(latestGeneration);
         setReferenceDocument(null);
+        setAnalysisStatus('idle');
+        setAnalysisResult(null);
+        setAnalysisError(null);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar briefing da landing page.');
       } finally {
@@ -90,6 +103,40 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
     } finally {
       setSaving(false);
     }
+  }
+
+  function handleSelectReference(document: Document) {
+    setReferenceDocument(document);
+    setAnalysisStatus('ready');
+    setAnalysisResult(null);
+    setAnalysisError(null);
+  }
+
+  async function handleAnalyze() {
+    if (!referenceDocument) return;
+
+    try {
+      setAnalysisStatus('analyzing');
+      setAnalysisError(null);
+      const result = await analyzeBriefingDocument({
+        clientId: client.id,
+        documentId: referenceDocument.id,
+        externalUrl: referenceDocument.external_url,
+        title: referenceDocument.title,
+      });
+      setAnalysisResult(result);
+      setAnalysisStatus('analyzed');
+    } catch (err: unknown) {
+      const rawMessage = err instanceof Error ? err.message : 'Erro ao analisar o briefing com IA.';
+      setAnalysisError(getLandingPageAiErrorMessage(rawMessage));
+      setAnalysisStatus('error');
+    }
+  }
+
+  function handleApplyAnalysis() {
+    if (!analysisResult) return;
+    setValues((current) => applyBriefingAnalysisToValues(current, analysisResult));
+    setAnalysisStatus('applied');
   }
 
   async function handleGenerate() {
@@ -132,9 +179,16 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         clientId={client.id}
         canManage={canManage}
         selectedDocumentId={referenceDocument?.id ?? null}
-        onSelectReference={setReferenceDocument}
+        onSelectReference={handleSelectReference}
       />
-      <LandingPageBriefingAnalysis selectedDocument={referenceDocument} />
+      <LandingPageBriefingAnalysis
+        selectedDocument={referenceDocument}
+        status={analysisStatus}
+        analysis={analysisResult}
+        error={analysisError}
+        onAnalyze={() => void handleAnalyze()}
+        onApply={handleApplyAnalysis}
+      />
       <div className="grid gap-4 lg:grid-cols-2">
         <LandingPageFutureActions
           canGenerate={canManage}

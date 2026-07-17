@@ -113,13 +113,19 @@ export function landingPageToValues(page: ClientLandingPage): LandingPageBriefin
   };
 }
 
-// --- Analise de briefing (preparacao para IA, etapa futura) -----------------------------------
+// --- Analise de briefing por IA -----------------------------------------------------------------
 //
-// Nada abaixo chama IA, API externa ou salva no banco. E apenas o contrato de dados que o
-// frontend ja deixa pronto para quando a analise automatica de um briefing anexado (documents
-// com type = 'briefing') existir de verdade.
+// A analise em si acontece na Edge Function `analyze-landing-briefing` (chave de IA nunca chega
+// ao frontend). Nada aqui e persistido no banco: o resultado fica em memoria ate o usuario decidir
+// aplicar ao formulario manual (e so entao salvar, como qualquer outra edicao do briefing).
 
-export type LandingPageBriefingAnalysisStatus = 'idle' | 'awaiting_analysis';
+export type LandingPageBriefingAnalysisStatus =
+  | 'idle' // nenhum briefing selecionado
+  | 'ready' // briefing selecionado, aguardando analise
+  | 'analyzing' // chamando a IA
+  | 'analyzed' // analise concluida, resultado pronto para aplicar
+  | 'applied' // usuario ja aplicou o resultado ao formulario manual
+  | 'error'; // falha na analise
 
 export interface LandingPageBriefingAnalysisFaqItem {
   question: string;
@@ -144,4 +150,45 @@ export interface LandingPageBriefingAnalysisResult {
   toneOfVoice: string | null;
   suggestedCta: string | null;
   landingPageSections: LandingPageBriefingAnalysisSection[];
+}
+
+function buildAnalysisNotesBlock(analysis: LandingPageBriefingAnalysisResult): string {
+  const lines: string[] = [];
+  if (analysis.audience) lines.push(`Publico-alvo: ${analysis.audience}`);
+  if (analysis.toneOfVoice) lines.push(`Tom de voz: ${analysis.toneOfVoice}`);
+  if (analysis.services.length > 0) lines.push(`Servicos: ${analysis.services.join(', ')}`);
+  if (analysis.differentiators.length > 0) lines.push(`Diferenciais: ${analysis.differentiators.join(', ')}`);
+  if (analysis.painPoints.length > 0) lines.push(`Dores do cliente: ${analysis.painPoints.join(', ')}`);
+  if (analysis.objections.length > 0) lines.push(`Objecoes: ${analysis.objections.join(', ')}`);
+  if (analysis.landingPageSections.length > 0) {
+    lines.push(`Secoes sugeridas: ${analysis.landingPageSections.map((section) => section.title).join(', ')}`);
+  }
+  if (lines.length === 0) return '';
+  return `Sugestoes da analise de briefing (IA):\n${lines.join('\n')}`;
+}
+
+// Preenche os campos JA EXISTENTES do formulario manual com os dados sugeridos pela analise.
+// So altera valores em memoria (o state do formulario) - nada e salvo ate o usuario clicar em
+// "Salvar briefing". Campos sem correspondencia direta (publico, tom de voz, servicos,
+// diferenciais, dores, objecoes, secoes sugeridas) sao anexados em "Observacoes" para nao se
+// perderem, ja que o formulario nao tem um campo dedicado para cada um deles.
+export function applyBriefingAnalysisToValues(
+  values: LandingPageBriefingValues,
+  analysis: LandingPageBriefingAnalysisResult,
+): LandingPageBriefingValues {
+  const notesBlock = buildAnalysisNotesBlock(analysis);
+  const faqText =
+    analysis.faq.length > 0
+      ? analysis.faq.map((item) => (item.answer ? `${item.question} - ${item.answer}` : item.question)).join('\n')
+      : values.faq;
+
+  return {
+    ...values,
+    displayName: analysis.companyName?.trim() || values.displayName,
+    segment: analysis.segment?.trim() || values.segment,
+    offerDescription: analysis.offer?.trim() || values.offerDescription,
+    mainCta: analysis.suggestedCta?.trim() || values.mainCta,
+    faq: faqText,
+    observations: [values.observations.trim(), notesBlock].filter(Boolean).join('\n\n'),
+  };
 }

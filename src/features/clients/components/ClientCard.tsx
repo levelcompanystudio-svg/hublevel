@@ -1,7 +1,9 @@
+import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button, Card } from '../../../components/ui';
 import type { ClientAggregate } from '../client-aggregates.types';
 import type { Client } from '../clients.types';
+import { ClientAvatar } from './ClientAvatar';
 import { ClientHealthBadge } from './ClientHealthBadge';
 import { ClientStatusBadge } from './ClientStatusBadge';
 
@@ -23,19 +25,46 @@ function getHealthAccent(client: Client) {
   return 'border-l-destructive';
 }
 
+// Reaproveita os mesmos sinais ja calculados para o modulo de Alertas (sem atualizacao recente,
+// sem reuniao recente/agendada, tarefas vencidas), mas exibidos de forma discreta no card em vez
+// de uma secao separada — so aparece quando ha algo relevante para o cliente ativo.
+function getAlertReasons(client: Client, aggregate: ClientAggregate): string[] {
+  if (client.status !== 'ativo') return [];
+  const reasons: string[] = [];
+  if (!aggregate.hasRecentUpdate) reasons.push('Sem atualizacao recente');
+  if (!aggregate.hasRecentOrUpcomingMeeting) reasons.push('Sem reuniao recente/agendada');
+  if (aggregate.overdueTasks > 0) reasons.push(`${aggregate.overdueTasks} tarefa(s) vencida(s)`);
+  return reasons;
+}
+
 export function ClientCard({ client, aggregate }: ClientCardProps) {
+  const displayName = client.trade_name || client.company_name;
+  const alertReasons = getAlertReasons(client, aggregate);
+
   return (
     <Card
-      className={`flex min-h-full flex-col gap-3 border-l-[3px] p-4 transition hover:border-primary/50 hover:bg-card-elevated ${getHealthAccent(client)}`}
+      className={`flex min-h-full flex-col gap-4 border-l-[3px] p-4 transition hover:border-primary/50 hover:bg-card-elevated ${getHealthAccent(client)}`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="truncate text-[15px] font-semibold text-foreground">{client.company_name}</h3>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {client.segment ?? client.trade_name ?? 'Sem segmento'}
-          </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <ClientAvatar name={displayName} />
+          <div className="min-w-0">
+            <h3 className="truncate text-[15px] font-semibold text-foreground">{displayName}</h3>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>
+          </div>
         </div>
-        <ClientHealthBadge status={client.health_status} />
+        <div className="flex shrink-0 items-center gap-1.5">
+          {alertReasons.length > 0 && (
+            <span
+              className="flex h-6 w-6 items-center justify-center rounded-full border border-warning/40 bg-warning/10 text-warning"
+              title={alertReasons.join(' - ')}
+              aria-label={`Alertas: ${alertReasons.join(', ')}`}
+            >
+              <Bell className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+          )}
+          <ClientHealthBadge status={client.health_status} />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
@@ -74,9 +103,15 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
         </div>
       </dl>
 
-      <Link to={`/app/clientes/${client.id}`} className="mt-auto">
-        <Button type="button" variant="secondary" className="w-full">Abrir</Button>
-      </Link>
+      <div className="mt-auto flex items-center gap-2">
+        <ClientAvatar name={client.responsible?.name ?? '?'} size="sm" />
+        <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+          {client.responsible?.email ?? 'Sem responsavel vinculado'}
+        </p>
+        <Link to={`/app/clientes/${client.id}`}>
+          <Button type="button" variant="secondary">Abrir</Button>
+        </Link>
+      </div>
     </Card>
   );
 }

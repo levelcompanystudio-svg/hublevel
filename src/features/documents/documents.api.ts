@@ -1,6 +1,8 @@
 import { supabase } from '../../lib/supabase';
 import type { Document, DocumentClientRef, DocumentCreatorRef, DocumentFormValues } from './documents.types';
 
+const DOCUMENT_BUCKET = 'client-documents';
+
 type DocumentRow = Omit<Document, 'client' | 'creator'> & {
   client?: DocumentClientRef | DocumentClientRef[] | null;
   creator?: DocumentCreatorRef | DocumentCreatorRef[] | null;
@@ -31,6 +33,7 @@ function toDocumentPayload(values: DocumentFormValues) {
     title: values.title.trim(),
     description: normalizeNullable(values.description),
     external_url: normalizeNullable(values.external_url),
+    file_url: normalizeNullable(values.file_url),
   };
 }
 
@@ -121,4 +124,41 @@ export async function updateDocument(id: string, values: DocumentFormValues): Pr
 
   if (error) throw error;
   return mapDocument(data as DocumentRow);
+}
+
+function safeFileName(name: string): string {
+  const extension = name.split('.').pop()?.toLowerCase();
+  const base = name
+    .replace(/\.[^.]+$/, '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9-_]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase()
+    .slice(0, 60);
+
+  return `${base || 'documento'}${extension ? `.${extension}` : ''}`;
+}
+
+export async function uploadDocumentFile(clientId: string, file: File): Promise<string> {
+  const path = `${clientId}/${crypto.randomUUID()}-${safeFileName(file.name)}`;
+  const { error } = await supabase.storage.from(DOCUMENT_BUCKET).upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type || undefined,
+  });
+
+  if (error) throw error;
+  return path;
+}
+
+export async function removeDocumentFile(path: string): Promise<void> {
+  const { error } = await supabase.storage.from(DOCUMENT_BUCKET).remove([path]);
+  if (error) throw error;
+}
+
+export async function getDocumentFileSignedUrl(path: string): Promise<string> {
+  const { data, error } = await supabase.storage.from(DOCUMENT_BUCKET).createSignedUrl(path, 60 * 10);
+  if (error) throw error;
+  return data.signedUrl;
 }

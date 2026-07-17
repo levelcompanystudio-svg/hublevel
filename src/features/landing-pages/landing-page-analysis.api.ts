@@ -16,6 +16,7 @@ export interface AnalyzeBriefingParams {
   clientId: string;
   documentId: string;
   externalUrl: string | null;
+  fileUrl: string | null;
   title: string;
 }
 
@@ -87,6 +88,7 @@ export async function analyzeBriefingDocument({
   clientId,
   documentId,
   externalUrl,
+  fileUrl,
   title,
 }: AnalyzeBriefingParams): Promise<LandingPageBriefingAnalysisResult> {
   const { data, error } = await supabase.functions.invoke<AnalyzeLandingBriefingResponse>('analyze-landing-briefing', {
@@ -94,6 +96,7 @@ export async function analyzeBriefingDocument({
       client_id: clientId,
       document_id: documentId,
       external_url: externalUrl,
+      file_url: fileUrl,
       title,
     },
   });

@@ -4,8 +4,8 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
-import { createDocument, getDocument, listDocumentClients, updateDocument } from '../documents.api';
-import { SENSITIVE_DOCUMENT_TYPES, emptyDocumentFormValues, validateDocumentForm } from '../documents.types';
+import { createDocument, getDocument, listDocumentClients, removeDocumentFile, updateDocument, uploadDocumentFile } from '../documents.api';
+import { SENSITIVE_DOCUMENT_TYPES, emptyDocumentFormValues, validateDocumentFile, validateDocumentForm } from '../documents.types';
 import type { DocumentClientRef, DocumentFormValues, DocumentType } from '../documents.types';
 import { DocumentForm } from '../components/DocumentForm';
 import { DocumentHeader } from '../components/DocumentHeader';
@@ -19,6 +19,7 @@ export function DocumentFormPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [values, setValues] = useState<DocumentFormValues>(emptyDocumentFormValues);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [clients, setClients] = useState<DocumentClientRef[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -61,6 +62,7 @@ export function DocumentFormPage() {
             title: document.title,
             description: document.description ?? '',
             external_url: document.external_url ?? '',
+            file_url: document.file_url ?? '',
           });
         } else {
           setValues({
@@ -68,6 +70,7 @@ export function DocumentFormPage() {
             client_id: preselectedClientId,
           });
         }
+        setSelectedFile(null);
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Erro ao preparar formulario de documento.';
         if (active) setError(message);
@@ -86,21 +89,38 @@ export function DocumentFormPage() {
   async function handleSubmit() {
     if (!profile) return;
 
-    const validationError = validateDocumentForm(values);
+    const fileError = selectedFile ? validateDocumentFile(selectedFile) : null;
+    if (fileError) {
+      setError(fileError);
+      return;
+    }
+
+    const validationValues = selectedFile ? { ...values, file_url: values.file_url || 'pending-upload' } : values;
+    const validationError = validateDocumentForm(validationValues);
     if (validationError) {
       setError(validationError);
       return;
     }
 
+    let uploadedPath: string | null = null;
+
     try {
       setSaving(true);
       setError(null);
+      if (selectedFile) {
+        uploadedPath = await uploadDocumentFile(values.client_id, selectedFile);
+      }
+
+      const payload = uploadedPath ? { ...values, file_url: uploadedPath } : values;
       const saved = id
-        ? await updateDocument(id, values)
-        : await createDocument(values, profile.id);
+        ? await updateDocument(id, payload)
+        : await createDocument(payload, profile.id);
 
       navigate(`/app/documentos/${saved.id}`, { replace: true });
     } catch (err: unknown) {
+      if (uploadedPath) {
+        await removeDocumentFile(uploadedPath).catch(() => undefined);
+      }
       const message = err instanceof Error ? err.message : 'Erro ao salvar documento.';
       setError(message);
     } finally {
@@ -127,8 +147,10 @@ export function DocumentFormPage() {
           clients={clients}
           allowedTypes={allowedTypes}
           loading={saving}
+          selectedFile={selectedFile}
           submitLabel={editing ? 'Salvar alteracoes' : 'Cadastrar documento'}
           onChange={setValues}
+          onFileChange={setSelectedFile}
           onSubmit={handleSubmit}
         />
       )}

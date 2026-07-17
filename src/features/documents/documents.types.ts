@@ -34,6 +34,7 @@ export interface DocumentFormValues {
   title: string;
   description: string;
   external_url: string;
+  file_url: string;
 }
 
 export const emptyDocumentFormValues: DocumentFormValues = {
@@ -42,15 +43,35 @@ export const emptyDocumentFormValues: DocumentFormValues = {
   title: '',
   description: '',
   external_url: '',
+  file_url: '',
 };
 
 export function validateDocumentForm(values: DocumentFormValues): string | null {
   if (!values.client_id) return 'Selecione um cliente.';
   if (!values.type) return 'Selecione o tipo do documento.';
   if (!values.title.trim()) return 'Informe um titulo para o documento.';
-  if (!values.external_url.trim()) return 'Informe a URL do documento.';
-  if (!/^https?:\/\//i.test(values.external_url.trim())) {
+  if (!values.external_url.trim() && !values.file_url.trim()) {
+    return 'Informe uma URL ou anexe um arquivo.';
+  }
+  if (values.external_url.trim() && !/^https?:\/\//i.test(values.external_url.trim())) {
     return 'Informe uma URL valida iniciada com http:// ou https://';
   }
+  return null;
+}
+
+export const DOCUMENT_FILE_MAX_SIZE_BYTES = 20 * 1024 * 1024;
+export const DOCUMENT_FILE_ALLOWED_EXTENSIONS = ['pdf', 'docx', 'txt', 'md'];
+
+export function validateDocumentFile(file: File): string | null {
+  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+
+  if (!DOCUMENT_FILE_ALLOWED_EXTENSIONS.includes(extension)) {
+    return 'Anexe um arquivo PDF, DOCX, TXT ou MD.';
+  }
+
+  if (file.size > DOCUMENT_FILE_MAX_SIZE_BYTES) {
+    return 'O arquivo deve ter no maximo 20MB.';
+  }
+
   return null;
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { EmptyState } from '../../../components/feedback/EmptyState';
-import { Button, Card } from '../../../components/ui';
+import { Badge, Button, Card } from '../../../components/ui';
 import type { Document } from '../documents.types';
 import { DocumentTypeBadge } from './DocumentTypeBadge';
 
@@ -39,6 +39,10 @@ export function DocumentTable({ documents, canEdit }: DocumentTableProps) {
               <tr key={document.id} className="bg-card transition-colors hover:bg-card-elevated">
                 <td className="px-5 py-4">
                   <p className="text-sm font-semibold text-foreground">{document.title}</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {document.file_url && <Badge tone="brand">Arquivo</Badge>}
+                    {document.external_url && <Badge tone="neutral">Link</Badge>}
+                  </div>
                   <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                     {document.description || 'Sem descricao'}
                   </p>

@@ -5,7 +5,7 @@ import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
-import { getDocument } from '../documents.api';
+import { getDocument, getDocumentFileSignedUrl } from '../documents.api';
 import type { Document } from '../documents.types';
 import { DocumentHeader } from '../components/DocumentHeader';
 import { DocumentTypeBadge } from '../components/DocumentTypeBadge';
@@ -17,6 +17,7 @@ export function DocumentDetailsPage() {
   const [doc, setDoc] = useState<Document | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openingFile, setOpeningFile] = useState(false);
   const role = profile?.roles?.name;
   const canAccess = role === 'admin' || role === 'gestor';
   const canEdit = role === 'admin';
@@ -53,6 +54,20 @@ export function DocumentDetailsPage() {
 
   if (!canAccess) {
     return <AccessDeniedPlaceholder />;
+  }
+
+  async function handleOpenFile() {
+    if (!doc?.file_url) return;
+
+    try {
+      setOpeningFile(true);
+      const signedUrl = await getDocumentFileSignedUrl(doc.file_url);
+      window.open(signedUrl, '_blank', 'noopener,noreferrer');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao abrir arquivo.');
+    } finally {
+      setOpeningFile(false);
+    }
   }
 
   return (
@@ -94,7 +109,18 @@ export function DocumentDetailsPage() {
           </div>
 
           <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">URL do documento</p>
+            <p className="text-xs font-semibold uppercase text-muted-foreground">Arquivo salvo no HubLevel</p>
+            {doc.file_url ? (
+              <Button type="button" variant="secondary" disabled={openingFile} onClick={() => void handleOpenFile()}>
+                {openingFile ? 'Abrindo...' : 'Abrir arquivo'}
+              </Button>
+            ) : (
+              <p className="mt-2 text-sm text-muted-foreground">Nenhum arquivo anexado.</p>
+            )}
+          </div>
+
+          <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">Link externo</p>
             {doc.external_url ? (
               <a
                 href={doc.external_url}

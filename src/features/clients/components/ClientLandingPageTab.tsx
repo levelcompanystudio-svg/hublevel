@@ -124,6 +124,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         clientId: client.id,
         documentId: referenceDocument.id,
         externalUrl: referenceDocument.external_url,
+        fileUrl: referenceDocument.file_url,
         title: referenceDocument.title,
       });
       setAnalysisResult(result);

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { Button, Card } from '../../../components/ui';
-import { listDocumentsByClient } from '../../documents/documents.api';
+import { Badge, Button, Card } from '../../../components/ui';
+import { getDocumentFileSignedUrl, listDocumentsByClient } from '../../documents/documents.api';
 import type { Document } from '../../documents/documents.types';
 import { DocumentTypeBadge } from '../../documents/components/DocumentTypeBadge';
 import { creatorName, formatDate } from '../../documents/components/DocumentTable';
@@ -19,6 +19,7 @@ export function ClientDocumentsTab({ clientId, canCreate, canEdit }: ClientDocum
   const [items, setItems] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openingFileId, setOpeningFileId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -36,6 +37,20 @@ export function ClientDocumentsTab({ clientId, canCreate, canEdit }: ClientDocum
   useEffect(() => {
     void load();
   }, [load]);
+
+  async function handleOpenFile(document: Document) {
+    if (!document.file_url) return;
+
+    try {
+      setOpeningFileId(document.id);
+      const signedUrl = await getDocumentFileSignedUrl(document.file_url);
+      window.open(signedUrl, '_blank', 'noopener,noreferrer');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao abrir arquivo.');
+    } finally {
+      setOpeningFileId(null);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -65,12 +80,24 @@ export function ClientDocumentsTab({ clientId, canCreate, canEdit }: ClientDocum
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-semibold text-foreground">{item.title}</p>
                       <DocumentTypeBadge type={item.type} />
+                      {item.file_url && <Badge tone="brand">Arquivo</Badge>}
+                      {item.external_url && <Badge tone="neutral">Link</Badge>}
                     </div>
                     <p className="mt-2 text-xs text-muted-foreground">
                       {formatDate(item.created_at)} - Criado por {creatorName(item)}
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
+                    {item.file_url && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={openingFileId === item.id}
+                        onClick={() => void handleOpenFile(item)}
+                      >
+                        {openingFileId === item.id ? 'Abrindo...' : 'Abrir arquivo'}
+                      </Button>
+                    )}
                     <Link to={`/app/documentos/${item.id}`}>
                       <Button type="button" variant="ghost">Ver</Button>
                     </Link>

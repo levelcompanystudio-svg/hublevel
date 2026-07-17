@@ -3,7 +3,14 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Badge, Button, Card } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
-import { createDocument, listDocumentsByClient } from '../../documents/documents.api';
+import {
+  createDocument,
+  getDocumentFileSignedUrl,
+  listDocumentsByClient,
+  removeDocumentFile,
+  uploadDocumentFile,
+} from '../../documents/documents.api';
+import { DOCUMENT_FILE_ALLOWED_EXTENSIONS, validateDocumentFile } from '../../documents/documents.types';
 import type { Document } from '../../documents/documents.types';
 import { StepBadge } from './LandingPageStepBadge';
 
@@ -24,10 +31,8 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
 
-// Anexo de briefing reaproveita 100% a estrutura de `documents` ja existente (type: 'briefing'),
-// sem tabela nova. O HubLevel ainda nao tem upload real de arquivo (Storage) para documentos -
-// "anexar" aqui significa colar o link de um arquivo ja hospedado (Drive, Dropbox etc.), exatamente
-// como o resto do modulo de Documentos ja funciona hoje.
+// Anexo de briefing reaproveita 100% a estrutura de `documents` ja existente (type: 'briefing').
+// Arquivos ficam no bucket privado `client-documents`; links externos continuam como alternativa.
 export function LandingPageBriefingDocuments({
   clientId,
   canManage,
@@ -41,8 +46,11 @@ export function LandingPageBriefingDocuments({
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [externalUrl, setExternalUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [openingFileId, setOpeningFileId] = useState<string | null>(null);
 
   useEffect(() => {
     onCountChange?.(documents.length);
@@ -75,21 +83,36 @@ export function LandingPageBriefingDocuments({
   async function handleAttach() {
     if (!profile || !canManage) return;
 
-    const trimmedTitle = title.trim();
+    const trimmedTitle = title.trim() || selectedFile?.name.trim() || '';
     const trimmedUrl = externalUrl.trim();
 
     if (!trimmedTitle) {
       setFormError('Informe um nome para o briefing.');
       return;
     }
-    if (!/^https?:\/\//i.test(trimmedUrl)) {
+    if (!selectedFile && !trimmedUrl) {
+      setFormError('Anexe um arquivo ou informe uma URL.');
+      return;
+    }
+    if (trimmedUrl && !/^https?:\/\//i.test(trimmedUrl)) {
       setFormError('Informe uma URL valida iniciada com http:// ou https://');
       return;
     }
+    const fileError = selectedFile ? validateDocumentFile(selectedFile) : null;
+    if (fileError) {
+      setFormError(fileError);
+      return;
+    }
+
+    let uploadedPath: string | null = null;
 
     try {
       setSaving(true);
       setFormError(null);
+      if (selectedFile) {
+        uploadedPath = await uploadDocumentFile(clientId, selectedFile);
+      }
+
       const created = await createDocument(
         {
           client_id: clientId,
@@ -97,16 +120,36 @@ export function LandingPageBriefingDocuments({
           title: trimmedTitle,
           description: '',
           external_url: trimmedUrl,
+          file_url: uploadedPath ?? '',
         },
         profile.id,
       );
       setDocuments((current) => [created, ...current]);
       setTitle('');
       setExternalUrl('');
+      setSelectedFile(null);
+      setFileInputKey((current) => current + 1);
     } catch (err: unknown) {
+      if (uploadedPath) {
+        await removeDocumentFile(uploadedPath).catch(() => undefined);
+      }
       setFormError(err instanceof Error ? err.message : 'Erro ao anexar briefing.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleOpenFile(document: Document) {
+    if (!document.file_url) return;
+
+    try {
+      setOpeningFileId(document.id);
+      const signedUrl = await getDocumentFileSignedUrl(document.file_url);
+      window.open(signedUrl, '_blank', 'noopener,noreferrer');
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : 'Erro ao abrir arquivo.');
+    } finally {
+      setOpeningFileId(null);
     }
   }
 
@@ -120,9 +163,8 @@ export function LandingPageBriefingDocuments({
         <Badge tone="brand">Usado na analise por IA</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Depois de salvar o briefing manual acima, anexe aqui materiais que o cliente ja tenha pronto (documento,
-        apresentacao, PDF hospedado em Drive/Dropbox etc.). Um deles pode ser escolhido como referencia para a
-        analise por IA logo abaixo.
+        Depois de salvar o briefing manual acima, anexe aqui materiais que o cliente ja tenha pronto. O arquivo fica
+        salvo nos Documentos do cliente e pode ser escolhido como referencia para a analise por IA logo abaixo.
       </p>
 
       {loading && <LoadingState title="Carregando briefings anexados" />}
@@ -164,7 +206,19 @@ export function LandingPageBriefingDocuments({
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
+                    {document.file_url && <Badge tone="brand">Arquivo</Badge>}
+                    {document.external_url && <Badge tone="neutral">Link</Badge>}
                     <Badge tone="neutral">Briefing</Badge>
+                    {document.file_url && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={openingFileId === document.id}
+                        onClick={() => void handleOpenFile(document)}
+                      >
+                        {openingFileId === document.id ? 'Abrindo...' : 'Abrir'}
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       variant={isSelected ? 'primary' : 'secondary'}
@@ -183,21 +237,37 @@ export function LandingPageBriefingDocuments({
       {canManage && (
         <div className="mt-4 space-y-2 border-t border-border pt-4">
           {formError && <p className="text-xs text-destructive">{formError}</p>}
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="space-y-3">
             <input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="Nome do briefing (ex.: Briefing enviado pelo cliente)"
+              placeholder="Nome do briefing (opcional se anexar arquivo)"
               disabled={saving}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
             />
-            <input
-              value={externalUrl}
-              onChange={(event) => setExternalUrl(event.target.value)}
-              placeholder="URL do arquivo (Drive, Dropbox, etc.)"
-              disabled={saving}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
-            />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div>
+                <input
+                  key={fileInputKey}
+                  type="file"
+                  accept={DOCUMENT_FILE_ALLOWED_EXTENSIONS.map((extension) => `.${extension}`).join(',')}
+                  disabled={saving}
+                  onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                />
+                <p className="mt-1 text-[11px] text-muted-foreground">PDF, DOCX, TXT ou MD ate 20MB.</p>
+              </div>
+              <div>
+                <input
+                  value={externalUrl}
+                  onChange={(event) => setExternalUrl(event.target.value)}
+                  placeholder="Ou cole uma URL (Drive, Dropbox, etc.)"
+                  disabled={saving}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
+                />
+                <p className="mt-1 text-[11px] text-muted-foreground">Opcional, como alternativa ao upload.</p>
+              </div>
+            </div>
           </div>
           <div className="flex justify-end">
             <Button type="button" variant="secondary" disabled={saving} onClick={() => void handleAttach()}>

@@ -17,7 +17,7 @@
 //   por CORS/robots, etc.), a analise segue apenas com titulo + dados ja cadastrados do cliente,
 //   e isso fica marcado no resultado.
 
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,6 +35,7 @@ interface RequestBody {
   client_id?: string;
   document_id?: string;
   external_url?: string;
+  file_url?: string;
   title?: string;
 }
 
@@ -62,6 +63,7 @@ interface DocumentRow {
   type: string;
   title: string;
   external_url: string | null;
+  file_url: string | null;
 }
 
 const MAX_FETCHED_CONTENT_CHARS = 12000;
@@ -127,6 +129,35 @@ async function tryFetchExternalContent(url: string): Promise<{ content: string |
     const reason = err instanceof Error ? err.message : 'erro desconhecido';
     return { content: null, note: `Nao foi possivel ler o conteudo do link automaticamente (${reason}).` };
   }
+}
+
+async function tryDownloadStoredContent(
+  supabase: SupabaseClient,
+  path: string,
+): Promise<{ content: string | null; note: string }> {
+  const extension = path.split('.').pop()?.toLowerCase() ?? '';
+
+  if (extension !== 'txt' && extension !== 'md') {
+    return {
+      content: null,
+      note: `Arquivo salvo no HubLevel (${extension || 'sem extensao'}) ainda nao tem leitura automatica nesta etapa. TXT e MD ja podem ser lidos; PDF/DOCX ficam anexados para uso e parser futuro.`,
+    };
+  }
+
+  const { data, error } = await supabase.storage.from('client-documents').download(path);
+  if (error) {
+    return { content: null, note: `Nao foi possivel baixar o arquivo salvo no HubLevel (${error.message}).` };
+  }
+
+  const text = (await data.text()).replace(/\s+/g, ' ').trim();
+  if (!text) {
+    return { content: null, note: 'O arquivo salvo no HubLevel foi aberto, mas nao tinha texto legivel.' };
+  }
+
+  return {
+    content: text.slice(0, MAX_FETCHED_CONTENT_CHARS),
+    note: 'Conteudo do arquivo salvo no HubLevel lido automaticamente.',
+  };
 }
 
 function buildPrompt(
@@ -224,7 +255,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: document, error: documentError } = await supabase
       .from('documents')
-      .select('id, client_id, type, title, external_url')
+      .select('id, client_id, type, title, external_url, file_url')
       .eq('id', documentId)
       .eq('client_id', clientId)
       .is('deleted_at', null)
@@ -247,11 +278,16 @@ Deno.serve(async (req: Request) => {
     }
 
     let fetchedContent: string | null = null;
-    let fetchNote = 'Nenhum link informado.';
-    if (document.external_url) {
-      const result = await tryFetchExternalContent(document.external_url);
+    let fetchNote = 'Nenhum arquivo ou link informado.';
+    if (document.file_url) {
+      const result = await tryDownloadStoredContent(supabase, document.file_url);
       fetchedContent = result.content;
       fetchNote = result.note;
+    }
+    if (!fetchedContent && document.external_url) {
+      const result = await tryFetchExternalContent(document.external_url);
+      fetchedContent = result.content;
+      fetchNote = `${fetchNote} Link externo: ${result.note}`;
     }
 
     const model = 'gpt-4o-mini';

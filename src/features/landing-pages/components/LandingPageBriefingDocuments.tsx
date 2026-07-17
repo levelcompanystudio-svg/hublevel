@@ -20,6 +20,7 @@ interface LandingPageBriefingDocumentsProps {
   selectedDocumentId: string | null;
   onSelectReference: (document: Document) => void;
   onCountChange?: (count: number) => void;
+  aiEnabled?: boolean;
 }
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
@@ -39,6 +40,7 @@ export function LandingPageBriefingDocuments({
   selectedDocumentId,
   onSelectReference,
   onCountChange,
+  aiEnabled = true,
 }: LandingPageBriefingDocumentsProps) {
   const { profile } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -160,11 +162,13 @@ export function LandingPageBriefingDocuments({
           <StepBadge step={2} />
           <h3 className="text-sm font-semibold text-foreground">Briefings anexados</h3>
         </div>
-        <Badge tone="brand">Usado na analise por IA</Badge>
+        <Badge tone={aiEnabled ? 'brand' : 'neutral'}>
+          {aiEnabled ? 'Usado na analise por IA' : 'Arquivo do cliente'}
+        </Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
         Depois de salvar o briefing manual acima, anexe aqui materiais que o cliente ja tenha pronto. O arquivo fica
-        salvo nos Documentos do cliente e pode ser escolhido como referencia para a analise por IA logo abaixo.
+        salvo nos Documentos do cliente e pode ser reutilizado nesta LP e em outros pontos do HubLevel.
       </p>
 
       {loading && <LoadingState title="Carregando briefings anexados" />}
@@ -219,13 +223,15 @@ export function LandingPageBriefingDocuments({
                         {openingFileId === document.id ? 'Abrindo...' : 'Abrir'}
                       </Button>
                     )}
-                    <Button
-                      type="button"
-                      variant={isSelected ? 'primary' : 'secondary'}
-                      onClick={() => onSelectReference(document)}
-                    >
-                      {isSelected ? 'Referencia selecionada' : 'Usar como referencia'}
-                    </Button>
+                    {aiEnabled && (
+                      <Button
+                        type="button"
+                        variant={isSelected ? 'primary' : 'secondary'}
+                        onClick={() => onSelectReference(document)}
+                      >
+                        {isSelected ? 'Referencia selecionada' : 'Usar como referencia'}
+                      </Button>
+                    )}
                   </div>
                 </div>
               );

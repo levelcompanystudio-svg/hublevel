@@ -377,6 +377,12 @@ allow_dynamic_registration = false
 [functions.get-public-landing-page]
 verify_jwt = false
 
+# create-landing-page-lead recebe o envio do formulario de lead na LP publica (sem login). So ela
+# pode inserir em `landing_page_leads` (nao ha policy publica de insert nessa tabela); resolve
+# client_id no servidor a partir do landing_page_id e nunca devolve o registro criado.
+[functions.create-landing-page-lead]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

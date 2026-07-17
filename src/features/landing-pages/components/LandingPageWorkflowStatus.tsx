@@ -7,6 +7,7 @@ interface LandingPageWorkflowStatusProps {
   analysisDone: boolean;
   contentGenerated: boolean;
   previewAvailable: boolean;
+  aiEnabled?: boolean;
 }
 
 interface StepDefinition {
@@ -24,12 +25,17 @@ export function LandingPageWorkflowStatus({
   analysisDone,
   contentGenerated,
   previewAvailable,
+  aiEnabled = true,
 }: LandingPageWorkflowStatusProps) {
   const steps: StepDefinition[] = [
     { key: 'briefing', label: 'Briefing salvo', done: briefingSaved },
     { key: 'attachment', label: 'Briefing anexado', done: briefingAttached },
-    { key: 'analysis', label: 'Analise IA realizada', done: analysisDone },
-    { key: 'content', label: 'Conteudo gerado', done: contentGenerated },
+    ...(aiEnabled
+      ? [
+          { key: 'analysis', label: 'Analise IA realizada', done: analysisDone },
+          { key: 'content', label: 'Conteudo gerado', done: contentGenerated },
+        ]
+      : []),
     { key: 'preview', label: 'Preview disponivel', done: previewAvailable },
   ];
 

@@ -14,9 +14,10 @@ import { LandingPageBriefingDocuments } from '../../landing-pages/components/Lan
 import { LandingPageBriefingForm } from '../../landing-pages/components/LandingPageBriefingForm';
 import { LandingPageFutureActions } from '../../landing-pages/components/LandingPageFutureActions';
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
-import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPageLeadsInfo';
+import { LandingPageLeadsPanel } from '../../landing-pages/components/LandingPageLeadsPanel';
 import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
 import { LandingPageWorkflowStatus } from '../../landing-pages/components/LandingPageWorkflowStatus';
+import { LANDING_PAGE_AI_ENABLED } from '../../landing-pages/landing-page-feature-flags';
 import { applyBriefingAnalysisToValues, initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
 import type {
   ClientLandingPage,
@@ -172,6 +173,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         analysisDone={analysisStatus === 'analyzed' || analysisStatus === 'applied'}
         contentGenerated={contentGenerated}
         previewAvailable={Boolean(page)}
+        aiEnabled={LANDING_PAGE_AI_ENABLED}
       />
 
       {saveError && <ErrorState title="Erro ao salvar" description={saveError} />}
@@ -198,33 +200,38 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         selectedDocumentId={referenceDocument?.id ?? null}
         onSelectReference={handleSelectReference}
         onCountChange={setBriefingDocumentsCount}
+        aiEnabled={LANDING_PAGE_AI_ENABLED}
       />
 
-      {/* 3. Analise do briefing selecionado, com opcao de aplicar ao formulario do passo 1 */}
-      <LandingPageBriefingAnalysis
-        selectedDocument={referenceDocument}
-        status={analysisStatus}
-        analysis={analysisResult}
-        error={analysisError}
-        onAnalyze={() => void handleAnalyze()}
-        onApply={handleApplyAnalysis}
-      />
+      {LANDING_PAGE_AI_ENABLED && (
+        <>
+          {/* 3. Analise do briefing selecionado, com opcao de aplicar ao formulario do passo 1 */}
+          <LandingPageBriefingAnalysis
+            selectedDocument={referenceDocument}
+            status={analysisStatus}
+            analysis={analysisResult}
+            error={analysisError}
+            onAnalyze={() => void handleAnalyze()}
+            onApply={handleApplyAnalysis}
+          />
 
-      {/* 4. Geracao de conteudo com IA a partir do briefing salvo */}
-      <LandingPageFutureActions
-        canGenerate={canManage}
-        generating={generating}
-        generateDisabledReason={!page ? 'Salve o briefing antes de gerar com IA' : undefined}
-        generateError={generateError}
-        onGenerate={() => void handleGenerate()}
-      />
-      {generation && <LandingPageGeneratedContent generation={generation} />}
+          {/* 4. Geracao de conteudo com IA a partir do briefing salvo */}
+          <LandingPageFutureActions
+            canGenerate={canManage}
+            generating={generating}
+            generateDisabledReason={!page ? 'Salve o briefing antes de gerar com IA' : undefined}
+            generateError={generateError}
+            onGenerate={() => void handleGenerate()}
+          />
+          {generation && <LandingPageGeneratedContent generation={generation} />}
+        </>
+      )}
 
       {/* 5. Preview interno do resultado */}
       <LandingPagePreview page={page} generation={generation} />
 
-      {/* Referencia sobre a etapa futura de publicacao/leads, fora do fluxo operacional atual */}
-      <LandingPageLeadsInfo />
+      {/* 6. Leads recebidos pelo formulario da landing page publica */}
+      <LandingPageLeadsPanel clientId={client.id} hasPublishedLink={Boolean(page)} />
     </div>
   );
 }

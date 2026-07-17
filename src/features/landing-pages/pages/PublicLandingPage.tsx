@@ -6,7 +6,19 @@ import type { PublicLandingPageData } from '../landing-page-public.api';
 import { PublicLandingCta } from '../components/PublicLandingCta';
 import { PublicLandingFaq } from '../components/PublicLandingFaq';
 import { PublicLandingHero } from '../components/PublicLandingHero';
+import { PublicLandingLeadForm } from '../components/PublicLandingLeadForm';
 import { PublicLandingSection } from '../components/PublicLandingSection';
+
+function getUtmParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utmSource: params.get('utm_source'),
+    utmMedium: params.get('utm_medium'),
+    utmCampaign: params.get('utm_campaign'),
+    utmContent: params.get('utm_content'),
+    utmTerm: params.get('utm_term'),
+  };
+}
 
 // Rota publica /lp/:id - sem login, sem sidebar/topbar do app. Usa o `id` da landing page como
 // identificador temporario (nao existe coluna `slug` em `client_landing_pages` ainda; ver
@@ -19,6 +31,7 @@ export function PublicLandingPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [utms] = useState(getUtmParams);
 
   useEffect(() => {
     if (!id) {
@@ -97,6 +110,7 @@ export function PublicLandingPage() {
           <PublicLandingSection content={content} />
           <PublicLandingFaq content={content} />
           <PublicLandingCta content={content} interactive />
+          <PublicLandingLeadForm landingPageId={data.page.id} content={content} utms={utms} />
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { useAuth } from '../../auth/useAuth';
 import { generateLandingPageCopy, getLatestLandingPageAiGeneration } from '../../landing-pages/landing-page-ai.api';
 import type { LandingPageAiGeneration } from '../../landing-pages/landing-page-ai.types';
 import { createClientLandingPage, getClientLandingPage, updateClientLandingPage } from '../../landing-pages/landing-page.api';
+import { LandingPageBriefingDocuments } from '../../landing-pages/components/LandingPageBriefingDocuments';
 import { LandingPageBriefingForm } from '../../landing-pages/components/LandingPageBriefingForm';
 import { LandingPageFutureActions } from '../../landing-pages/components/LandingPageFutureActions';
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
@@ -123,6 +124,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         onChange={setValues}
         onSubmit={() => void handleSubmit()}
       />
+      <LandingPageBriefingDocuments clientId={client.id} canManage={canManage} />
       <div className="grid gap-4 lg:grid-cols-2">
         <LandingPageFutureActions
           canGenerate={canManage}

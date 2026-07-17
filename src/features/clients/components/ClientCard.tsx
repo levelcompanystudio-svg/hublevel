@@ -52,9 +52,7 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative shrink-0">
             <ClientAvatar name={displayName} logoUrl={logoUrl} />
-            <div className="absolute -bottom-1.5 -right-1.5">
-              <ClientLogoSettings clientId={client.id} hasLogo={Boolean(logoUrl)} onUpdated={(updated) => setLogoUrl(updated.logo_url)} />
-            </div>
+            <ClientLogoSettings clientId={client.id} hasLogo={Boolean(logoUrl)} onUpdated={(updated) => setLogoUrl(updated.logo_url)} />
           </div>
           <div className="min-w-0">
             <h3 className="truncate text-[15px] font-semibold text-foreground">{displayName}</h3>

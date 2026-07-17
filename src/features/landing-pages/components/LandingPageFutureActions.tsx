@@ -1,4 +1,5 @@
 import { Button, Card } from '../../../components/ui';
+import { getLandingPageAiErrorMessage } from '../landing-page-ai.errors';
 
 interface LandingPageFutureActionsProps {
   canGenerate: boolean;
@@ -16,6 +17,7 @@ export function LandingPageFutureActions({
   onGenerate,
 }: LandingPageFutureActionsProps) {
   const generateDisabled = !canGenerate || generating || Boolean(generateDisabledReason);
+  const friendlyGenerateError = generateError ? getLandingPageAiErrorMessage(generateError) : null;
 
   return (
     <Card className="border-dashed">
@@ -41,7 +43,7 @@ export function LandingPageFutureActions({
           Publicar
         </Button>
       </div>
-      {generateError && <p className="mt-3 text-xs text-destructive">{generateError}</p>}
+      {friendlyGenerateError && <p className="mt-3 text-xs text-destructive">{friendlyGenerateError}</p>}
     </Card>
   );
 }

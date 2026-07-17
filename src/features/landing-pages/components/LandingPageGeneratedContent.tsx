@@ -1,4 +1,5 @@
 import { Badge, Card } from '../../../components/ui';
+import { getLandingPageAiErrorMessage, shouldShowLandingPageAiTechnicalDetails } from '../landing-page-ai.errors';
 import type { LandingPageAiGeneration } from '../landing-page-ai.types';
 
 interface LandingPageGeneratedContentProps {
@@ -12,6 +13,8 @@ function formatDateTime(value: string): string {
 export function LandingPageGeneratedContent({ generation }: LandingPageGeneratedContentProps) {
   const content = generation.generated_content;
   const isFailed = generation.status === 'failed';
+  const friendlyError = getLandingPageAiErrorMessage(generation.error_message);
+  const showTechnicalDetails = shouldShowLandingPageAiTechnicalDetails(generation.error_message);
 
   return (
     <Card>
@@ -24,7 +27,19 @@ export function LandingPageGeneratedContent({ generation }: LandingPageGenerated
       </div>
 
       {isFailed ? (
-        <p className="mt-3 text-sm text-destructive">{generation.error_message || 'A geracao falhou.'}</p>
+        <div className="mt-3 rounded-lg border border-destructive/25 bg-destructive/10 p-3">
+          <p className="text-sm font-medium text-destructive">{friendlyError}</p>
+          {showTechnicalDetails && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+                Ver detalhe tecnico
+              </summary>
+              <p className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap break-words rounded-md bg-background/70 p-2 text-[11px] leading-4 text-muted-foreground">
+                {generation.error_message}
+              </p>
+            </details>
+          )}
+        </div>
       ) : (
         <div className="mt-4 space-y-5">
           {content.headline && (

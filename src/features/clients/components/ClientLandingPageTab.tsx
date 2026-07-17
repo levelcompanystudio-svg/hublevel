@@ -11,6 +11,7 @@ import { LandingPageBriefingForm } from '../../landing-pages/components/LandingP
 import { LandingPageFutureActions } from '../../landing-pages/components/LandingPageFutureActions';
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
 import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPageLeadsInfo';
+import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
 import { initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
 import type { ClientLandingPage, LandingPageBriefingValues } from '../../landing-pages/landing-page.types';
 import type { Client } from '../clients.types';
@@ -133,6 +134,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         <LandingPageLeadsInfo />
       </div>
       {generation && <LandingPageGeneratedContent generation={generation} />}
+      <LandingPagePreview page={page} generation={generation} />
     </div>
   );
 }

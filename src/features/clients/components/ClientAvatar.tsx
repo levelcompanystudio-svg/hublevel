@@ -29,15 +29,24 @@ function initialsFor(name: string): string {
 
 interface ClientAvatarProps {
   name: string;
+  logoUrl?: string | null;
   size?: 'sm' | 'md';
 }
 
-// Nao ha campo de logo real no schema de clientes (sem upload/storage nesta etapa); usamos um
-// "logo" gerado deterministicamente a partir do nome (iniciais + cor estavel), no mesmo espirito
-// visual de avatares de SaaS, sem inventar nenhum dado.
-export function ClientAvatar({ name, size = 'md' }: ClientAvatarProps) {
+// Quando o cliente tem uma logo real enviada (logo_url), ela e exibida. Caso contrario, cai para
+// um "logo" gerado deterministicamente a partir do nome (iniciais + cor estavel), sem inventar
+// nenhum dado.
+export function ClientAvatar({ name, logoUrl, size = 'md' }: ClientAvatarProps) {
   const color = PALETTE[hashString(name) % PALETTE.length];
   const sizeClass = size === 'sm' ? 'h-8 w-8 text-[11px]' : 'h-11 w-11 text-sm';
+
+  if (logoUrl) {
+    return (
+      <div className={`${sizeClass} shrink-0 overflow-hidden rounded-xl border border-border bg-white shadow-sm`}>
+        <img src={logoUrl} alt={name} className="h-full w-full object-contain" />
+      </div>
+    );
+  }
 
   return (
     <div

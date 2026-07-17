@@ -1,10 +1,12 @@
 import { Bell } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card } from '../../../components/ui';
 import type { ClientAggregate } from '../client-aggregates.types';
 import type { Client } from '../clients.types';
 import { ClientAvatar } from './ClientAvatar';
 import { ClientHealthBadge } from './ClientHealthBadge';
+import { ClientLogoSettings } from './ClientLogoSettings';
 import { ClientStatusBadge } from './ClientStatusBadge';
 
 interface ClientCardProps {
@@ -40,6 +42,7 @@ function getAlertReasons(client: Client, aggregate: ClientAggregate): string[] {
 export function ClientCard({ client, aggregate }: ClientCardProps) {
   const displayName = client.trade_name || client.company_name;
   const alertReasons = getAlertReasons(client, aggregate);
+  const [logoUrl, setLogoUrl] = useState(client.logo_url);
 
   return (
     <Card
@@ -47,7 +50,12 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <ClientAvatar name={displayName} />
+          <div className="relative shrink-0">
+            <ClientAvatar name={displayName} logoUrl={logoUrl} />
+            <div className="absolute -bottom-1.5 -right-1.5">
+              <ClientLogoSettings clientId={client.id} hasLogo={Boolean(logoUrl)} onUpdated={(updated) => setLogoUrl(updated.logo_url)} />
+            </div>
+          </div>
           <div className="min-w-0">
             <h3 className="truncate text-[15px] font-semibold text-foreground">{displayName}</h3>
             <p className="mt-0.5 truncate text-xs text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>

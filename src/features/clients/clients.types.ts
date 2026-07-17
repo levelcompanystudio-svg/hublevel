@@ -24,6 +24,7 @@ export interface Client {
   start_date: string | null;
   end_date: string | null;
   notes: string | null;
+  logo_url: string | null;
   created_at: string;
   updated_at: string;
   responsible?: ResponsibleProfile | null;

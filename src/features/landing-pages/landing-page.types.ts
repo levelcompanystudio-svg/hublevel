@@ -112,3 +112,36 @@ export function landingPageToValues(page: ClientLandingPage): LandingPageBriefin
     observations: page.observations ?? '',
   };
 }
+
+// --- Analise de briefing (preparacao para IA, etapa futura) -----------------------------------
+//
+// Nada abaixo chama IA, API externa ou salva no banco. E apenas o contrato de dados que o
+// frontend ja deixa pronto para quando a analise automatica de um briefing anexado (documents
+// com type = 'briefing') existir de verdade.
+
+export type LandingPageBriefingAnalysisStatus = 'idle' | 'awaiting_analysis';
+
+export interface LandingPageBriefingAnalysisFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface LandingPageBriefingAnalysisSection {
+  title: string;
+  body: string;
+}
+
+export interface LandingPageBriefingAnalysisResult {
+  companyName: string | null;
+  segment: string | null;
+  audience: string | null;
+  offer: string | null;
+  services: string[];
+  differentiators: string[];
+  painPoints: string[];
+  objections: string[];
+  faq: LandingPageBriefingAnalysisFaqItem[];
+  toneOfVoice: string | null;
+  suggestedCta: string | null;
+  landingPageSections: LandingPageBriefingAnalysisSection[];
+}

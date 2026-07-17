@@ -7,6 +7,7 @@ import { useAuth } from '../../auth/useAuth';
 import { generateLandingPageCopy, getLatestLandingPageAiGeneration } from '../../landing-pages/landing-page-ai.api';
 import type { LandingPageAiGeneration } from '../../landing-pages/landing-page-ai.types';
 import { createClientLandingPage, getClientLandingPage, updateClientLandingPage } from '../../landing-pages/landing-page.api';
+import { LandingPageBriefingAnalysis } from '../../landing-pages/components/LandingPageBriefingAnalysis';
 import { LandingPageBriefingDocuments } from '../../landing-pages/components/LandingPageBriefingDocuments';
 import { LandingPageBriefingForm } from '../../landing-pages/components/LandingPageBriefingForm';
 import { LandingPageFutureActions } from '../../landing-pages/components/LandingPageFutureActions';
@@ -15,6 +16,7 @@ import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPage
 import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
 import { initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
 import type { ClientLandingPage, LandingPageBriefingValues } from '../../landing-pages/landing-page.types';
+import type { Document } from '../../documents/documents.types';
 import type { Client } from '../clients.types';
 
 interface ClientLandingPageTabProps {
@@ -34,6 +36,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   const [generation, setGeneration] = useState<LandingPageAiGeneration | null>(null);
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [referenceDocument, setReferenceDocument] = useState<Document | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -55,6 +58,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         setPage(existing);
         setValues(existing ? landingPageToValues(existing) : initialValuesForClient(client));
         setGeneration(latestGeneration);
+        setReferenceDocument(null);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar briefing da landing page.');
       } finally {
@@ -124,7 +128,13 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         onChange={setValues}
         onSubmit={() => void handleSubmit()}
       />
-      <LandingPageBriefingDocuments clientId={client.id} canManage={canManage} />
+      <LandingPageBriefingDocuments
+        clientId={client.id}
+        canManage={canManage}
+        selectedDocumentId={referenceDocument?.id ?? null}
+        onSelectReference={setReferenceDocument}
+      />
+      <LandingPageBriefingAnalysis selectedDocument={referenceDocument} />
       <div className="grid gap-4 lg:grid-cols-2">
         <LandingPageFutureActions
           canGenerate={canManage}

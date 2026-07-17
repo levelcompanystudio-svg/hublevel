@@ -9,6 +9,8 @@ import type { Document } from '../../documents/documents.types';
 interface LandingPageBriefingDocumentsProps {
   clientId: string;
   canManage: boolean;
+  selectedDocumentId: string | null;
+  onSelectReference: (document: Document) => void;
 }
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
@@ -24,7 +26,12 @@ function formatDate(value: string): string {
 // sem tabela nova. O HubLevel ainda nao tem upload real de arquivo (Storage) para documentos -
 // "anexar" aqui significa colar o link de um arquivo ja hospedado (Drive, Dropbox etc.), exatamente
 // como o resto do modulo de Documentos ja funciona hoje.
-export function LandingPageBriefingDocuments({ clientId, canManage }: LandingPageBriefingDocumentsProps) {
+export function LandingPageBriefingDocuments({
+  clientId,
+  canManage,
+  selectedDocumentId,
+  onSelectReference,
+}: LandingPageBriefingDocumentsProps) {
   const { profile } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,10 +127,13 @@ export function LandingPageBriefingDocuments({ clientId, canManage }: LandingPag
           ) : (
             documents.map((document) => {
               const creator = firstRelation(document.creator);
+              const isSelected = document.id === selectedDocumentId;
               return (
                 <div
                   key={document.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface/40 px-3 py-2.5"
+                  className={`flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2.5 transition ${
+                    isSelected ? 'border-primary/60 bg-primary/5' : 'border-border bg-surface/40'
+                  }`}
                 >
                   <div className="min-w-0">
                     {document.external_url ? (
@@ -143,7 +153,16 @@ export function LandingPageBriefingDocuments({ clientId, canManage }: LandingPag
                       {creator?.name ? ` por ${creator.name}` : ''}
                     </p>
                   </div>
-                  <Badge tone="neutral">Briefing</Badge>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Badge tone="neutral">Briefing</Badge>
+                    <Button
+                      type="button"
+                      variant={isSelected ? 'primary' : 'secondary'}
+                      onClick={() => onSelectReference(document)}
+                    >
+                      {isSelected ? 'Referencia selecionada' : 'Usar como referencia'}
+                    </Button>
+                  </div>
                 </div>
               );
             })

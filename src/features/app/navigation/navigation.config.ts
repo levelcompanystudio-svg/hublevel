@@ -136,7 +136,7 @@ export const navigationItems: NavigationItem[] = [
   {
     path: '/app/integracoes',
     label: 'Integracoes',
-    description: 'Meta Ads, Google Ads, CRM e WhatsApp (nao conectado)',
+    description: 'Status de conexao Meta Ads e Google Ads por cliente',
     icon: Plug,
     roles: ['admin', 'gestor'],
     group: 'Gestao',

@@ -1,6 +1,7 @@
+import { FunctionsHttpError } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 import type { UserStatus } from '../auth/auth.types';
-import type { ManagedProfile, RoleOption } from './settings.types';
+import type { CreateUserValues, ManagedProfile, RoleOption } from './settings.types';
 
 const profileSelect = `
   id,
@@ -61,4 +62,34 @@ export async function updateOwnName(profileId: string, name: string): Promise<vo
     .eq('id', profileId);
 
   if (error) throw error;
+}
+
+interface CreateUserResponse {
+  profile?: ManagedProfile;
+  error?: string;
+}
+
+export async function createUser(values: CreateUserValues): Promise<ManagedProfile> {
+  const { data, error } = await supabase.functions.invoke<CreateUserResponse>('create-app-user', {
+    body: {
+      name: values.name.trim(),
+      email: values.email.trim(),
+      password: values.password,
+    },
+  });
+
+  if (error) {
+    let message = error.message || 'Erro ao cadastrar usuario.';
+    if (error instanceof FunctionsHttpError) {
+      const body = await error.context.json().catch(() => null);
+      if (body?.error) message = body.error;
+    }
+    throw new Error(message);
+  }
+
+  if (!data?.profile) {
+    throw new Error(data?.error || 'Resposta invalida ao cadastrar usuario.');
+  }
+
+  return data.profile;
 }

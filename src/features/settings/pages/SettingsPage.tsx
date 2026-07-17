@@ -6,6 +6,7 @@ import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlac
 import { useAuth } from '../../auth/useAuth';
 import { listProfiles, listRoles, updateProfileRole, updateProfileStatus } from '../settings.api';
 import type { ManagedProfile, RoleOption } from '../settings.types';
+import { CreateUserForm } from '../components/CreateUserForm';
 import { ProfileNameForm } from '../components/ProfileNameForm';
 import { UserTable } from '../components/UserTable';
 
@@ -100,6 +101,14 @@ export function SettingsPage() {
           onUpdated={(name) => {
             setOwnName(name);
             setProfiles((current) => current.map((item) => (item.id === profile.id ? { ...item, name } : item)));
+          }}
+        />
+      )}
+
+      {!loading && !error && (
+        <CreateUserForm
+          onCreated={(createdProfile) => {
+            setProfiles((current) => [createdProfile, ...current].sort((a, b) => a.name.localeCompare(b.name)));
           }}
         />
       )}

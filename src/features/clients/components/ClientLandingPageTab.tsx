@@ -16,6 +16,7 @@ import { LandingPageFutureActions } from '../../landing-pages/components/Landing
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
 import { LandingPageLeadsInfo } from '../../landing-pages/components/LandingPageLeadsInfo';
 import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
+import { LandingPageWorkflowStatus } from '../../landing-pages/components/LandingPageWorkflowStatus';
 import { applyBriefingAnalysisToValues, initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
 import type {
   ClientLandingPage,
@@ -44,6 +45,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [referenceDocument, setReferenceDocument] = useState<Document | null>(null);
+  const [briefingDocumentsCount, setBriefingDocumentsCount] = useState(0);
   const [analysisStatus, setAnalysisStatus] = useState<LandingPageBriefingAnalysisStatus>('idle');
   const [analysisResult, setAnalysisResult] = useState<LandingPageBriefingAnalysisResult | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -159,8 +161,18 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   if (loading) return <LoadingState title="Carregando briefing da landing page" />;
   if (error) return <ErrorState description={error} />;
 
+  const contentGenerated = generation?.status === 'generated';
+
   return (
     <div className="space-y-4">
+      <LandingPageWorkflowStatus
+        briefingSaved={Boolean(page)}
+        briefingAttached={briefingDocumentsCount > 0}
+        analysisDone={analysisStatus === 'analyzed' || analysisStatus === 'applied'}
+        contentGenerated={contentGenerated}
+        previewAvailable={Boolean(page)}
+      />
+
       {saveError && <ErrorState title="Erro ao salvar" description={saveError} />}
       {savedAt && !saving && !saveError && (
         <div className="flex items-center gap-2 rounded-lg border border-success/40 bg-success/10 px-4 py-3 text-sm text-success">
@@ -168,6 +180,8 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
           Briefing salvo com sucesso.
         </div>
       )}
+
+      {/* 1. Briefing manual */}
       <LandingPageBriefingForm
         values={values}
         status={page?.status ?? null}
@@ -175,12 +189,17 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         onChange={setValues}
         onSubmit={() => void handleSubmit()}
       />
+
+      {/* 2. Briefings anexados (materiais do cliente) */}
       <LandingPageBriefingDocuments
         clientId={client.id}
         canManage={canManage}
         selectedDocumentId={referenceDocument?.id ?? null}
         onSelectReference={handleSelectReference}
+        onCountChange={setBriefingDocumentsCount}
       />
+
+      {/* 3. Analise do briefing selecionado, com opcao de aplicar ao formulario do passo 1 */}
       <LandingPageBriefingAnalysis
         selectedDocument={referenceDocument}
         status={analysisStatus}
@@ -189,18 +208,22 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         onAnalyze={() => void handleAnalyze()}
         onApply={handleApplyAnalysis}
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <LandingPageFutureActions
-          canGenerate={canManage}
-          generating={generating}
-          generateDisabledReason={!page ? 'Salve o briefing antes de gerar com IA' : undefined}
-          generateError={generateError}
-          onGenerate={() => void handleGenerate()}
-        />
-        <LandingPageLeadsInfo />
-      </div>
+
+      {/* 4. Geracao de conteudo com IA a partir do briefing salvo */}
+      <LandingPageFutureActions
+        canGenerate={canManage}
+        generating={generating}
+        generateDisabledReason={!page ? 'Salve o briefing antes de gerar com IA' : undefined}
+        generateError={generateError}
+        onGenerate={() => void handleGenerate()}
+      />
       {generation && <LandingPageGeneratedContent generation={generation} />}
+
+      {/* 5. Preview interno do resultado */}
       <LandingPagePreview page={page} generation={generation} />
+
+      {/* Referencia sobre a etapa futura de publicacao/leads, fora do fluxo operacional atual */}
+      <LandingPageLeadsInfo />
     </div>
   );
 }

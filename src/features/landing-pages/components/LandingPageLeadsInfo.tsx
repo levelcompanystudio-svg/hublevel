@@ -1,4 +1,4 @@
-import { Card } from '../../../components/ui';
+import { Badge, Card } from '../../../components/ui';
 
 const steps = [
   'A landing page e publicada com um formulario ou botao de WhatsApp conectado ao CTA principal.',
@@ -9,11 +9,14 @@ const steps = [
 
 export function LandingPageLeadsInfo() {
   return (
-    <Card>
-      <h3 className="text-sm font-semibold text-foreground">Como os leads vao funcionar</h3>
+    <Card className="border-dashed">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-foreground">Como os leads vao funcionar</h3>
+        <Badge tone="neutral">Etapa futura</Badge>
+      </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
         Nenhum lead e capturado hoje. Esta secao descreve o fluxo planejado para quando a landing page for publicada
-        de verdade.
+        de verdade - nao faz parte do fluxo operacional atual, e so uma referencia do que vem depois.
       </p>
       <ol className="mt-4 space-y-2.5">
         {steps.map((step, index) => (

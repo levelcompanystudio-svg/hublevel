@@ -1,5 +1,6 @@
 import { Button, Card } from '../../../components/ui';
 import { getLandingPageAiErrorMessage } from '../landing-page-ai.errors';
+import { StepBadge } from './LandingPageStepBadge';
 
 interface LandingPageFutureActionsProps {
   canGenerate: boolean;
@@ -20,30 +21,39 @@ export function LandingPageFutureActions({
   const friendlyGenerateError = generateError ? getLandingPageAiErrorMessage(generateError) : null;
 
   return (
-    <Card className="border-dashed">
-      <h3 className="text-sm font-semibold text-foreground">Proximos passos</h3>
+    <Card>
+      <div className="flex items-center gap-2">
+        <StepBadge step={4} />
+        <h3 className="text-sm font-semibold text-foreground">Gerar conteudo com IA</h3>
+      </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        "Gerar com IA" cria um rascunho textual a partir do briefing salvo. "Criar LP" e "Publicar" continuam
-        desabilitados de proposito: nenhum dos dois cria pagina real nem publica nada hoje.
+        Com o briefing salvo (e, se quiser, ja complementado pela analise de IA), gere um rascunho de copy - headline,
+        secoes, beneficios, FAQ e CTAs - pronto para revisar no preview logo abaixo.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button
           type="button"
-          variant="secondary"
+          variant="primary"
           disabled={generateDisabled}
           title={!canGenerate ? 'Apenas admin/gestor podem gerar conteudo com IA' : generateDisabledReason}
           onClick={onGenerate}
         >
           {generating ? 'Gerando...' : 'Gerar com IA'}
         </Button>
-        <Button type="button" variant="secondary" disabled title="Criacao da LP sera implementada futuramente">
-          Criar LP
-        </Button>
-        <Button type="button" variant="primary" disabled title="Publicacao sera implementada futuramente">
-          Publicar
-        </Button>
       </div>
       {friendlyGenerateError && <p className="mt-3 text-xs text-destructive">{friendlyGenerateError}</p>}
+
+      <div className="mt-4 border-t border-border pt-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Em breve</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button type="button" variant="secondary" disabled title="Criacao da LP sera implementada futuramente">
+            Criar LP
+          </Button>
+          <Button type="button" variant="secondary" disabled title="Publicacao sera implementada futuramente">
+            Publicar
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 }

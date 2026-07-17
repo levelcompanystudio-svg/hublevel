@@ -5,12 +5,14 @@ import { Badge, Button, Card } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { createDocument, listDocumentsByClient } from '../../documents/documents.api';
 import type { Document } from '../../documents/documents.types';
+import { StepBadge } from './LandingPageStepBadge';
 
 interface LandingPageBriefingDocumentsProps {
   clientId: string;
   canManage: boolean;
   selectedDocumentId: string | null;
   onSelectReference: (document: Document) => void;
+  onCountChange?: (count: number) => void;
 }
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
@@ -31,6 +33,7 @@ export function LandingPageBriefingDocuments({
   canManage,
   selectedDocumentId,
   onSelectReference,
+  onCountChange,
 }: LandingPageBriefingDocumentsProps) {
   const { profile } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -40,6 +43,10 @@ export function LandingPageBriefingDocuments({
   const [externalUrl, setExternalUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    onCountChange?.(documents.length);
+  }, [documents, onCountChange]);
 
   useEffect(() => {
     let active = true;
@@ -106,13 +113,16 @@ export function LandingPageBriefingDocuments({
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-foreground">Briefings anexados</h3>
-        <Badge tone="brand">Uso futuro por IA</Badge>
+        <div className="flex items-center gap-2">
+          <StepBadge step={2} />
+          <h3 className="text-sm font-semibold text-foreground">Briefings anexados</h3>
+        </div>
+        <Badge tone="brand">Usado na analise por IA</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Anexe aqui materiais de briefing que o cliente ja tenha pronto (documento, apresentacao, PDF hospedado em
-        Drive/Dropbox etc.). Este material fica salvo no cliente e sera usado futuramente como fonte de leitura para
-        a geracao de landing page com IA - ainda nao ha leitura automatica hoje.
+        Depois de salvar o briefing manual acima, anexe aqui materiais que o cliente ja tenha pronto (documento,
+        apresentacao, PDF hospedado em Drive/Dropbox etc.). Um deles pode ser escolhido como referencia para a
+        analise por IA logo abaixo.
       </p>
 
       {loading && <LoadingState title="Carregando briefings anexados" />}

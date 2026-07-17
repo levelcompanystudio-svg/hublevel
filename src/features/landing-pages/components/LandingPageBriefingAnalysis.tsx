@@ -1,6 +1,7 @@
 import { Badge, Button, Card } from '../../../components/ui';
 import type { Document } from '../../documents/documents.types';
 import type { LandingPageBriefingAnalysisResult, LandingPageBriefingAnalysisStatus } from '../landing-page.types';
+import { StepBadge } from './LandingPageStepBadge';
 
 interface LandingPageBriefingAnalysisProps {
   selectedDocument: Document | null;
@@ -52,12 +53,17 @@ export function LandingPageBriefingAnalysis({
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-foreground">Analise do briefing</h3>
+        <div className="flex items-center gap-2">
+          <StepBadge step={3} />
+          <h3 className="text-sm font-semibold text-foreground">Analise do briefing</h3>
+        </div>
         <Badge tone={badge.tone}>{badge.label}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
         Escolha um briefing anexado acima como referencia e clique em "Analisar briefing" para a IA sugerir um
-        resumo estruturado. Nada e salvo automaticamente - voce revisa e decide se aplica ao formulario manual.
+        resumo estruturado. Nada e salvo automaticamente - revise o resultado e, se fizer sentido, use "Aplicar ao
+        briefing manual" para preencher o formulario do passo 1 (voce ainda precisa clicar em "Salvar briefing" la
+        para confirmar).
       </p>
 
       {!selectedDocument ? (

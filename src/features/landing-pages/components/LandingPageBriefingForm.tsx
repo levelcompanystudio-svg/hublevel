@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Badge, Button, Card } from '../../../components/ui';
 import type { LandingPageBriefingValues, LandingPageStatus } from '../landing-page.types';
+import { StepBadge } from './LandingPageStepBadge';
 
 interface LandingPageBriefingFormProps {
   values: LandingPageBriefingValues;
@@ -25,12 +26,15 @@ export function LandingPageBriefingForm({ values, status, saving, onChange, onSu
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-foreground">Briefing da landing page</h3>
+        <div className="flex items-center gap-2">
+          <StepBadge step={1} />
+          <h3 className="text-sm font-semibold text-foreground">Briefing da landing page</h3>
+        </div>
         <Badge tone={status === 'published' ? 'success' : 'warning'}>{statusLabels[status ?? 'draft']}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        O briefing e salvo no banco por cliente. Geracao por IA, criacao real da LP e publicacao ainda nao estao
-        disponiveis.
+        Ponto de partida do fluxo: preencha e salve o briefing manual. Depois voce podera anexar materiais do
+        cliente, pedir uma analise por IA e gerar um rascunho de conteudo - tudo com base no que for salvo aqui.
       </p>
 
       <div className="mt-6 space-y-6">

@@ -1,6 +1,7 @@
 import { Badge, Card } from '../../../components/ui';
 import type { LandingPageAiGeneration } from '../landing-page-ai.types';
 import type { ClientLandingPage } from '../landing-page.types';
+import { StepBadge } from './LandingPageStepBadge';
 
 interface LandingPagePreviewProps {
   page: ClientLandingPage | null;
@@ -81,7 +82,10 @@ export function LandingPagePreview({ page, generation }: LandingPagePreviewProps
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-foreground">Preview da LP</h3>
+        <div className="flex items-center gap-2">
+          <StepBadge step={5} />
+          <h3 className="text-sm font-semibold text-foreground">Preview da LP</h3>
+        </div>
         <Badge tone={hasAiContent ? 'brand' : 'neutral'}>{hasAiContent ? 'Conteudo gerado por IA' : 'Baseado no briefing'}</Badge>
       </div>
       <p className="mt-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs font-semibold text-warning">

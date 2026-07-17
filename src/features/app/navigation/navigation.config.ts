@@ -9,6 +9,7 @@ import {
   FileSignature,
   FileText,
   LayoutDashboard,
+  LayoutPanelTop,
   ListChecks,
   Plug,
   Settings,
@@ -91,6 +92,14 @@ export const navigationItems: NavigationItem[] = [
     icon: ListChecks,
     roles: ['admin', 'gestor', 'colaborador'],
     group: 'Operacao',
+  },
+  {
+    path: '/app/painel-administrativo',
+    label: 'Painel Administrativo',
+    description: 'Indicadores administrativos e financeiros globais',
+    icon: LayoutPanelTop,
+    roles: ['admin'],
+    group: 'Gestao',
   },
   {
     path: '/app/contratos',

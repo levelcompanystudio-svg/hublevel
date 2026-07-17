@@ -14,6 +14,7 @@ import { ContractDetailsPage } from '../features/contracts/pages/ContractDetails
 import { ContractFormPage } from '../features/contracts/pages/ContractFormPage';
 import { ContractListPage } from '../features/contracts/pages/ContractListPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { AdminDashboardPage } from '../features/dashboard/pages/AdminDashboardPage';
 import { DeliverableDetailsPage } from '../features/deliverables/pages/DeliverableDetailsPage';
 import { DeliverableFormPage } from '../features/deliverables/pages/DeliverableFormPage';
 import { DeliverableListPage } from '../features/deliverables/pages/DeliverableListPage';
@@ -86,6 +87,7 @@ export const AppRoutes: React.FC = () => {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="painel-administrativo" element={<AdminDashboardPage />} />
         <Route path="clientes" element={<ClientListPage />} />
         <Route path="clientes/novo" element={<ClientFormPage />} />
         <Route path="clientes/:id" element={<ClientDetailsPage />} />

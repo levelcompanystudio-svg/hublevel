@@ -1,9 +1,8 @@
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Card } from '../../components/ui';
 import { useAuth } from '../auth/useAuth';
-import { AdminDashboard } from './placeholders/AdminDashboard';
 import { CollaboratorDashboard } from './placeholders/CollaboratorDashboard';
-import { ManagerDashboard } from './placeholders/ManagerDashboard';
+import { ResultsDashboard } from './placeholders/ResultsDashboard';
 
 export function DashboardPage() {
   const { profile } = useAuth();
@@ -14,11 +13,10 @@ export function DashboardPage() {
       <PageHeader
         eyebrow="Visao geral"
         title="Dashboard"
-        description="Painel operacional por papel, com indicadores calculados a partir dos dados reais de clientes, tarefas, reunioes e acompanhamento."
+        description="Panorama geral de resultados: carteira ativa, saude dos clientes e desempenho de campanhas assim que integracoes forem conectadas."
       />
 
-      {role === 'admin' && <AdminDashboard />}
-      {role === 'gestor' && <ManagerDashboard />}
+      {(role === 'admin' || role === 'gestor') && <ResultsDashboard />}
       {role === 'colaborador' && <CollaboratorDashboard />}
       {!role && (
         <Card>

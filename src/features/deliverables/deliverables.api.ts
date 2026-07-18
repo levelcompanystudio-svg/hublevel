@@ -112,12 +112,12 @@ export async function getDeliverable(id: string): Promise<Deliverable> {
 export async function listDeliverableClients(): Promise<DeliverableClient[]> {
   const { data, error } = await supabase
     .from('clients')
-    .select('id, company_name, trade_name')
+    .select('id, company_name, trade_name, responsible_user_id, responsible:profiles!clients_responsible_user_id_fkey(id, name, email, roles(name))')
     .is('deleted_at', null)
     .order('company_name', { ascending: true });
 
   if (error) throw error;
-  return (data ?? []) as DeliverableClient[];
+  return (data ?? []) as unknown as DeliverableClient[];
 }
 
 export async function listAssignableProfiles(currentUserId: string, role: RoleName): Promise<DeliverableProfile[]> {

@@ -7,6 +7,8 @@ export interface DeliverableClient {
   id: string;
   company_name: string;
   trade_name: string | null;
+  responsible_user_id?: string;
+  responsible?: DeliverableProfile | DeliverableProfile[] | null;
 }
 
 export interface DeliverableProfile {

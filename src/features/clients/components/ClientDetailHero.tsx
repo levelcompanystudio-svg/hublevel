@@ -12,7 +12,7 @@ interface ClientDetailHeroProps {
 
 export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
   return (
-    <div className="flex flex-col gap-3 border-b border-border pb-5">
+    <div className="flex flex-col gap-2 border-b border-border pb-3">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -23,14 +23,14 @@ export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <h2 className="truncate text-h1 text-foreground">{client.company_name}</h2>
+            <h2 className="truncate text-h2 text-foreground">{client.company_name}</h2>
             {client.trade_name && <span className="truncate text-sm text-muted-foreground">{client.trade_name}</span>}
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2 pl-9">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 pl-9">
             <ClientStatusBadge status={client.status} />
             <ClientHealthBadge status={client.health_status} />
             {client.segment && <span className="text-caption">{client.segment}</span>}
-            <span className="text-caption">Responsável: {client.responsible?.name ?? 'Não definido'}</span>
+            <span className="text-caption">Responsavel: {client.responsible?.name ?? 'Nao definido'}</span>
           </div>
         </div>
 
@@ -41,10 +41,10 @@ export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
                 <Button type="button" variant="ghost" size="sm">Nova tarefa</Button>
               </Link>
               <Link to={`/app/acompanhamento/novo?client_id=${client.id}`}>
-                <Button type="button" variant="ghost" size="sm">Nova atualização</Button>
+                <Button type="button" variant="ghost" size="sm">Nova atualizacao</Button>
               </Link>
               <Link to={`/app/reunioes/novo?client_id=${client.id}`}>
-                <Button type="button" variant="ghost" size="sm">Nova reunião</Button>
+                <Button type="button" variant="ghost" size="sm">Nova reuniao</Button>
               </Link>
               <Link to={`/app/documentos/novo?client_id=${client.id}`}>
                 <Button type="button" variant="ghost" size="sm">Novo documento</Button>

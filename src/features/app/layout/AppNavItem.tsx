@@ -13,10 +13,10 @@ export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
       onClick={onNavigate}
       className={({ isActive }) =>
         [
-          'group relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition',
+          'group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors duration-150',
           isActive
-            ? 'border-primary/30 bg-primary/12 text-sidebar-accent-foreground shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset,0_8px_20px_-10px_var(--color-primary)]'
-            : 'border-transparent text-muted-foreground hover:border-sidebar-border hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+            ? 'bg-sidebar-accent text-sidebar-foreground'
+            : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
         ].join(' ')
       }
     >
@@ -25,26 +25,17 @@ export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
         return (
           <>
             <span
-              className={`absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary transition-opacity ${
+              className={`absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary transition-opacity duration-150 ${
                 isActive ? 'opacity-100' : 'opacity-0'
               }`}
               aria-hidden="true"
             />
-            <span
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition ${
-                isActive
-                  ? 'border-primary/40 bg-primary text-primary-foreground'
-                  : 'border-sidebar-border bg-sidebar text-muted-foreground group-hover:border-primary/30 group-hover:text-sidebar-accent-foreground'
-              }`}
-            >
-              <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-            </span>
-            <span className="min-w-0">
-              <span className={`block truncate ${isActive ? 'font-semibold text-sidebar-foreground' : 'font-medium'}`}>
-                {item.label}
-              </span>
-              <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
-            </span>
+            <Icon
+              className={`h-4 w-4 shrink-0 transition-colors duration-150 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-sidebar-foreground'}`}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+            <span className={`truncate ${isActive ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
           </>
         );
       }}

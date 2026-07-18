@@ -22,7 +22,12 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="hidden md:fixed md:inset-y-0 md:flex">
-        <AppSidebar role={profile?.roles?.name} userName={profile?.name} />
+        <AppSidebar
+          role={profile?.roles?.name}
+          userName={profile?.name}
+          onLogout={() => void handleLogout()}
+          loggingOut={signingOut}
+        />
       </div>
 
       <MobileSidebar
@@ -30,17 +35,13 @@ export function AppLayout() {
         role={profile?.roles?.name}
         userName={profile?.name}
         onClose={() => setMobileMenuOpen(false)}
+        onLogout={() => void handleLogout()}
+        loggingOut={signingOut}
       />
 
-      <div className="min-h-screen md:pl-72">
-        <AppTopbar
-          role={profile?.roles?.name}
-          userName={profile?.name}
-          loading={signingOut}
-          onLogout={() => void handleLogout()}
-          onOpenMenu={() => setMobileMenuOpen(true)}
-        />
-        <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10 xl:py-8">
+      <div className="min-h-screen md:pl-64">
+        <AppTopbar role={profile?.roles?.name} userName={profile?.name} onOpenMenu={() => setMobileMenuOpen(true)} />
+        <main className="mx-auto w-full max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8 xl:px-10">
           <Outlet />
         </main>
       </div>

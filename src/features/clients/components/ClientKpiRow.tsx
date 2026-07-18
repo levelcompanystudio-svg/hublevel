@@ -1,3 +1,4 @@
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
 import type { ClientOverviewMetrics } from '../client-overview.types';
 
@@ -17,7 +18,7 @@ function formatDateTime(value: string | null) {
 
 export function ClientKpiRow({ metrics }: ClientKpiRowProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <StatsGrid>
       <SummaryCard label="Servicos ativos" value={metrics.activeServices} tone="brand" />
       <SummaryCard
         label="Tarefas abertas"
@@ -41,6 +42,6 @@ export function ClientKpiRow({ metrics }: ClientKpiRowProps) {
         description="Tarefas concluidas do total"
       />
       <SummaryCard label="Documentos recentes" value={metrics.recentDocuments.length} />
-    </div>
+    </StatsGrid>
   );
 }

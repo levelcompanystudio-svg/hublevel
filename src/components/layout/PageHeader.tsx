@@ -9,26 +9,13 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, eyebrow, action }: PageHeaderProps) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-card-elevated to-card px-6 py-6 text-card-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_16px_32px_-18px_rgba(0,0,0,0.65)]">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-80"
-        style={{
-          background:
-            'radial-gradient(560px circle at 0% 0%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 65%)',
-        }}
-      />
-      <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0">
-          {eyebrow && (
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
-              {eyebrow}
-            </p>
-          )}
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-[1.75rem]">{title}</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
-        </div>
-        {action && <div className="shrink-0">{action}</div>}
+    <div className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-start lg:justify-between">
+      <div className="min-w-0">
+        {eyebrow && <p className="text-caption mb-1 uppercase tracking-wide text-primary">{eyebrow}</p>}
+        <h2 className="text-h1 text-foreground">{title}</h2>
+        <p className="mt-1.5 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
       </div>
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

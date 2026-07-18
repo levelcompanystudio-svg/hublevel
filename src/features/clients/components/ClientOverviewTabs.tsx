@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { Tabs } from '../../../components/ui';
 import type { RoleName } from '../../auth/auth.types';
 import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overview.types';
 import type { Client } from '../clients.types';
@@ -66,26 +67,12 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-lg border border-border bg-card p-2">
-        <div className="flex min-w-max gap-2" role="tablist" aria-label="Abas do cliente">
-          {visibleTabs.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
-              onClick={() => setActiveTab(tab)}
-              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
-                activeTab === tab
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </div>
+      <Tabs
+        ariaLabel="Abas do cliente"
+        tabs={visibleTabs.map((tab) => ({ key: tab, label: tab }))}
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key as TabName)}
+      />
 
       {activeTab === 'Visao geral' ? (
         overviewLoading ? (

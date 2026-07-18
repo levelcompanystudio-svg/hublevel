@@ -1,5 +1,6 @@
+import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Button, Card } from '../../../components/ui';
+import { Button } from '../../../components/ui';
 import type { Client } from '../clients.types';
 import { ClientHealthBadge } from './ClientHealthBadge';
 import { ClientStatusBadge } from './ClientStatusBadge';
@@ -11,54 +12,50 @@ interface ClientDetailHeroProps {
 
 export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
   return (
-    <Card className="overflow-hidden bg-gradient-to-br from-primary/10 via-card to-card">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-3 border-b border-border pb-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="truncate text-xl font-bold tracking-tight text-foreground">{client.company_name}</h2>
-            {client.trade_name && (
-              <span className="truncate text-sm text-muted-foreground">{client.trade_name}</span>
-            )}
+          <div className="flex items-center gap-2">
+            <Link
+              to="/app/clientes"
+              aria-label="Voltar para clientes"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            </Link>
+            <h2 className="truncate text-h1 text-foreground">{client.company_name}</h2>
+            {client.trade_name && <span className="truncate text-sm text-muted-foreground">{client.trade_name}</span>}
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2 pl-9">
             <ClientStatusBadge status={client.status} />
             <ClientHealthBadge status={client.health_status} />
-            {client.segment && (
-              <span className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                {client.segment}
-              </span>
-            )}
-            <span className="text-xs text-muted-foreground">
-              Responsavel: {client.responsible?.name ?? 'Nao definido'}
-            </span>
+            {client.segment && <span className="text-caption">{client.segment}</span>}
+            <span className="text-caption">Responsável: {client.responsible?.name ?? 'Não definido'}</span>
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap gap-2">
-          <Link to="/app/clientes">
-            <Button type="button" variant="ghost">Voltar</Button>
-          </Link>
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5">
           {canManage && (
             <>
               <Link to={`/app/tarefas/novo?client_id=${client.id}`}>
-                <Button type="button" variant="secondary">Nova tarefa</Button>
+                <Button type="button" variant="ghost" size="sm">Nova tarefa</Button>
               </Link>
               <Link to={`/app/acompanhamento/novo?client_id=${client.id}`}>
-                <Button type="button" variant="secondary">Nova atualizacao</Button>
+                <Button type="button" variant="ghost" size="sm">Nova atualização</Button>
               </Link>
               <Link to={`/app/reunioes/novo?client_id=${client.id}`}>
-                <Button type="button" variant="secondary">Nova reuniao</Button>
+                <Button type="button" variant="ghost" size="sm">Nova reunião</Button>
               </Link>
               <Link to={`/app/documentos/novo?client_id=${client.id}`}>
-                <Button type="button" variant="secondary">Novo documento</Button>
+                <Button type="button" variant="ghost" size="sm">Novo documento</Button>
               </Link>
             </>
           )}
           <Link to={`/app/clientes/${client.id}/editar`}>
-            <Button type="button" variant="primary">Editar</Button>
+            <Button type="button" variant="primary" size="sm">Editar</Button>
           </Link>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

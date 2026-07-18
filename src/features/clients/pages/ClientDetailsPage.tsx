@@ -79,7 +79,7 @@ export function ClientDetailsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {loading && <LoadingState title="Carregando cliente" />}
       {error && <ErrorState description={error} />}
 

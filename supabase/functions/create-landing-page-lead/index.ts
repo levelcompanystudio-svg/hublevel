@@ -120,13 +120,14 @@ Deno.serve(async (req: Request) => {
 
     const { data: landingPage, error: landingPageError } = await supabase
       .from('client_landing_pages')
-      .select('id, client_id')
+      .select('id, client_id, status')
       .eq('id', landingPageId)
       .is('deleted_at', null)
-      .maybeSingle<{ id: string; client_id: string }>();
+      .maybeSingle<{ id: string; client_id: string; status: string }>();
 
     if (landingPageError) return json({ error: landingPageError.message }, 500);
     if (!landingPage) return json({ error: 'Landing page not found.' }, 404);
+    if (landingPage.status !== 'published') return json({ error: 'Landing page is not published.' }, 404);
 
     const userAgent = clip(req.headers.get('user-agent') ?? undefined, 500);
 

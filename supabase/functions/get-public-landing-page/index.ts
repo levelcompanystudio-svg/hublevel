@@ -1,7 +1,7 @@
 // HubLevel Edge Function: get-public-landing-page
 //
 // Unica function do projeto que roda sem exigir login (verify_jwt = false em supabase/config.toml)
-// porque serve a rota publica /lp/:id. Isso e necessario porque a RLS de `client_landing_pages` e
+// porque serve a rota publica /lp/:slug. Isso e necessario porque a RLS de `client_landing_pages` e
 // `landing_page_ai_generations` so libera leitura para admin/gestor autenticados (correto para o
 // resto do app) - nao existe (e nao criamos aqui) nenhuma policy publica nessas tabelas.
 //
@@ -11,9 +11,8 @@
 // inteira, nunca dados de outras tabelas, nunca informacao interna (created_by, updated_by,
 // client_id, observacoes internas etc.).
 //
-// Como nao existe ainda controle real de "publicado" (o botao Publicar continua desabilitado no
-// app), qualquer landing page existente pode ser aberta por este id - e um preview publico
-// temporario, deixado claro tanto aqui quanto na pagina publica.
+// A function so devolve landing pages com status = 'published'. Rascunhos e paginas prontas,
+// mas nao publicadas, respondem como nao encontradas.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
@@ -36,6 +35,7 @@ interface RequestBody {
 interface LandingPageRow {
   id: string;
   status: string;
+  slug: string | null;
   display_name: string | null;
   headline: string | null;
   subheadline: string | null;
@@ -70,8 +70,8 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = (await req.json().catch(() => ({}))) as RequestBody;
-    const id = body.id;
-    if (!id) {
+    const identifier = body.id?.trim();
+    if (!identifier) {
       return json({ error: 'id is required' }, 400);
     }
 
@@ -79,13 +79,16 @@ Deno.serve(async (req: Request) => {
     // pontual e devolver campos whitelisted. Nunca e enviada ao cliente.
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const { data: page, error: pageError } = await supabase
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
+    const pageQuery = supabase
       .from('client_landing_pages')
       .select(
-        'id, status, display_name, headline, subheadline, offer_description, main_cta, whatsapp, contact_email, primary_color, secondary_color, logo_url, hero_image_url, faq, city, state',
+        'id, status, slug, display_name, headline, subheadline, offer_description, main_cta, whatsapp, contact_email, primary_color, secondary_color, logo_url, hero_image_url, faq, city, state',
       )
-      .eq('id', id)
-      .is('deleted_at', null)
+      .eq('status', 'published')
+      .is('deleted_at', null);
+
+    const { data: page, error: pageError } = await (isUuid ? pageQuery.eq('id', identifier) : pageQuery.eq('slug', identifier))
       .maybeSingle<LandingPageRow>();
 
     if (pageError) return json({ error: pageError.message }, 500);

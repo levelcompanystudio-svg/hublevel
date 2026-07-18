@@ -6,6 +6,7 @@ const landingPageSelect = `
   id,
   client_id,
   status,
+  slug,
   display_name,
   legal_name,
   segment,
@@ -100,6 +101,58 @@ export async function updateClientLandingPage(
       updated_by: userId,
     })
     .eq('id', id)
+    .select(landingPageSelect)
+    .single();
+
+  if (error) throw error;
+  return data as ClientLandingPage;
+}
+
+function slugify(value: string): string {
+  const slug = value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase()
+    .slice(0, 70);
+
+  return slug || 'landing-page';
+}
+
+function publicationSlug(values: LandingPageBriefingValues, id: string): string {
+  return `${slugify(values.displayName || values.legalName || 'landing-page')}-${id.slice(0, 8)}`;
+}
+
+export async function publishClientLandingPage(
+  page: ClientLandingPage,
+  values: LandingPageBriefingValues,
+  userId: string,
+): Promise<ClientLandingPage> {
+  const { data, error } = await supabase
+    .from('client_landing_pages')
+    .update({
+      ...toPayload(values),
+      status: 'published',
+      slug: page.slug ?? publicationSlug(values, page.id),
+      updated_by: userId,
+    })
+    .eq('id', page.id)
+    .select(landingPageSelect)
+    .single();
+
+  if (error) throw error;
+  return data as ClientLandingPage;
+}
+
+export async function unpublishClientLandingPage(pageId: string, userId: string): Promise<ClientLandingPage> {
+  const { data, error } = await supabase
+    .from('client_landing_pages')
+    .update({
+      status: 'ready',
+      updated_by: userId,
+    })
+    .eq('id', pageId)
     .select(landingPageSelect)
     .single();
 

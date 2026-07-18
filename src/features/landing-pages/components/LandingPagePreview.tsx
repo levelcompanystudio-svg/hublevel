@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Badge, Button, Card } from '../../../components/ui';
 import type { LandingPageAiGeneration } from '../landing-page-ai.types';
 import { buildLandingPageContent } from '../landing-page-content';
@@ -29,12 +28,12 @@ export function LandingPagePreview({ page, generation }: LandingPagePreviewProps
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs font-semibold text-warning">
         <span>Preview interno. Os botoes abaixo nao sao clicaveis aqui.</span>
-        {page && (
-          <Link to={`/lp/${page.id}`} target="_blank" rel="noreferrer" className="shrink-0">
+        {page?.status === 'published' && (
+          <a href={`/lp/${page.slug ?? page.id}`} target="_blank" rel="noreferrer" className="shrink-0">
             <Button type="button" variant="secondary" className="!py-1 !text-[11px]">
-              Abrir preview publico
+              Abrir pagina publicada
             </Button>
-          </Link>
+          </a>
         )}
       </div>
 

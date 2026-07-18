@@ -8,7 +8,13 @@ import { getLandingPageAiErrorMessage } from '../../landing-pages/landing-page-a
 import { generateLandingPageCopy, getLatestLandingPageAiGeneration } from '../../landing-pages/landing-page-ai.api';
 import type { LandingPageAiGeneration } from '../../landing-pages/landing-page-ai.types';
 import { analyzeBriefingDocument } from '../../landing-pages/landing-page-analysis.api';
-import { createClientLandingPage, getClientLandingPage, updateClientLandingPage } from '../../landing-pages/landing-page.api';
+import {
+  createClientLandingPage,
+  getClientLandingPage,
+  publishClientLandingPage,
+  unpublishClientLandingPage,
+  updateClientLandingPage,
+} from '../../landing-pages/landing-page.api';
 import { LandingPageBriefingAnalysis } from '../../landing-pages/components/LandingPageBriefingAnalysis';
 import { LandingPageBriefingDocuments } from '../../landing-pages/components/LandingPageBriefingDocuments';
 import { LandingPageBriefingForm } from '../../landing-pages/components/LandingPageBriefingForm';
@@ -16,6 +22,7 @@ import { LandingPageFutureActions } from '../../landing-pages/components/Landing
 import { LandingPageGeneratedContent } from '../../landing-pages/components/LandingPageGeneratedContent';
 import { LandingPageLeadsPanel } from '../../landing-pages/components/LandingPageLeadsPanel';
 import { LandingPagePreview } from '../../landing-pages/components/LandingPagePreview';
+import { LandingPagePublicationPanel } from '../../landing-pages/components/LandingPagePublicationPanel';
 import { LandingPageWorkflowStatus } from '../../landing-pages/components/LandingPageWorkflowStatus';
 import { LANDING_PAGE_AI_ENABLED } from '../../landing-pages/landing-page-feature-flags';
 import { applyBriefingAnalysisToValues, initialValuesForClient, landingPageToValues } from '../../landing-pages/landing-page.types';
@@ -45,6 +52,8 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
   const [generation, setGeneration] = useState<LandingPageAiGeneration | null>(null);
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
+  const [publicationError, setPublicationError] = useState<string | null>(null);
   const [referenceDocument, setReferenceDocument] = useState<Document | null>(null);
   const [briefingDocumentsCount, setBriefingDocumentsCount] = useState(0);
   const [analysisStatus, setAnalysisStatus] = useState<LandingPageBriefingAnalysisStatus>('idle');
@@ -158,6 +167,36 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
     }
   }
 
+  async function handlePublish() {
+    if (!profile || !page) return;
+
+    try {
+      setPublishing(true);
+      setPublicationError(null);
+      const published = await publishClientLandingPage(page, values, profile.id);
+      setPage(published);
+    } catch (err: unknown) {
+      setPublicationError(err instanceof Error ? err.message : 'Erro ao publicar landing page.');
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  async function handleUnpublish() {
+    if (!profile || !page) return;
+
+    try {
+      setPublishing(true);
+      setPublicationError(null);
+      const unpublished = await unpublishClientLandingPage(page.id, profile.id);
+      setPage(unpublished);
+    } catch (err: unknown) {
+      setPublicationError(err instanceof Error ? err.message : 'Erro ao despublicar landing page.');
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   if (!canManage) return <AccessDeniedPlaceholder />;
 
   if (loading) return <LoadingState title="Carregando briefing da landing page" />;
@@ -173,6 +212,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         analysisDone={analysisStatus === 'analyzed' || analysisStatus === 'applied'}
         contentGenerated={contentGenerated}
         previewAvailable={Boolean(page)}
+        published={page?.status === 'published'}
         aiEnabled={LANDING_PAGE_AI_ENABLED}
       />
 
@@ -230,8 +270,16 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
       {/* 5. Preview interno do resultado */}
       <LandingPagePreview page={page} generation={generation} />
 
+      <LandingPagePublicationPanel
+        page={page}
+        busy={publishing}
+        error={publicationError}
+        onPublish={() => void handlePublish()}
+        onUnpublish={() => void handleUnpublish()}
+      />
+
       {/* 6. Leads recebidos pelo formulario da landing page publica */}
-      <LandingPageLeadsPanel clientId={client.id} hasPublishedLink={Boolean(page)} />
+      <LandingPageLeadsPanel clientId={client.id} hasPublishedLink={page?.status === 'published'} />
     </div>
   );
 }

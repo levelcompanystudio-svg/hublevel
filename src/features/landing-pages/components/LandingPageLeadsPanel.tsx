@@ -14,6 +14,13 @@ interface LandingPageLeadsPanelProps {
   hasPublishedLink: boolean;
 }
 
+const statusLabels: Record<LandingPageLeadStatus, string> = {
+  novo: 'Novos',
+  contatado: 'Contatados',
+  qualificado: 'Qualificados',
+  descartado: 'Descartados',
+};
+
 function formatDateTime(value: string): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
@@ -30,12 +37,17 @@ function utmSummary(lead: LandingPageLead): string {
     .join(' - ');
 }
 
+function filteredLeads(leads: LandingPageLead[], status: LandingPageLeadStatus | 'todos'): LandingPageLead[] {
+  return status === 'todos' ? leads : leads.filter((lead) => lead.status === status);
+}
+
 export function LandingPageLeadsPanel({ clientId, hasPublishedLink }: LandingPageLeadsPanelProps) {
   const { profile } = useAuth();
   const [leads, setLeads] = useState<LandingPageLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<LandingPageLeadStatus | 'todos'>('todos');
 
   useEffect(() => {
     let active = true;
@@ -73,6 +85,8 @@ export function LandingPageLeadsPanel({ clientId, hasPublishedLink }: LandingPag
     }
   }
 
+  const visibleLeads = filteredLeads(leads, statusFilter);
+
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -80,23 +94,44 @@ export function LandingPageLeadsPanel({ clientId, hasPublishedLink }: LandingPag
         <Badge tone="brand">{leads.length}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Contatos enviados pelo formulario da landing page pública deste cliente. Nenhuma automação move esses leads
-        para tarefas/atualizações ainda — o status é só um marcador manual por enquanto.
+        Contatos enviados pelo formulario da landing page publica deste cliente. Nenhuma automacao move esses leads
+        para tarefas/atualizacoes ainda - o status e so um marcador manual por enquanto.
       </p>
 
       {loading && <LoadingState title="Carregando leads" />}
       {error && <ErrorState description={error} />}
 
       {!loading && !error && (
-        <div className="mt-4 space-y-2">
-          {leads.length === 0 ? (
+        <div className="mt-4 space-y-3">
+          <LeadSummary leads={leads} />
+
+          <div className="flex flex-wrap gap-2">
+            {(['todos', 'novo', 'contatado', 'qualificado', 'descartado'] as const).map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setStatusFilter(status)}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                  statusFilter === status
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-surface/60 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {status === 'todos' ? 'Todos' : statusLabels[status]}
+              </button>
+            ))}
+          </div>
+
+          {visibleLeads.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border bg-surface/40 px-3 py-4 text-center text-xs text-muted-foreground">
-              {hasPublishedLink
+              {leads.length === 0 && hasPublishedLink
                 ? 'Nenhum lead recebido ainda.'
-                : 'Nenhum lead recebido ainda. Salve o briefing para ativar o link publico da landing page.'}
+                : leads.length === 0
+                  ? 'Nenhum lead recebido ainda. Publique a landing page para ativar o formulario publico.'
+                  : 'Nenhum lead encontrado neste filtro.'}
             </p>
           ) : (
-            leads.map((lead) => (
+            visibleLeads.map((lead) => (
               <div key={lead.id} className="rounded-lg border border-border bg-surface/40 px-3 py-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
@@ -125,5 +160,32 @@ export function LandingPageLeadsPanel({ clientId, hasPublishedLink }: LandingPag
         </div>
       )}
     </Card>
+  );
+}
+
+function LeadSummary({ leads }: { leads: LandingPageLead[] }) {
+  const counts = {
+    novo: leads.filter((lead) => lead.status === 'novo').length,
+    contatado: leads.filter((lead) => lead.status === 'contatado').length,
+    qualificado: leads.filter((lead) => lead.status === 'qualificado').length,
+    descartado: leads.filter((lead) => lead.status === 'descartado').length,
+  };
+
+  return (
+    <div className="grid gap-2 sm:grid-cols-4">
+      <SummaryItem label="Novos" value={counts.novo} />
+      <SummaryItem label="Contatados" value={counts.contatado} />
+      <SummaryItem label="Qualificados" value={counts.qualificado} />
+      <SummaryItem label="Descartados" value={counts.descartado} />
+    </div>
+  );
+}
+
+function SummaryItem({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
+      <p className="text-[11px] font-semibold uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 text-lg font-bold text-foreground">{value}</p>
+    </div>
   );
 }

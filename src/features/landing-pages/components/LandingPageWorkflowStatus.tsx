@@ -1,4 +1,4 @@
-import { Check, Clock, Lock } from 'lucide-react';
+import { Check, Clock } from 'lucide-react';
 import { Card } from '../../../components/ui';
 
 interface LandingPageWorkflowStatusProps {
@@ -7,6 +7,7 @@ interface LandingPageWorkflowStatusProps {
   analysisDone: boolean;
   contentGenerated: boolean;
   previewAvailable: boolean;
+  published: boolean;
   aiEnabled?: boolean;
 }
 
@@ -25,6 +26,7 @@ export function LandingPageWorkflowStatus({
   analysisDone,
   contentGenerated,
   previewAvailable,
+  published,
   aiEnabled = true,
 }: LandingPageWorkflowStatusProps) {
   const steps: StepDefinition[] = [
@@ -37,6 +39,7 @@ export function LandingPageWorkflowStatus({
         ]
       : []),
     { key: 'preview', label: 'Preview disponivel', done: previewAvailable },
+    { key: 'publication', label: 'Publicada', done: published },
   ];
 
   return (
@@ -63,11 +66,6 @@ export function LandingPageWorkflowStatus({
             {index < steps.length - 1 && <span className="h-px w-3 shrink-0 bg-border" aria-hidden="true" />}
           </div>
         ))}
-        <span className="h-px w-3 shrink-0 bg-border" aria-hidden="true" />
-        <div className="flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-          <Lock className="h-3.5 w-3.5" aria-hidden="true" />
-          Publicacao (etapa futura)
-        </div>
       </div>
     </Card>
   );

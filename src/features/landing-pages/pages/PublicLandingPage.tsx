@@ -20,11 +20,8 @@ function getUtmParams() {
   };
 }
 
-// Rota publica /lp/:id - sem login, sem sidebar/topbar do app. Usa o `id` da landing page como
-// identificador temporario (nao existe coluna `slug` em `client_landing_pages` ainda; ver
-// relatorio da etapa para a recomendacao de migration futura). Nao ha controle real de
-// "publicado" no banco hoje (o botao Publicar continua desabilitado), entao qualquer landing
-// page existente pode ser aberta por este link - por isso o aviso de "preview publico" abaixo.
+// Rota publica /lp/:slug - sem login, sem sidebar/topbar do app. A Edge Function so devolve
+// landing pages publicadas; rascunhos e paginas despublicadas ficam inacessiveis ao publico.
 export function PublicLandingPage() {
   const { id } = useParams();
   const [data, setData] = useState<PublicLandingPageData | null>(null);
@@ -100,10 +97,6 @@ export function PublicLandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-warning/40 bg-warning/10 px-4 py-2 text-center text-xs font-semibold text-warning">
-        Preview publico temporario - esta pagina ainda nao esta em um dominio proprio nem foi publicada oficialmente.
-      </div>
-
       <div className="mx-auto max-w-3xl sm:my-10">
         <div className="overflow-hidden sm:rounded-xl sm:border sm:border-border">
           <PublicLandingHero content={content} interactive />

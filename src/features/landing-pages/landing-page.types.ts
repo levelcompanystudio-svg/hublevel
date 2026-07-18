@@ -6,6 +6,7 @@ export interface ClientLandingPage {
   id: string;
   client_id: string;
   status: LandingPageStatus;
+  slug: string | null;
   display_name: string | null;
   legal_name: string | null;
   segment: string | null;

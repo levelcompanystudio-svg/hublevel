@@ -4,7 +4,7 @@ import type { LandingPageAiGeneratedContent } from './landing-page-ai.types';
 import type { LandingPageContentSource } from './landing-page-content';
 
 export interface PublicLandingPageData {
-  page: LandingPageContentSource & { id: string; status: string };
+  page: LandingPageContentSource & { id: string; status: string; slug: string | null };
   generatedContent: LandingPageAiGeneratedContent | null;
 }
 

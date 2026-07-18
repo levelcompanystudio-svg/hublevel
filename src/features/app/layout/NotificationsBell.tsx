@@ -9,6 +9,7 @@ import type { RoleName } from '../../auth/auth.types';
 
 interface NotificationsBellProps {
   role?: RoleName;
+  buttonClassName?: string;
 }
 
 const typeLabels: Record<AlertType, string> = {
@@ -20,7 +21,7 @@ const typeLabels: Record<AlertType, string> = {
 
 const MAX_VISIBLE = 6;
 
-export function NotificationsBell({ role }: NotificationsBellProps) {
+export function NotificationsBell({ role, buttonClassName }: NotificationsBellProps) {
   const canView = role === 'admin' || role === 'gestor';
   const [open, setOpen] = useState(false);
   const [alerts, setAlerts] = useState<OperationalAlert[]>([]);
@@ -63,7 +64,7 @@ export function NotificationsBell({ role }: NotificationsBellProps) {
         aria-label="Notificacoes"
         aria-expanded={open}
         aria-haspopup="menu"
-        className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        className={buttonClassName ?? 'relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground'}
       >
         <Bell className="h-3.5 w-3.5" aria-hidden="true" />
         {alerts.length > 0 && (

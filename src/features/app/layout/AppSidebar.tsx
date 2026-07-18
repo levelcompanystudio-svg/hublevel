@@ -55,25 +55,23 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
         })}
       </nav>
 
-      <div className="relative border-t border-sidebar-border px-2.5 py-3">
-        <div className="rounded-lg px-1 py-1">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-sidebar-foreground">{userName ?? 'Usuario'}</p>
-              <p className="truncate text-xs capitalize text-muted-foreground">{role ?? 'sem papel'}</p>
-            </div>
+      <div className="relative border-t border-sidebar-border px-3 py-3">
+        <div className="flex items-center gap-2 rounded-lg">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
+            {initials}
           </div>
-          <div className="mt-2 flex items-center justify-end gap-0.5">
-            <NotificationsBell role={role} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-semibold text-sidebar-foreground">{userName ?? 'Usuario'}</p>
+            <p className="truncate text-xs capitalize leading-4 text-muted-foreground">{role ?? 'sem papel'}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-0.5">
+            <NotificationsBell role={role} buttonClassName={iconButtonClassName} />
             <button
               type="button"
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
               title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className={iconButtonClassName}
             >
               {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
             </button>
@@ -84,7 +82,7 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
                 disabled={loggingOut}
                 aria-label="Sair"
                 title="Sair"
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                className={`${iconButtonClassName} hover:bg-destructive/10 hover:text-destructive`}
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
@@ -95,6 +93,9 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
     </aside>
   );
 }
+
+const iconButtonClassName =
+  'relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground disabled:opacity-50';
 
 function getInitials(name?: string) {
   if (!name) return 'U';

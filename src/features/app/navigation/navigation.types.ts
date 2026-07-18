@@ -7,5 +7,5 @@ export interface NavigationItem {
   description: string;
   icon: LucideIcon;
   roles: RoleName[];
-  group: 'Visao Geral' | 'Operacao' | 'Gestao' | 'Administracao';
+  group: 'Visao Geral' | 'Operacao' | 'Gestao';
 }

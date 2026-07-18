@@ -1,6 +1,5 @@
 import {
   Activity,
-  Bell,
   BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
@@ -118,14 +117,6 @@ export const navigationItems: NavigationItem[] = [
     group: 'Gestao',
   },
   {
-    path: '/app/alertas',
-    label: 'Alertas',
-    description: 'Riscos operacionais calculados em tempo real',
-    icon: Bell,
-    roles: ['admin', 'gestor'],
-    group: 'Gestao',
-  },
-  {
     path: '/app/performance',
     label: 'Performance',
     description: 'Investimento, leads e satisfacao (aguardando integracao)',
@@ -155,7 +146,7 @@ export const navigationItems: NavigationItem[] = [
     description: 'Parametros do sistema',
     icon: Settings,
     roles: ['admin'],
-    group: 'Administracao',
+    group: 'Gestao',
   },
 ];
 

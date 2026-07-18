@@ -3,6 +3,7 @@ import type { RoleName } from '../../auth/auth.types';
 import { useTheme } from '../../theme/useTheme';
 import { getNavigationForRole } from '../navigation/navigation.config';
 import { AppNavItem } from './AppNavItem';
+import { NotificationsBell } from './NotificationsBell';
 
 interface AppSidebarProps {
   role?: RoleName;
@@ -12,13 +13,12 @@ interface AppSidebarProps {
   loggingOut?: boolean;
 }
 
-const groups = ['Visao Geral', 'Operacao', 'Gestao', 'Administracao'] as const;
+const groups = ['Visao Geral', 'Operacao', 'Gestao'] as const;
 
 const groupLabels: Record<(typeof groups)[number], string> = {
   'Visao Geral': 'Visao Geral',
   Operacao: 'Operacao',
   Gestao: 'Gestao',
-  Administracao: 'Administracao',
 };
 
 export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = false }: AppSidebarProps) {
@@ -55,36 +55,41 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
         })}
       </nav>
 
-      <div className="border-t border-sidebar-border px-2.5 py-3">
-        <div className="flex items-center gap-2 rounded-lg px-1 py-1">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
-            {initials}
+      <div className="relative border-t border-sidebar-border px-2.5 py-3">
+        <div className="rounded-lg px-1 py-1">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
+              {initials}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-sidebar-foreground">{userName ?? 'Usuario'}</p>
+              <p className="truncate text-xs capitalize text-muted-foreground">{role ?? 'sem papel'}</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-sidebar-foreground">{userName ?? 'Usuario'}</p>
-            <p className="truncate text-xs capitalize text-muted-foreground">{role ?? 'sem papel'}</p>
-          </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
-            title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-          >
-            {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
-          </button>
-          {onLogout && (
+          <div className="mt-2 flex items-center justify-end gap-0.5">
+            <NotificationsBell role={role} />
             <button
               type="button"
-              onClick={onLogout}
-              disabled={loggingOut}
-              aria-label="Sair"
-              title="Sair"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
+              title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
             </button>
-          )}
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                disabled={loggingOut}
+                aria-label="Sair"
+                title="Sair"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+              >
+                <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </aside>

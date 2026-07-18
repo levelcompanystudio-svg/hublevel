@@ -21,7 +21,7 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="hidden md:fixed md:inset-y-0 md:flex">
+      <div className="hidden md:fixed md:inset-y-0 md:z-40 md:flex">
         <AppSidebar
           role={profile?.roles?.name}
           userName={profile?.name}

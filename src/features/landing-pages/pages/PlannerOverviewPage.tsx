@@ -49,15 +49,14 @@ export function PlannerOverviewPage() {
     <div className="space-y-6">
       <LandingPageHeader
         title="Planejador de landing pages"
-        description="Briefing de landing page por cliente, salvo no banco. Sem geracao por IA, sem publicacao e sem captura de leads ainda."
+        description="Central para acessar as landing pages dos clientes, preencher briefings, publicar paginas e acompanhar leads."
       />
 
       <Card>
         <h3 className="text-sm font-semibold text-foreground">Como usar hoje</h3>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Escolha um cliente abaixo e abra a aba "Landing Page" no detalhe dele para preencher e salvar o briefing.
-          Os dados ficam salvos por cliente e podem ser editados a qualquer momento. Geracao com IA, criacao real da
-          LP e publicacao chegam em uma etapa futura.
+          Escolha um cliente abaixo e abra a aba "Landing Page" no detalhe dele para preencher briefing, anexar
+          documentos, publicar a pagina e acompanhar os leads enviados pelo formulario publico.
         </p>
       </Card>
 

@@ -33,8 +33,8 @@ export function LandingPageBriefingForm({ values, status, saving, onChange, onSu
         <Badge tone={status === 'published' ? 'success' : 'warning'}>{statusLabels[status ?? 'draft']}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Ponto de partida do fluxo: preencha e salve o briefing manual. Depois voce podera anexar materiais do
-        cliente, pedir uma analise por IA e gerar um rascunho de conteudo - tudo com base no que for salvo aqui.
+        Ponto de partida do fluxo: preencha e salve o briefing manual. Depois voce pode anexar PDF/DOCX ou links do
+        cliente, revisar o preview, publicar a pagina e acompanhar os leads recebidos.
       </p>
 
       <div className="mt-6 space-y-6">

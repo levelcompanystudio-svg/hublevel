@@ -94,8 +94,8 @@ export function LandingPageLeadsPanel({ clientId, hasPublishedLink }: LandingPag
         <Badge tone="brand">{leads.length}</Badge>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        Contatos enviados pelo formulario da landing page publica deste cliente. Nenhuma automacao move esses leads
-        para tarefas/atualizacoes ainda - o status e so um marcador manual por enquanto.
+        Contatos enviados pelo formulario da landing page publica deste cliente. Use o status para organizar o
+        atendimento manual.
       </p>
 
       {loading && <LoadingState title="Carregando leads" />}

@@ -53,7 +53,7 @@ export function LandingPageFutureActions({
             type="button"
             variant="secondary"
             disabled
-            title="Publicacao oficial (com controle de status e dominio proprio) sera implementada futuramente. Ja existe um link de preview publico temporario no card de Preview, logo abaixo."
+            title="Publicacao manual ja existe no painel principal da landing page."
           >
             Publicar
           </Button>

@@ -1,6 +1,7 @@
 import { Badge, Button, Card } from '../../../components/ui';
 import type { LandingPageAiGeneration } from '../landing-page-ai.types';
 import { buildLandingPageContent } from '../landing-page-content';
+import { LANDING_PAGE_AI_ENABLED } from '../landing-page-feature-flags';
 import type { ClientLandingPage } from '../landing-page.types';
 import { StepBadge } from './LandingPageStepBadge';
 import { PublicLandingCta } from './PublicLandingCta';
@@ -14,7 +15,7 @@ interface LandingPagePreviewProps {
 }
 
 export function LandingPagePreview({ page, generation }: LandingPagePreviewProps) {
-  const hasAiContent = generation?.status === 'generated';
+  const hasAiContent = LANDING_PAGE_AI_ENABLED && generation?.status === 'generated';
   const content = buildLandingPageContent(page, hasAiContent ? generation.generated_content : null);
 
   return (
@@ -39,7 +40,7 @@ export function LandingPagePreview({ page, generation }: LandingPagePreviewProps
 
       {!content.hasContent ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          Preencha o briefing (ou gere conteudo com IA) para visualizar um preview aqui.
+          Preencha e salve o briefing para visualizar um preview aqui.
         </p>
       ) : (
         <div className="mt-4 overflow-hidden rounded-xl border border-border">

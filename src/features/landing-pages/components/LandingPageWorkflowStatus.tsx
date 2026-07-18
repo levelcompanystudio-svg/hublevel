@@ -18,8 +18,7 @@ interface StepDefinition {
 }
 
 // Progresso puramente visual, derivado do state ja existente na aba (nao introduz nenhuma query
-// nova nem persiste nada). "Publicacao" nunca fica "concluida" nesta etapa de proposito - e so um
-// marcador de que esse passo ainda e futuro.
+// nova nem persiste nada).
 export function LandingPageWorkflowStatus({
   briefingSaved,
   briefingAttached,

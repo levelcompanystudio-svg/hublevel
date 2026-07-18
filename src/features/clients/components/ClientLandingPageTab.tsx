@@ -74,7 +74,7 @@ export function ClientLandingPageTab({ client, canManage }: ClientLandingPageTab
         setError(null);
         const [existing, latestGeneration] = await Promise.all([
           getClientLandingPage(client.id),
-          getLatestLandingPageAiGeneration(client.id),
+          LANDING_PAGE_AI_ENABLED ? getLatestLandingPageAiGeneration(client.id) : Promise.resolve(null),
         ]);
         if (!active) return;
         setPage(existing);

@@ -93,3 +93,27 @@ export async function createUser(values: CreateUserValues): Promise<ManagedProfi
 
   return data.profile;
 }
+
+interface DeleteUserResponse {
+  ok?: boolean;
+  error?: string;
+}
+
+export async function deleteUser(profileId: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke<DeleteUserResponse>('delete-app-user', {
+    body: { profile_id: profileId },
+  });
+
+  if (error) {
+    let message = error.message || 'Erro ao excluir usuario.';
+    if (error instanceof FunctionsHttpError) {
+      const body = await error.context.json().catch(() => null);
+      if (body?.error) message = body.error;
+    }
+    throw new Error(message);
+  }
+
+  if (!data?.ok) {
+    throw new Error(data?.error || 'Resposta invalida ao excluir usuario.');
+  }
+}

@@ -11,6 +11,7 @@ interface UserTableProps {
   savingId: string | null;
   onRoleChange: (profileId: string, roleId: string) => void;
   onStatusToggle: (profileId: string, nextStatus: 'active' | 'inactive') => void;
+  onConfigure: (profile: ManagedProfile) => void;
 }
 
 function roleName(profile: ManagedProfile) {
@@ -18,7 +19,15 @@ function roleName(profile: ManagedProfile) {
   return role?.name;
 }
 
-export function UserTable({ profiles, roles, currentUserId, savingId, onRoleChange, onStatusToggle }: UserTableProps) {
+export function UserTable({
+  profiles,
+  roles,
+  currentUserId,
+  savingId,
+  onRoleChange,
+  onStatusToggle,
+  onConfigure,
+}: UserTableProps) {
   if (profiles.length === 0) {
     return (
       <Card>
@@ -73,7 +82,10 @@ export function UserTable({ profiles, roles, currentUserId, savingId, onRoleChan
                   </td>
                   <td className="px-5 py-4"><UserStatusBadge status={profile.status} /></td>
                   <td className="px-5 py-4">
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-2">
+                      <Button type="button" variant="ghost" onClick={() => onConfigure(profile)}>
+                        Configurar
+                      </Button>
                       <Button
                         type="button"
                         variant="secondary"

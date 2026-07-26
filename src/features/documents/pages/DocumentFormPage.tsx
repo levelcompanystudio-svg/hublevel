@@ -8,7 +8,7 @@ import { createDocument, getDocument, listDocumentClients, removeDocumentFile, u
 import { SENSITIVE_DOCUMENT_TYPES, emptyDocumentFormValues, validateDocumentFile, validateDocumentForm } from '../documents.types';
 import type { DocumentClientRef, DocumentFormValues, DocumentType } from '../documents.types';
 import { DocumentForm } from '../components/DocumentForm';
-import { DocumentHeader } from '../components/DocumentHeader';
+import { PageHeader } from '../../../components/layout/PageHeader';
 
 const ALL_DOCUMENT_TYPES: DocumentType[] = ['contrato', 'proposta', 'briefing', 'relatorio', 'planejamento', 'comprovante', 'outro'];
 
@@ -134,7 +134,8 @@ export function DocumentFormPage() {
 
   return (
     <div className="space-y-6">
-      <DocumentHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar documento' : 'Novo documento'}
         description={editing ? 'Atualize os dados do documento.' : 'Cadastre um novo documento vinculado a um cliente.'}
       />

@@ -82,14 +82,14 @@ export function MeetingFrequencyCell({ frequency, customFrequencyDays, disabled,
           <button
             type="button"
             onClick={() => setEditingCustom(true)}
-            className="w-fit text-left text-[11px] font-medium text-primary hover:underline"
+            className="w-fit text-left text-xs font-medium text-primary hover:underline"
           >
             Editar dias
           </button>
         )
       )}
 
-      {localError && <p className="text-[11px] text-destructive">{localError}</p>}
+      {localError && <p className="text-xs text-destructive">{localError}</p>}
     </div>
   );
 }

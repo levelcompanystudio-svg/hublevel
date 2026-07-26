@@ -2,13 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { createClient, getClient, listResponsibleProfiles, updateClient } from '../clients.api';
 import type { ClientFormValues, ResponsibleProfile } from '../clients.types';
 import { emptyClientFormValues } from '../clients.types';
 import { ClientForm } from '../components/ClientForm';
-import { ClientHeader } from '../components/ClientHeader';
 
 export function ClientFormPage() {
   const { id } = useParams();
@@ -121,7 +121,8 @@ export function ClientFormPage() {
 
   return (
     <div className="space-y-6">
-      <ClientHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar cliente' : 'Novo cliente'}
         description={editing ? 'Atualize os dados basicos do cliente.' : 'Cadastre um novo cliente na carteira operacional.'}
       />

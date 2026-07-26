@@ -4,6 +4,7 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
@@ -68,12 +69,12 @@ export function DocumentListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <StatsGrid className="sm:grid-cols-3">
             <SummaryCard label="Total de documentos" value={documents.length} tone="brand" />
             <SummaryCard label="Operacionais" value={operationalDocuments} tone="success" />
             <SummaryCard label="Sensiveis (contrato/comprovante)" value={sensitiveDocuments} tone="warning" />
-          </div>
-          <FilterBar label="Filtros visuais">
+          </StatsGrid>
+          <FilterBar label="Contexto">
             <Badge tone="brand">{role === 'admin' ? 'Todos os documentos' : 'Documentos operacionais da carteira'}</Badge>
             <Badge>Vinculado a clientes</Badge>
           </FilterBar>

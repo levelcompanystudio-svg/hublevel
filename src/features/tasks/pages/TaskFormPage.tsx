@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { createTask, getTask, listAssignableProfiles, listTaskClients, updateTask } from '../tasks.api';
 import type { TaskClient, TaskFormValues, TaskProfile } from '../tasks.types';
 import { emptyTaskFormValues } from '../tasks.types';
 import { TaskForm } from '../components/TaskForm';
-import { TaskHeader } from '../components/TaskHeader';
 
 export function TaskFormPage() {
   const { id } = useParams();
@@ -96,7 +96,7 @@ export function TaskFormPage() {
 
   return (
     <div className="space-y-6">
-      <TaskHeader title={editing ? 'Editar tarefa' : 'Nova tarefa'} description="Cadastro e manutencao operacional de tarefas." />
+      <PageHeader eyebrow="Operacao" title={editing ? 'Editar tarefa' : 'Nova tarefa'} description="Cadastro e manutencao operacional de tarefas." />
       {loading && <LoadingState title="Preparando formulario" />}
       {error && <ErrorState description={error} />}
       {!loading && <TaskForm values={values} clients={clients} assignees={assignees} loading={saving} submitLabel={editing ? 'Salvar alteracoes' : 'Criar tarefa'} onChange={setValues} onSubmit={handleSubmit} />}

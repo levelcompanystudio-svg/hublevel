@@ -27,21 +27,21 @@ export function MeetingTable({ meetings }: MeetingTableProps) {
         <table className="w-full min-w-[880px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3.5 font-semibold">Reuniao</th>
-              <th className="px-5 py-3.5 font-semibold">Cliente</th>
-              <th className="px-5 py-3.5 font-semibold">Tipo</th>
-              <th className="px-5 py-3.5 font-semibold">Data/hora</th>
-              <th className="px-5 py-3.5 font-semibold">Status</th>
-              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Reuniao</th>
+              <th className="px-4 py-3.5 font-semibold">Cliente</th>
+              <th className="px-4 py-3.5 font-semibold">Tipo</th>
+              <th className="px-4 py-3.5 font-semibold">Data/hora</th>
+              <th className="px-4 py-3.5 font-semibold">Status</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {meetings.map((meeting) => (
               <tr key={meeting.id} className="bg-card transition-colors hover:bg-card-elevated">
-                <td className="px-5 py-4">
+                <td className="px-4 py-3">
                   <p className="text-sm font-semibold text-foreground">{meeting.title}</p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground">
                   {meeting.client_id ? (
                     <Link to={`/app/clientes/${meeting.client_id}`} className="text-primary hover:underline">
                       {clientName(meeting)}
@@ -50,10 +50,10 @@ export function MeetingTable({ meetings }: MeetingTableProps) {
                     clientName(meeting)
                   )}
                 </td>
-                <td className="px-5 py-4"><MeetingTypeBadge type={meeting.type} /></td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{formatDateTime(meeting.scheduled_at)}</td>
-                <td className="px-5 py-4"><MeetingStatusBadge status={meeting.status} /></td>
-                <td className="px-5 py-4">
+                <td className="px-4 py-3"><MeetingTypeBadge type={meeting.type} /></td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDateTime(meeting.scheduled_at)}</td>
+                <td className="px-4 py-3"><MeetingStatusBadge status={meeting.status} /></td>
+                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Link to={`/app/reunioes/${meeting.id}`}>
                       <Button type="button" variant="ghost">Ver</Button>

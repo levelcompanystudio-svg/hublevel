@@ -27,17 +27,17 @@ export function DocumentTable({ documents, canEdit }: DocumentTableProps) {
         <table className="w-full min-w-[820px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3.5 font-semibold">Documento</th>
-              <th className="px-5 py-3.5 font-semibold">Cliente</th>
-              <th className="px-5 py-3.5 font-semibold">Tipo</th>
-              <th className="px-5 py-3.5 font-semibold">Criado em</th>
-              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Documento</th>
+              <th className="px-4 py-3.5 font-semibold">Cliente</th>
+              <th className="px-4 py-3.5 font-semibold">Tipo</th>
+              <th className="px-4 py-3.5 font-semibold">Criado em</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {documents.map((document) => (
               <tr key={document.id} className="bg-card transition-colors hover:bg-card-elevated">
-                <td className="px-5 py-4">
+                <td className="px-4 py-3">
                   <p className="text-sm font-semibold text-foreground">{document.title}</p>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {document.file_url && <Badge tone="brand">Arquivo</Badge>}
@@ -47,14 +47,14 @@ export function DocumentTable({ documents, canEdit }: DocumentTableProps) {
                     {document.description || 'Sem descricao'}
                   </p>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground">
                   <Link to={`/app/clientes/${document.client_id}`} className="text-primary hover:underline">
                     {clientName(document)}
                   </Link>
                 </td>
-                <td className="px-5 py-4"><DocumentTypeBadge type={document.type} /></td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(document.created_at)}</td>
-                <td className="px-5 py-4">
+                <td className="px-4 py-3"><DocumentTypeBadge type={document.type} /></td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(document.created_at)}</td>
+                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Link to={`/app/documentos/${document.id}`}>
                       <Button type="button" variant="ghost">Ver</Button>

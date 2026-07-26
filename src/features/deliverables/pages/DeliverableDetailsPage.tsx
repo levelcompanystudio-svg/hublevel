@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { getDeliverable, updateDeliverableStatus } from '../deliverables.api';
 import { COLABORADOR_ALLOWED_STATUSES } from '../deliverables.types';
 import type { Deliverable, DeliverableStatus } from '../deliverables.types';
 import { assigneeName, clientName, formatDate } from '../components/DeliverableTable';
-import { DeliverableHeader } from '../components/DeliverableHeader';
 import { DeliverablePriorityBadge } from '../components/DeliverablePriorityBadge';
 import { DeliverableStatusBadge } from '../components/DeliverableStatusBadge';
 import { DeliverableStatusUpdateForm } from '../components/DeliverableStatusUpdateForm';
@@ -74,7 +74,7 @@ export function DeliverableDetailsPage() {
 
   return (
     <div className="space-y-5">
-      <DeliverableHeader title={deliverable?.title ?? 'Entregavel'} description="Detalhe do entregavel." />
+      <PageHeader eyebrow="Operacao" title={deliverable?.title ?? 'Entregavel'} description="Detalhe do entregavel." />
       {loading && <LoadingState title="Carregando entregavel" />}
       {error && <ErrorState description={error} />}
       {!loading && deliverable && (

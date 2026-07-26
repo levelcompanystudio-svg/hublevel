@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getMeeting } from '../meetings.api';
 import type { Meeting } from '../meetings.types';
-import { MeetingHeader } from '../components/MeetingHeader';
 import { MeetingStatusBadge } from '../components/MeetingStatusBadge';
 import { MeetingTypeBadge } from '../components/MeetingTypeBadge';
 import { clientName, creatorName, formatDateTime } from '../components/MeetingTable';
@@ -57,7 +57,7 @@ export function MeetingDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <MeetingHeader title={meeting?.title ?? 'Reuniao'} description="Detalhe da reuniao registrada." />
+      <PageHeader eyebrow="Operacao" title={meeting?.title ?? 'Reuniao'} description="Detalhe da reuniao registrada." />
 
       {loading && <LoadingState title="Carregando reuniao" />}
       {error && <ErrorState description={error} />}

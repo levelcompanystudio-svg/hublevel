@@ -36,7 +36,7 @@ interface FilterSelectProps<T extends string> {
 function FilterSelect<T extends string>({ label, value, onChange, options }: FilterSelectProps<T>) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as T)}

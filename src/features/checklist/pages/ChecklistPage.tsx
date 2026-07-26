@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Badge } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { listChecklistItems } from '../checklist.api';
 import { getChecklistBucket } from '../checklist.types';
 import type { ChecklistFilter, ChecklistItem } from '../checklist.types';
-import { ChecklistHeader } from '../components/ChecklistHeader';
 import { ChecklistSummary } from '../components/ChecklistSummary';
 import { ChecklistTable } from '../components/ChecklistTable';
 
@@ -55,7 +55,8 @@ export function ChecklistPage() {
 
   return (
     <div className="space-y-6">
-      <ChecklistHeader
+      <PageHeader
+        eyebrow="Operacao"
         title="Checklist operacional"
         description="Entregaveis e pendencias por cliente, derivados das tarefas cadastradas na operacao."
       />
@@ -73,9 +74,9 @@ export function ChecklistPage() {
                   key={filter.value}
                   type="button"
                   onClick={() => setActiveFilter(filter.value)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
                     activeFilter === filter.value
-                      ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
+                      ? 'border-primary/60 bg-primary text-primary-foreground'
                       : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
                   }`}
                 >

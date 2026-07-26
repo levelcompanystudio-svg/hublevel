@@ -46,7 +46,7 @@ export function ClientLogoSettings({ clientId, hasLogo, onUpdated }: ClientLogoS
   return (
     <>
       <label
-        className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-xl bg-black/55 text-[10px] font-bold uppercase tracking-wide text-white opacity-0 backdrop-blur-[1px] transition hover:opacity-100 focus-within:opacity-100"
+        className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-xl bg-black/55 text-xs font-bold uppercase tracking-wide text-white opacity-0 backdrop-blur-[1px] transition hover:opacity-100 focus-within:opacity-100"
         title={hasLogo ? 'Trocar logo do cliente' : 'Enviar logo do cliente'}
         aria-label={hasLogo ? 'Trocar logo do cliente' : 'Enviar logo do cliente'}
       >

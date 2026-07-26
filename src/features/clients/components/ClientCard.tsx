@@ -55,7 +55,7 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
             <ClientLogoSettings clientId={client.id} hasLogo={Boolean(logoUrl)} onUpdated={(updated) => setLogoUrl(updated.logo_url)} />
           </div>
           <div className="min-w-0">
-            <h3 className="truncate text-[15px] font-semibold text-foreground">{displayName}</h3>
+            <h3 className="truncate text-h3 text-foreground">{displayName}</h3>
             <p className="mt-0.5 truncate text-xs text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>
           </div>
         </div>
@@ -138,7 +138,7 @@ function Stat({
       <p className={`text-sm font-bold tabular-nums ${tone === 'destructive' ? 'text-destructive' : 'text-foreground'}`}>
         {display ?? value}
       </p>
-      <p className="truncate text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
     </div>
   );
 }

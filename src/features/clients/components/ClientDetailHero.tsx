@@ -1,5 +1,7 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useOnClickOutside } from '../../../lib/useOnClickOutside';
 import { Button } from '../../../components/ui';
 import type { Client } from '../clients.types';
 import { ClientHealthBadge } from './ClientHealthBadge';
@@ -8,6 +10,45 @@ import { ClientStatusBadge } from './ClientStatusBadge';
 interface ClientDetailHeroProps {
   client: Client;
   canManage: boolean;
+}
+
+function ClientDetailOverflowMenu({ clientId }: { clientId: string }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(containerRef, () => setOpen(false));
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-label="Mais acoes"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+      >
+        <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+      </button>
+      {open && (
+        <div role="menu" className="absolute right-0 top-full z-20 mt-1.5 min-w-44 rounded-lg border border-border bg-card p-1 shadow-soft">
+          <Link
+            to={`/app/reunioes/novo?client_id=${clientId}`}
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-2.5 py-1.5 text-sm text-foreground transition-colors duration-150 hover:bg-muted"
+          >
+            Nova reuniao
+          </Link>
+          <Link
+            to={`/app/documentos/novo?client_id=${clientId}`}
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-2.5 py-1.5 text-sm text-foreground transition-colors duration-150 hover:bg-muted"
+          >
+            Novo documento
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
@@ -43,12 +84,7 @@ export function ClientDetailHero({ client, canManage }: ClientDetailHeroProps) {
               <Link to={`/app/acompanhamento/novo?client_id=${client.id}`}>
                 <Button type="button" variant="ghost" size="sm">Nova atualizacao</Button>
               </Link>
-              <Link to={`/app/reunioes/novo?client_id=${client.id}`}>
-                <Button type="button" variant="ghost" size="sm">Nova reuniao</Button>
-              </Link>
-              <Link to={`/app/documentos/novo?client_id=${client.id}`}>
-                <Button type="button" variant="ghost" size="sm">Novo documento</Button>
-              </Link>
+              <ClientDetailOverflowMenu clientId={client.id} />
             </>
           )}
           <Link to={`/app/clientes/${client.id}/editar`}>

@@ -8,7 +8,7 @@ import { createDeliverable, getDeliverable, listAssignableProfiles, listDelivera
 import { emptyDeliverableFormValues } from '../deliverables.types';
 import type { DeliverableClient, DeliverableFormValues, DeliverableProfile } from '../deliverables.types';
 import { DeliverableForm } from '../components/DeliverableForm';
-import { DeliverableHeader } from '../components/DeliverableHeader';
+import { PageHeader } from '../../../components/layout/PageHeader';
 
 export function DeliverableFormPage() {
   const { id } = useParams();
@@ -96,7 +96,8 @@ export function DeliverableFormPage() {
 
   return (
     <div className="space-y-5">
-      <DeliverableHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar entregavel' : 'Novo entregavel'}
         description="Cadastro e manutencao de entregaveis por cliente."
       />

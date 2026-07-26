@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Badge, Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getUpdate } from '../updates.api';
 import type { Update } from '../updates.types';
-import { UpdateHeader } from '../components/UpdateHeader';
 import { UpdateStatusBadge } from '../components/UpdateStatusBadge';
 import { clientName, formatDate, responsibleName } from '../components/UpdateTable';
 
@@ -56,7 +56,7 @@ export function UpdateDetailsPage() {
 
   return (
     <div className="space-y-5">
-      <UpdateHeader title={update?.title ?? 'Atualizacao'} description="Detalhe da atualizacao de acompanhamento." />
+      <PageHeader eyebrow="Operacao" title={update?.title ?? 'Atualizacao'} description="Detalhe da atualizacao de acompanhamento." />
 
       {loading && <LoadingState title="Carregando atualizacao" />}
       {error && <ErrorState description={error} />}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { getTask, updateTaskStatus } from '../tasks.api';
@@ -10,7 +11,6 @@ import { TaskPriorityBadge } from '../components/TaskPriorityBadge';
 import { TaskStatusBadge } from '../components/TaskStatusBadge';
 import { TaskStatusUpdateForm } from '../components/TaskStatusUpdateForm';
 import { clientName, formatDate, profileName } from '../components/TaskTable';
-import { TaskHeader } from '../components/TaskHeader';
 
 const CLOSED_STATUSES: TaskStatus[] = ['concluida', 'cancelada'];
 
@@ -88,7 +88,7 @@ export function TaskDetailsPage() {
 
   return (
     <div className="space-y-5">
-      <TaskHeader title={task?.title ?? 'Tarefa'} description="Detalhe operacional da tarefa." />
+      <PageHeader eyebrow="Operacao" title={task?.title ?? 'Tarefa'} description="Detalhe operacional da tarefa." />
       {loading && <LoadingState title="Carregando tarefa" />}
       {error && <ErrorState description={error} />}
       {!loading && task && (

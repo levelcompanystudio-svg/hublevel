@@ -151,9 +151,9 @@ export function ClientListPage() {
                   key={filter.value}
                   type="button"
                   onClick={() => setActiveFilter(filter.value)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
                     activeFilter === filter.value
-                      ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
+                      ? 'border-primary/60 bg-primary text-primary-foreground'
                       : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
                   }`}
                 >

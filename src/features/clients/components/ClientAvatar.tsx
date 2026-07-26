@@ -38,7 +38,7 @@ interface ClientAvatarProps {
 // nenhum dado.
 export function ClientAvatar({ name, logoUrl, size = 'md' }: ClientAvatarProps) {
   const color = PALETTE[hashString(name) % PALETTE.length];
-  const sizeClass = size === 'sm' ? 'h-8 w-8 text-[11px]' : 'h-11 w-11 text-sm';
+  const sizeClass = size === 'sm' ? 'h-8 w-8 text-xs' : 'h-11 w-11 text-sm';
 
   if (logoUrl) {
     return (

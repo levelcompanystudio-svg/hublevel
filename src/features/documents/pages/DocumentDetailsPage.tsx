@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getDocument, getDocumentFileSignedUrl } from '../documents.api';
 import type { Document } from '../documents.types';
-import { DocumentHeader } from '../components/DocumentHeader';
 import { DocumentTypeBadge } from '../components/DocumentTypeBadge';
 import { clientName, creatorName, formatDate } from '../components/DocumentTable';
 
@@ -72,7 +72,7 @@ export function DocumentDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <DocumentHeader title={doc?.title ?? 'Documento'} description="Detalhe do documento vinculado ao cliente." />
+      <PageHeader eyebrow="Operacao" title={doc?.title ?? 'Documento'} description="Detalhe do documento vinculado ao cliente." />
 
       {loading && <LoadingState title="Carregando documento" />}
       {error && <ErrorState description={error} />}

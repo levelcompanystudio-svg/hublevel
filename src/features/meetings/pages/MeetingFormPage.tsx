@@ -9,7 +9,7 @@ import type { MeetingClientRef, MeetingFormValues, MeetingParticipant } from '..
 import type { MeetingStatus } from '../meetings.types';
 import { emptyMeetingFormValues, toDatetimeLocalInput, validateMeetingForm } from '../meetings.types';
 import { MeetingForm } from '../components/MeetingForm';
-import { MeetingHeader } from '../components/MeetingHeader';
+import { PageHeader } from '../../../components/layout/PageHeader';
 
 export function MeetingFormPage() {
   const { id } = useParams();
@@ -119,7 +119,8 @@ export function MeetingFormPage() {
 
   return (
     <div className="space-y-6">
-      <MeetingHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar reuniao' : 'Nova reuniao'}
         description={editing ? 'Atualize os dados da reuniao.' : 'Registre uma nova reuniao, alinhamento ou consultoria.'}
       />

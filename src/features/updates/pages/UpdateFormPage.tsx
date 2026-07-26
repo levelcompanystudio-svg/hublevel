@@ -8,7 +8,7 @@ import { createUpdate, getUpdate, listUpdateClients, listUpdateResponsibles, upd
 import type { UpdateClientRef, UpdateFormValues, UpdateResponsibleRef } from '../updates.types';
 import { createEmptyUpdateFormValues, validateUpdateForm } from '../updates.types';
 import { UpdateForm } from '../components/UpdateForm';
-import { UpdateHeader } from '../components/UpdateHeader';
+import { PageHeader } from '../../../components/layout/PageHeader';
 
 export function UpdateFormPage() {
   const { id } = useParams();
@@ -122,7 +122,8 @@ export function UpdateFormPage() {
 
   return (
     <div className="space-y-5">
-      <UpdateHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar atualizacao' : 'Nova atualizacao'}
         description={editing ? 'Atualize o registro de acompanhamento do cliente.' : 'Registre uma nova atualizacao de acompanhamento para um cliente.'}
       />

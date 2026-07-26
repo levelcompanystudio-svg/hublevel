@@ -6,6 +6,7 @@ import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlac
 import { useAuth } from '../../auth/useAuth';
 import { createMeeting, getMeeting, listMeetingClients, listMeetingParticipantDirectory, updateMeeting } from '../meetings.api';
 import type { MeetingClientRef, MeetingFormValues, MeetingParticipant } from '../meetings.types';
+import type { MeetingStatus } from '../meetings.types';
 import { emptyMeetingFormValues, toDatetimeLocalInput, validateMeetingForm } from '../meetings.types';
 import { MeetingForm } from '../components/MeetingForm';
 import { MeetingHeader } from '../components/MeetingHeader';
@@ -14,6 +15,7 @@ export function MeetingFormPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const preselectedClientId = searchParams.get('client_id') ?? '';
+  const preselectedStatus = meetingStatusFromSearch(searchParams.get('status'));
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [values, setValues] = useState<MeetingFormValues>(emptyMeetingFormValues);
@@ -68,6 +70,7 @@ export function MeetingFormPage() {
           setValues({
             ...emptyMeetingFormValues,
             client_id: preselectedClientId,
+            status: preselectedStatus ?? emptyMeetingFormValues.status,
           });
         }
       } catch (err: unknown) {
@@ -83,7 +86,7 @@ export function MeetingFormPage() {
     return () => {
       active = false;
     };
-  }, [canAccess, id, preselectedClientId, profile]);
+  }, [canAccess, id, preselectedClientId, preselectedStatus, profile]);
 
   async function handleSubmit() {
     if (!profile) return;
@@ -136,4 +139,9 @@ export function MeetingFormPage() {
       )}
     </div>
   );
+}
+
+function meetingStatusFromSearch(value: string | null): MeetingStatus | null {
+  if (value === 'agendada' || value === 'realizada' || value === 'cancelada' || value === 'remarcada') return value;
+  return null;
 }

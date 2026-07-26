@@ -27,9 +27,9 @@ import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
 import { IntegrationsOverviewPage } from '../features/integrations/pages/IntegrationsOverviewPage';
 import { PlannerOverviewPage } from '../features/landing-pages/pages/PlannerOverviewPage';
 import { PublicLandingPage } from '../features/landing-pages/pages/PublicLandingPage';
+import { MeetingConsolePage } from '../features/meetings/pages/MeetingConsolePage';
 import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
 import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
-import { MeetingListPage } from '../features/meetings/pages/MeetingListPage';
 import { PerformanceOverviewPage } from '../features/performance/pages/PerformanceOverviewPage';
 import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
 import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
@@ -115,7 +115,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="acompanhamento/novo" element={<UpdateFormPage />} />
         <Route path="acompanhamento/:id" element={<UpdateDetailsPage />} />
         <Route path="acompanhamento/:id/editar" element={<UpdateFormPage />} />
-        <Route path="reunioes" element={<MeetingListPage />} />
+        <Route path="reunioes" element={<MeetingConsolePage />} />
         <Route path="reunioes/novo" element={<MeetingFormPage />} />
         <Route path="reunioes/:id" element={<MeetingDetailsPage />} />
         <Route path="reunioes/:id/editar" element={<MeetingFormPage />} />

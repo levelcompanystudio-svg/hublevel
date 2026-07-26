@@ -92,11 +92,55 @@ async function countTotalTasks(): Promise<number> {
   return count ?? 0;
 }
 
+async function countOpenTasks(): Promise<number> {
+  const { count, error } = await supabase
+    .from('tasks')
+    .select('id', { count: 'exact', head: true })
+    .is('deleted_at', null)
+    .not('status', 'in', `(${NON_OVERDUE_TASK_STATUSES.join(',')})`);
+
+  if (error) throw error;
+  return count ?? 0;
+}
+
+async function countActiveClients(): Promise<number> {
+  const { count, error } = await supabase
+    .from('clients')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'ativo')
+    .is('deleted_at', null);
+
+  if (error) throw error;
+  return count ?? 0;
+}
+
+function next7DaysRange(): { start: string; end: string } {
+  const start = new Date();
+  const end = new Date();
+  end.setDate(end.getDate() + 7);
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+
 async function countMeetingsInRange(start: string, end: string): Promise<number> {
   const { count, error } = await supabase
     .from('meetings')
     .select('id', { count: 'exact', head: true })
     .is('deleted_at', null)
+    .gte('scheduled_at', start)
+    .lte('scheduled_at', end);
+
+  if (error) throw error;
+  return count ?? 0;
+}
+
+const UPCOMING_MEETING_STATUSES = ['agendada', 'remarcada'];
+
+async function countUpcomingMeetingsInRange(start: string, end: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('meetings')
+    .select('id', { count: 'exact', head: true })
+    .is('deleted_at', null)
+    .in('status', UPCOMING_MEETING_STATUSES)
     .gte('scheduled_at', start)
     .lte('scheduled_at', end);
 
@@ -185,6 +229,28 @@ export async function getManagerDashboardMetrics(): Promise<ManagerDashboardMetr
     overdueTasks,
     meetingsThisWeek,
   };
+}
+
+export interface DashboardOperationalOverview {
+  activeClients: number;
+  openTasks: number;
+  meetingsNext7Days: number;
+}
+
+// Cockpit operacional de /app/dashboard (admin/gestor): so contagens portfolio-wide, sem nenhum
+// dado financeiro (isso fica exclusivo do Painel Administrativo). RLS ja restringe gestor aos
+// proprios clientes em cada uma dessas tabelas, entao as contagens saem corretas por papel sem
+// filtro manual aqui.
+export async function getDashboardOperationalOverview(): Promise<DashboardOperationalOverview> {
+  const { start, end } = next7DaysRange();
+
+  const [activeClients, openTasks, meetingsNext7Days] = await Promise.all([
+    countActiveClients(),
+    countOpenTasks(),
+    countUpcomingMeetingsInRange(start, end),
+  ]);
+
+  return { activeClients, openTasks, meetingsNext7Days };
 }
 
 export async function getCollaboratorDashboardMetrics(): Promise<CollaboratorDashboardMetrics> {

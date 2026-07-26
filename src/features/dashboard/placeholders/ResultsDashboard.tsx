@@ -1,122 +1,221 @@
+import { Activity, CalendarDays, CheckSquare, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
-import { Card } from '../../../components/ui';
+import { Card, SectionHeader } from '../../../components/ui';
+import { getOperationalAlerts } from '../../alerts/alerts.api';
+import type { OperationalAlert } from '../../alerts/alerts.types';
+import { AlertPriorityBadge } from '../../alerts/components/AlertPriorityBadge';
+import { useAuth } from '../../auth/useAuth';
 import { listClients } from '../../clients/clients.api';
 import type { Client, ClientHealthStatus } from '../../clients/clients.types';
-import { emptyClientPerformanceMetrics } from '../../performance/performance.types';
-import { PerformanceMetricsGrid } from '../../performance/components/PerformanceMetricsGrid';
-import { DashboardSection } from '../components/DashboardSection';
+import { getRecentPortfolioActivity } from '../dashboard-activity.api';
+import type { ActivityItem, ActivityType } from '../dashboard-activity.api';
+import { getDashboardOperationalOverview } from '../dashboard.api';
+import type { DashboardOperationalOverview } from '../dashboard.api';
 
-const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; dotClassName: string }> = [
-  { status: 'saudavel', label: 'Saudavel', dotClassName: 'bg-success' },
-  { status: 'atencao', label: 'Atencao', dotClassName: 'bg-warning' },
-  { status: 'critico', label: 'Critico', dotClassName: 'bg-destructive' },
+const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; barClassName: string }> = [
+  { status: 'saudavel', label: 'Saudaveis', barClassName: 'bg-success' },
+  { status: 'atencao', label: 'Atencao', barClassName: 'bg-warning' },
+  { status: 'critico', label: 'Criticos', barClassName: 'bg-destructive' },
 ];
 
-function clientName(client: Client): string {
-  return client.trade_name || client.company_name;
+const ACTIVITY_ICONS: Record<ActivityType, typeof CheckSquare> = {
+  tarefa: CheckSquare,
+  atualizacao: Activity,
+  reuniao: CalendarDays,
+  documento: FileText,
+};
+
+function formatRelativeDate(value: string): string {
+  return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
 
-// Painel geral de resultados: metricas de clientes/carteira ja existentes no HubLevel (reais),
-// mais o espaco reservado para Investimento/Leads/CPL/ROAS/NPS assim que uma integracao de anuncios
-// existir de verdade (mesmo componente ja usado em Performance, sem duplicar logica nem inventar numero).
+// Cockpit operacional (admin/gestor) para /app/dashboard. Nenhum dado financeiro aqui - isso fica
+// exclusivo do Painel Administrativo (/app/painel-administrativo). Todas as secoes usam dados reais
+// ja existentes no banco (clientes, alertas operacionais, tarefas, reunioes, atividade recente);
+// Performance so mostra numeros quando uma integracao real existir - sem grade de "Sem dados".
 export function ResultsDashboard() {
+  const { profile } = useAuth();
+  const role = profile?.roles?.name;
+
+  const [overview, setOverview] = useState<DashboardOperationalOverview | null>(null);
   const [clients, setClients] = useState<Client[]>([]);
+  const [alerts, setAlerts] = useState<OperationalAlert[]>([]);
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (role !== 'admin' && role !== 'gestor') return;
+
     let active = true;
+
     async function load() {
       try {
         setLoading(true);
         setError(null);
-        const result = await listClients();
-        if (active) setClients(result);
+        const [overviewResult, clientsResult, alertsResult, activityResult] = await Promise.all([
+          getDashboardOperationalOverview(),
+          listClients(),
+          getOperationalAlerts(role as 'admin' | 'gestor'),
+          getRecentPortfolioActivity(),
+        ]);
+        if (!active) return;
+        setOverview(overviewResult);
+        setClients(clientsResult);
+        setAlerts(alertsResult);
+        setActivity(activityResult);
       } catch (err: unknown) {
-        if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar dados de clientes.');
+        if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar o dashboard.');
       } finally {
         if (active) setLoading(false);
       }
     }
+
     void load();
     return () => {
       active = false;
     };
-  }, []);
+  }, [role]);
 
-  if (loading) return <LoadingState title="Carregando painel de resultados" />;
+  if (loading) return <LoadingState title="Carregando dashboard" />;
   if (error) return <ErrorState description={error} />;
+  if (!overview) return null;
 
-  const activeClients = clients.filter((client) => client.status === 'ativo');
+  const clientsNeedingAttention = new Set(alerts.filter((alert) => alert.clientId).map((alert) => alert.clientId)).size;
+  const topAlerts = alerts.slice(0, 5);
+  const operationalClients = clients.filter((client) => client.status === 'ativo' || client.status === 'onboarding');
+  const totalClientsForHealth = operationalClients.length;
 
   return (
-    <div className="space-y-6">
-      <DashboardSection title="Conversao" description="Carteira ativa e resultados de aquisicao pagos.">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <SummaryCard
-            label="Clientes ativos"
-            value={activeClients.length}
-            description={`${clients.length} no total`}
-            tone="brand"
+    <div className="space-y-5">
+      <StatsGrid>
+        <SummaryCard
+          label="Clientes ativos"
+          value={overview.activeClients}
+          description={`${operationalClients.length} clientes operacionais incluindo onboarding`}
+          tone="brand"
+        />
+        <SummaryCard
+          label="Precisam de atencao"
+          value={clientsNeedingAttention}
+          tone={clientsNeedingAttention > 0 ? 'warning' : 'neutral'}
+        />
+        <SummaryCard label="Tarefas pendentes" value={overview.openTasks} tone="neutral" />
+        <SummaryCard label="Reunioes proximas (7d)" value={overview.meetingsNext7Days} tone="neutral" />
+      </StatsGrid>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <SectionHeader
+            title="Atencao necessaria"
+            caption={`${clientsNeedingAttention} clientes com pendencias identificadas`}
+            action={
+              <Link to="/app/alertas" className="text-xs font-semibold text-primary hover:underline">
+                Ver todos
+              </Link>
+            }
           />
-          <div className="sm:col-span-1 xl:col-span-3">
-            <PerformanceMetricsGrid metrics={emptyClientPerformanceMetrics} />
+          <div className="mt-3">
+            {topAlerts.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">Nenhum alerta no momento.</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {topAlerts.map((alert) => (
+                  <Link
+                    key={alert.id}
+                    to={alert.clientId ? `/app/clientes/${alert.clientId}` : '/app/alertas'}
+                    className="flex items-center justify-between gap-3 py-2.5 transition-colors duration-150 hover:bg-card-elevated"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-foreground">{alert.clientName ?? alert.title}</p>
+                      <p className="truncate text-xs text-muted-foreground">{alert.description}</p>
+                    </div>
+                    <AlertPriorityBadge severity={alert.severity} />
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </DashboardSection>
+        </Card>
 
-      <Card>
-        <h3 className="text-sm font-semibold text-foreground">Evolucao no periodo</h3>
-        <p className="mt-1 text-xs text-muted-foreground">Investimento e leads ao longo do tempo, por integracao.</p>
-        <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-surface/40 py-10 text-center">
-          <p className="text-sm font-semibold text-foreground">Nenhuma integracao conectada</p>
-          <p className="max-w-md text-xs text-muted-foreground">
-            Conecte Meta Ads ou Google Ads em{' '}
-            <Link to="/app/integracoes" className="font-semibold text-primary hover:underline">
-              Integracoes
-            </Link>{' '}
-            para ver a evolucao de investimento e leads aqui.
-          </p>
-        </div>
-      </Card>
-
-      <DashboardSection title="Saude dos clientes" description="Distribuicao da carteira por status de saude, calculada em tempo real.">
-        <div className="grid gap-4 lg:grid-cols-3">
-          {HEALTH_GROUPS.map((group) => {
-            const groupClients = clients.filter((client) => client.health_status === group.status);
-            return (
-              <Card key={group.status} className="flex flex-col">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${group.dotClassName}`} aria-hidden="true" />
-                    <p className="text-sm font-semibold text-foreground">{group.label}</p>
+        <Card>
+          <SectionHeader title="Saude da carteira" caption="Distribuicao dos clientes por status de saude" />
+          <div className="mt-4 space-y-3">
+            {HEALTH_GROUPS.map((group) => {
+              const count = operationalClients.filter((client) => client.health_status === group.status).length;
+              const percent = totalClientsForHealth > 0 ? Math.round((count / totalClientsForHealth) * 100) : 0;
+              return (
+                <div key={group.status}>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-medium text-foreground">{group.label}</span>
+                    <span className="text-muted-foreground">{count} - {percent}%</span>
                   </div>
-                  <span className="text-sm font-bold tabular-nums text-foreground">{groupClients.length}</span>
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div className={`h-full rounded-full ${group.barClassName}`} style={{ width: `${percent}%` }} />
+                  </div>
                 </div>
-                <div className="mt-3 max-h-52 space-y-1.5 overflow-y-auto pr-1">
-                  {groupClients.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">Nenhum cliente nesta faixa.</p>
-                  ) : (
-                    groupClients.map((client) => (
-                      <Link
-                        key={client.id}
-                        to={`/app/clientes/${client.id}`}
-                        className="block truncate text-xs font-medium text-primary hover:underline"
-                      >
-                        {clientName(client)}
-                      </Link>
-                    ))
-                  )}
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      </DashboardSection>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <SectionHeader
+            title="Performance"
+            caption="Investimento, leads e resultados de campanhas pagas"
+            action={
+              <Link to="/app/integracoes" className="text-xs font-semibold text-primary hover:underline">
+                Integracoes
+              </Link>
+            }
+          />
+          <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-surface/40 py-8 text-center">
+            <p className="text-sm font-semibold text-foreground">Nenhuma integracao conectada</p>
+            <p className="max-w-xs text-xs text-muted-foreground">
+              Conecte Meta Ads ou Google Ads para ver investimento, leads e ROAS aqui.
+            </p>
+          </div>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Atividade recente" />
+          <div className="mt-3">
+            {activity.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {activity.map((item) => {
+                  const Icon = ACTIVITY_ICONS[item.type];
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.href}
+                      className="flex items-start gap-2.5 py-2.5 transition-colors duration-150 hover:bg-card-elevated"
+                    >
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm text-foreground">{item.title}</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {item.clientName ?? 'Interno'} - {formatRelativeDate(item.createdAt)}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

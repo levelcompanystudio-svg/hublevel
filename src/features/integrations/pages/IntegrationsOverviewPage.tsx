@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Card } from '../../../components/ui';
@@ -15,43 +15,40 @@ export function IntegrationsOverviewPage() {
   const { profile } = useAuth();
   const role = profile?.roles?.name;
   const canAccess = role === 'admin' || role === 'gestor';
+  const isAdmin = role === 'admin';
 
   const [integrations, setIntegrations] = useState<ClientIntegration[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!canAccess) {
       setLoading(false);
       return;
     }
-    let active = true;
-    async function load() {
-      try {
-        setLoading(true);
-        setError(null);
-        const [clients, realRows] = await Promise.all([listClients(), listAllClientIntegrations()]);
-        if (!active) return;
-        setIntegrations(mergeIntegrationsForClients(clients, realRows));
-      } catch (err: unknown) {
-        if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar integracoes.');
-      } finally {
-        if (active) setLoading(false);
-      }
+    try {
+      setLoading(true);
+      setError(null);
+      const [clients, realRows] = await Promise.all([listClients(), listAllClientIntegrations()]);
+      setIntegrations(mergeIntegrationsForClients(clients, realRows));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar integracoes.');
+    } finally {
+      setLoading(false);
     }
-    void load();
-    return () => {
-      active = false;
-    };
   }, [canAccess]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   if (!canAccess) return <AccessDeniedPlaceholder />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <IntegrationHeader
         title="Integracoes"
-        description="Status de conexao de Meta Ads e Google Ads por cliente. Ainda sem OAuth real, sem armazenamento de credenciais e sem sincronizacao de metricas."
+        description="Status de conexao de Meta Ads e Google Ads por cliente. Meta Ads ja sincroniza metricas reais; Google Ads segue preparado na arquitetura."
       />
 
       {loading && <LoadingState title="Carregando integracoes" />}
@@ -59,13 +56,12 @@ export function IntegrationsOverviewPage() {
       {!loading && !error && (
         <>
           <IntegrationSummary integrations={integrations} />
-          <IntegrationTable integrations={integrations} />
+          <IntegrationTable integrations={integrations} isAdmin={isAdmin} onChanged={() => void load()} />
           <Card>
-            <h3 className="text-sm font-semibold text-foreground">Integracao real sera implementada em etapa futura</h3>
+            <h3 className="text-sm font-semibold text-foreground">Meta Ads real, Google Ads preparado</h3>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-              Esta tela ja le o status real salvo por cliente, mas nenhuma conexao com Meta Ads ou Google Ads existe
-              ainda: sem OAuth, sem token armazenado, sem chamada de rede a APIs externas. Os botoes de conectar,
-              sincronizar e desconectar continuam desabilitados ate a proxima etapa.
+              Conectar uma conta e a sincronizacao manual ficam disponiveis na aba Integracoes de cada cliente (admin).
+              Google Ads ja tem a mesma arquitetura pronta no servidor, mas ainda sem chamada real a API do Google.
             </p>
           </Card>
         </>

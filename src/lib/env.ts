@@ -36,9 +36,22 @@ function getSupabasePublishableKey(): string {
   );
 }
 
+// URL publica do backend HubLevel (/server) - nunca um secret, so o endereco onde ele roda.
+// Diferente de getEnvVar(), nao lanca erro se faltar: sem isso configurado, so as telas que
+// dependem do servidor (Integracoes Meta/Google) ficam indisponiveis, o resto do app continua
+// funcionando normalmente.
+function getServerUrl(): string {
+  const value = import.meta.env.VITE_HUBLEVEL_SERVER_URL;
+  if (!value || value.includes('PLACEHOLDER') || value.includes('placeholder')) {
+    return 'http://localhost:4000';
+  }
+  return value.replace(/\/$/, '');
+}
+
 export const env = {
   SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'),
   SUPABASE_PUBLISHABLE_KEY: getSupabasePublishableKey(),
+  SERVER_URL: getServerUrl(),
   MODE: import.meta.env.MODE,
   DEV: import.meta.env.DEV,
   PROD: import.meta.env.PROD,

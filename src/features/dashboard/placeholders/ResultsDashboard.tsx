@@ -16,6 +16,9 @@ import { getRecentPortfolioActivity } from '../dashboard-activity.api';
 import type { ActivityItem, ActivityType } from '../dashboard-activity.api';
 import { getDashboardOperationalOverview } from '../dashboard.api';
 import type { DashboardOperationalOverview } from '../dashboard.api';
+import { getPortfolioPerformanceMetrics } from '../../performance/performance.api';
+import type { ClientPerformanceMetrics } from '../../performance/performance.types';
+import { emptyClientPerformanceMetrics } from '../../performance/performance.types';
 
 const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; barClassName: string }> = [
   { status: 'saudavel', label: 'Saudaveis', barClassName: 'bg-success' },
@@ -34,6 +37,29 @@ function formatRelativeDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
 
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+function PortfolioMetric({
+  label,
+  value,
+  format,
+}: {
+  label: string;
+  value: number | null;
+  format?: (value: number) => string;
+}) {
+  return (
+    <div>
+      <p className="text-caption uppercase">{label}</p>
+      <p className="mt-1 text-lg font-semibold text-foreground">
+        {value === null ? '-' : format ? format(value) : value}
+      </p>
+    </div>
+  );
+}
+
 // Cockpit operacional (admin/gestor) para /app/dashboard. Nenhum dado financeiro aqui - isso fica
 // exclusivo do Painel Administrativo (/app/painel-administrativo). Todas as secoes usam dados reais
 // ja existentes no banco (clientes, alertas operacionais, tarefas, reunioes, atividade recente);
@@ -46,6 +72,7 @@ export function ResultsDashboard() {
   const [clients, setClients] = useState<Client[]>([]);
   const [alerts, setAlerts] = useState<OperationalAlert[]>([]);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [performance, setPerformance] = useState<ClientPerformanceMetrics>(emptyClientPerformanceMetrics);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,17 +85,19 @@ export function ResultsDashboard() {
       try {
         setLoading(true);
         setError(null);
-        const [overviewResult, clientsResult, alertsResult, activityResult] = await Promise.all([
+        const [overviewResult, clientsResult, alertsResult, activityResult, performanceResult] = await Promise.all([
           getDashboardOperationalOverview(),
           listClients(),
           getOperationalAlerts(role as 'admin' | 'gestor'),
           getRecentPortfolioActivity(),
+          getPortfolioPerformanceMetrics(),
         ]);
         if (!active) return;
         setOverview(overviewResult);
         setClients(clientsResult);
         setAlerts(alertsResult);
         setActivity(activityResult);
+        setPerformance(performanceResult);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar o dashboard.');
       } finally {
@@ -176,12 +205,21 @@ export function ResultsDashboard() {
               </Link>
             }
           />
-          <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-surface/40 py-8 text-center">
-            <p className="text-sm font-semibold text-foreground">Nenhuma integracao conectada</p>
-            <p className="max-w-xs text-xs text-muted-foreground">
-              Conecte Meta Ads ou Google Ads para ver investimento, leads e ROAS aqui.
-            </p>
-          </div>
+          {performance.investment === null && performance.leads === null && performance.clicks === null ? (
+            <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-surface/40 py-8 text-center">
+              <p className="text-sm font-semibold text-foreground">Nenhuma integracao conectada</p>
+              <p className="max-w-xs text-xs text-muted-foreground">
+                Conecte Meta Ads em um cliente (aba Integracoes) para ver investimento, leads e ROAS aqui.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <PortfolioMetric label="Investimento (30d)" value={performance.investment} format={formatCurrency} />
+              <PortfolioMetric label="Leads (30d)" value={performance.leads} />
+              <PortfolioMetric label="CPL" value={performance.cpl} format={formatCurrency} />
+              <PortfolioMetric label="ROAS" value={performance.roas} format={(value) => `${value.toFixed(2)}x`} />
+            </div>
+          )}
         </Card>
 
         <Card>

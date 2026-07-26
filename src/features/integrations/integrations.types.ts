@@ -42,6 +42,11 @@ export interface ClientIntegration {
   external_account_id: string | null;
   external_account_name: string | null;
   last_sync_at: string | null;
+  last_success_at: string | null;
+  last_error_code: string | null;
+  last_error_at: string | null;
+  currency_code: string | null;
+  timezone: string | null;
   error_message: string | null;
   notes: string | null;
   created_at: string | null;
@@ -62,10 +67,22 @@ export function emptyClientIntegration(
     external_account_id: null,
     external_account_name: null,
     last_sync_at: null,
+    last_success_at: null,
+    last_error_code: null,
+    last_error_at: null,
+    currency_code: null,
+    timezone: null,
     error_message: null,
     notes: null,
     created_at: null,
     updated_at: null,
     client: client ?? null,
   };
+}
+
+// Uma conta de anuncio Meta acessivel pelo system user token configurado no servidor - resposta
+// de GET /integrations/meta/accounts, nunca contem nenhum token.
+export interface MetaAdAccountOption {
+  id: string;
+  name: string;
 }

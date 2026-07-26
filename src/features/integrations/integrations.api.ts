@@ -1,6 +1,7 @@
+import { serverGet, serverPost } from '../../lib/serverClient';
 import { supabase } from '../../lib/supabase';
 import { INTEGRATION_PROVIDERS, emptyClientIntegration } from './integrations.types';
-import type { ClientIntegration, IntegrationClientRef } from './integrations.types';
+import type { ClientIntegration, IntegrationClientRef, MetaAdAccountOption } from './integrations.types';
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) return value[0] ?? null;
@@ -15,6 +16,11 @@ const clientIntegrationSelect = `
   external_account_id,
   external_account_name,
   last_sync_at,
+  last_success_at,
+  last_error_code,
+  last_error_at,
+  currency_code,
+  timezone,
   error_message,
   notes,
   created_at,
@@ -83,4 +89,25 @@ export function mergeIntegrationsForClients(
 
 export function integrationClientRef(integration: ClientIntegration): IntegrationClientRef | null {
   return firstRelation(integration.client);
+}
+
+// A partir daqui, chamadas ao backend /server (nunca diretamente a Meta/Google a partir do
+// frontend). O servidor e quem detem o system user token e fala com a Graph API; aqui so
+// anexamos o JWT da sessao Supabase do usuario logado.
+
+export async function listAvailableMetaAdAccounts(): Promise<MetaAdAccountOption[]> {
+  const result = await serverGet<{ accounts: MetaAdAccountOption[] }>('/integrations/meta/accounts');
+  return result.accounts;
+}
+
+export async function createMetaConnection(clientId: string, adAccountId: string): Promise<ClientIntegration> {
+  const result = await serverPost<{ connection: ClientIntegration }>('/integrations/meta/connections', {
+    client_id: clientId,
+    ad_account_id: adAccountId,
+  });
+  return result.connection;
+}
+
+export async function syncClientIntegration(connectionId: string): Promise<void> {
+  await serverPost<{ ok: true }>(`/integrations/connections/${connectionId}/sync`);
 }

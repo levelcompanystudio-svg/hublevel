@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { useAuth } from '../../auth/useAuth';
 import { listClientIntegrationsByClient, mergeIntegrationsForClient } from '../../integrations/integrations.api';
 import { IntegrationProviderCard } from '../../integrations/components/IntegrationProviderCard';
 import type { ClientIntegration } from '../../integrations/integrations.types';
@@ -10,6 +11,8 @@ interface ClientIntegrationsTabProps {
 }
 
 export function ClientIntegrationsTab({ clientId }: ClientIntegrationsTabProps) {
+  const { profile } = useAuth();
+  const isAdmin = profile?.roles?.name === 'admin';
   const [integrations, setIntegrations] = useState<ClientIntegration[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +40,12 @@ export function ClientIntegrationsTab({ clientId }: ClientIntegrationsTabProps) 
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Integracao real sera implementada em etapa futura. Os cartoes abaixo ja mostram o status salvo para este
-        cliente, mas conectar/sincronizar/desconectar ainda nao funcionam.
+        Meta Ads ja sincroniza de verdade (admin pode conectar uma conta e disparar a sincronizacao manual). Google
+        Ads continua preparado na arquitetura, sem integracao real ainda.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         {integrations.map((integration) => (
-          <IntegrationProviderCard key={integration.provider} integration={integration} />
+          <IntegrationProviderCard key={integration.provider} integration={integration} isAdmin={isAdmin} onChanged={() => void load()} />
         ))}
       </div>
     </div>

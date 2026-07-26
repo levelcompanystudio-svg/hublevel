@@ -46,7 +46,7 @@ export function ClientMetricsTab({ clientId }: ClientMetricsTabProps) {
         <Card>
           <EmptyState
             title="Sem dados de performance conectados"
-            description="Este espaco esta pronto para receber integracoes futuras (Meta Ads, Google Ads, pesquisas de NPS). Quando uma fonte de dados real for conectada, os cards acima passam a exibir os numeros deste cliente automaticamente."
+            description="Conecte uma conta Meta Ads na aba Integracoes deste cliente e sincronize manualmente para ver investimento, leads, CPL, ROAS e cliques aqui. Google Ads segue preparado na arquitetura, sem integracao real ainda."
           />
         </Card>
       )}

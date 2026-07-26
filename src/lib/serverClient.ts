@@ -15,17 +15,19 @@ async function getAuthHeader(): Promise<string> {
 
 interface ServerErrorBody {
   error?: string;
+  message?: string;
 }
 
 async function serverRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const authorization = await getAuthHeader();
+  const hasBody = init?.body !== undefined;
 
   let response: Response;
   try {
     response = await fetch(`${env.SERVER_URL}${path}`, {
       ...init,
       headers: {
-        'Content-Type': 'application/json',
+        ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
         Authorization: authorization,
         ...init?.headers,
       },
@@ -37,7 +39,7 @@ async function serverRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const body = (await response.json().catch(() => null)) as (T & ServerErrorBody) | null;
 
   if (!response.ok) {
-    const message = body?.error || `Falha ao comunicar com o servidor (${response.status}).`;
+    const message = body?.message || body?.error || `Falha ao comunicar com o servidor (${response.status}).`;
     throw new Error(message);
   }
 

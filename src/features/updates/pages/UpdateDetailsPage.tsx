@@ -55,7 +55,7 @@ export function UpdateDetailsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <UpdateHeader title={update?.title ?? 'Atualizacao'} description="Detalhe da atualizacao de acompanhamento." />
 
       {loading && <LoadingState title="Carregando atualizacao" />}
@@ -63,36 +63,41 @@ export function UpdateDetailsPage() {
 
       {!loading && update && (
         <Card>
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <Link to={`/app/clientes/${update.client_id}`} className="text-sm text-primary hover:underline">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <Link to={`/app/clientes/${update.client_id}`} className="text-sm font-semibold text-primary hover:underline">
                 {clientName(update)}
               </Link>
-              <div className="mt-4 flex flex-wrap items-center gap-2">
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <UpdateStatusBadge status={update.status} />
                 {update.sent_to_client && <Badge tone="success">Enviada ao cliente</Badge>}
                 {update.category && <Badge>{update.category}</Badge>}
               </div>
             </div>
-            <Link to={`/app/acompanhamento/${update.id}/editar`}>
-              <Button type="button">Editar atualizacao</Button>
-            </Link>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Link to={`/app/clientes/${update.client_id}`}>
+                <Button type="button" variant="ghost" size="sm">Abrir cliente</Button>
+              </Link>
+              <Link to={`/app/acompanhamento/${update.id}/editar`}>
+                <Button type="button" size="sm">Editar atualizacao</Button>
+              </Link>
+            </div>
           </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <InfoItem label="Responsavel" value={responsibleName(update)} />
             <InfoItem label="Data da atualizacao" value={formatDate(update.update_date)} />
             <InfoItem label="Enviada ao cliente" value={update.sent_to_client ? 'Sim' : 'Nao'} />
           </div>
 
-          <div className="mt-6 rounded-lg border border-border bg-muted/40 p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">Descricao</p>
-            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{update.description}</p>
+          <div className="mt-5 rounded-lg border border-border bg-muted/40 p-3.5">
+            <p className="text-caption uppercase">Descricao</p>
+            <p className="mt-1.5 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{update.description}</p>
           </div>
 
-          <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">Proxima acao</p>
-            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
+          <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3.5">
+            <p className="text-caption uppercase">Proxima acao</p>
+            <p className="mt-1.5 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
               {update.next_action || 'Nenhuma proxima acao registrada.'}
             </p>
           </div>
@@ -105,7 +110,7 @@ export function UpdateDetailsPage() {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-border bg-muted/40 p-3">
-      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="text-caption uppercase">{label}</p>
       <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>
     </div>
   );

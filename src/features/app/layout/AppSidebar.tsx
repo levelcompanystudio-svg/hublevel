@@ -44,7 +44,7 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
 
           return (
             <div key={group}>
-              <p className="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">{groupLabels[group]}</p>
+              <p className="px-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{groupLabels[group]}</p>
               <div className="mt-1.5 space-y-0.5">
                 {groupItems.map((item) => (
                   <AppNavItem key={item.path} item={item} onNavigate={onNavigate} />

@@ -22,7 +22,7 @@ export function MobileSidebar({ open, role, userName, onClose, onLogout, logging
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative h-full w-64 max-w-[85vw] shadow-2xl shadow-black/40">
+      <div className="relative h-full w-64 max-w-[85vw] shadow-soft">
         <button
           type="button"
           onClick={onClose}

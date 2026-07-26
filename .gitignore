@@ -35,4 +35,6 @@ lerna-debug.log*
 *.sw?
 
 # Local assistant settings
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**

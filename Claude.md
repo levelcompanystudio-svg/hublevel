@@ -178,6 +178,19 @@ Consulte `docs/git-mcp.md` para o plano tecnico completo de Git/GitHub MCP, bran
 4. Nao remova arquivos, configuracoes ou alteracoes existentes sem confirmar que fazem parte da tarefa.
 5. Ao adicionar funcionalidades, inclua ou atualize testes quando houver estrutura de testes disponivel.
 6. Atualize esta documentacao quando novas convencoes, comandos ou decisoes forem introduzidas.
+7. Antes de criar ou alterar qualquer tela, pagina ou componente de interface, consulte a skill obrigatoria descrita em "Sistema de Design Visual" abaixo.
+
+## Sistema de Design Visual (Skill Obrigatoria)
+
+O HubLevel tem uma skill oficial e unica de design: `.claude/skills/hublevel-design-system/SKILL.md`. Nao existe outro documento mestre de design no projeto — se um dia parecer necessario criar um segundo, trate isso como sinal de que a skill existente esta desatualizada e precisa ser evoluida, nao duplicada.
+
+Regras obrigatorias:
+
+- Claude deve ler `.claude/skills/hublevel-design-system/SKILL.md` antes de criar ou alterar qualquer pagina em `src/features/*/pages/` ou componente em `src/features/*/components/` e `src/components/`.
+- Claude deve consultar `.claude/skills/hublevel-design-system/references/canonical-layouts.md` para o tipo de pagina especifico sendo criado ou alterado (Dashboard, ListPage, EntityDetailPage, SettingsPage, IntegrationPage, FormPage, AdminTablePage ou AppShell).
+- Claude deve rodar `.claude/skills/hublevel-design-system/references/approval-checklist.md` antes de reportar qualquer entrega de interface como concluida, alem do Codex usar o mesmo checklist ao revisar, como parte do "Fluxo Apos Execucao do Claude".
+- A auditoria das imagens de referencia que fundamentam a skill esta em `docs/product/reference-images/README.md`. Novas referencias visuais devem ser adicionadas nessa pasta e auditadas nesse arquivo antes de virarem regra na skill.
+- Nenhuma tela deve copiar literalmente identidade visual, texto, icones de marca ou layout pixel-a-pixel dos produtos de referencia (Attio, Linear, Stripe, Vercel) — apenas os principios estruturais descritos na skill.
 
 ## Comandos do Projeto
 

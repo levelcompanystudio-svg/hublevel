@@ -32,8 +32,10 @@ export function AppTopbar({ role, userName, onOpenMenu }: AppTopbarProps) {
           <h1 className="truncate text-sm font-semibold text-foreground">{item?.label ?? 'HubLevel'}</h1>
         </div>
 
+        {/* Identidade ja aparece no rodape da sidebar (visivel junto no desktop); mostrar aqui so
+            quando a sidebar esta fechada (mobile), para nao duplicar o mesmo dado na tela. */}
         <div
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary md:hidden"
           title={role ? `${userName ?? 'Usuario'} (${role})` : userName}
           aria-hidden="true"
         >

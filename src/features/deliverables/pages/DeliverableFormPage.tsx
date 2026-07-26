@@ -95,7 +95,7 @@ export function DeliverableFormPage() {
   if (!canEdit) return <AccessDeniedPlaceholder />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <DeliverableHeader
         title={editing ? 'Editar entregavel' : 'Novo entregavel'}
         description="Cadastro e manutencao de entregaveis por cliente."

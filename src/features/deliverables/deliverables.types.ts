@@ -18,6 +18,11 @@ export interface DeliverableProfile {
   roles?: { name: RoleName } | { name: RoleName }[] | null;
 }
 
+export interface DeliverableDocumentRef {
+  id: string;
+  title: string;
+}
+
 export interface Deliverable {
   id: string;
   client_id: string;
@@ -38,6 +43,7 @@ export interface Deliverable {
   updated_at: string;
   client?: DeliverableClient | DeliverableClient[] | null;
   assignee?: DeliverableProfile | DeliverableProfile[] | null;
+  document?: DeliverableDocumentRef | DeliverableDocumentRef[] | null;
 }
 
 export interface DeliverableFormValues {

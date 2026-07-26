@@ -73,7 +73,7 @@ export function DeliverableDetailsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <DeliverableHeader title={deliverable?.title ?? 'Entregavel'} description="Detalhe do entregavel." />
       {loading && <LoadingState title="Carregando entregavel" />}
       {error && <ErrorState description={error} />}

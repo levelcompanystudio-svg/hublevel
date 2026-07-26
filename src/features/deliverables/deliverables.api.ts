@@ -3,14 +3,16 @@ import type { RoleName } from '../auth/auth.types';
 import type {
   Deliverable,
   DeliverableClient,
+  DeliverableDocumentRef,
   DeliverableFormValues,
   DeliverableProfile,
   DeliverableStatus,
 } from './deliverables.types';
 
-type DeliverableRow = Omit<Deliverable, 'client' | 'assignee'> & {
+type DeliverableRow = Omit<Deliverable, 'client' | 'assignee' | 'document'> & {
   client?: DeliverableClient | DeliverableClient[] | null;
   assignee?: DeliverableProfile | DeliverableProfile[] | null;
+  document?: DeliverableDocumentRef | DeliverableDocumentRef[] | null;
 };
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
@@ -33,6 +35,7 @@ function mapDeliverable(row: DeliverableRow): Deliverable {
     ...row,
     client: firstRelation(row.client),
     assignee: firstRelation(row.assignee),
+    document: firstRelation(row.document),
   };
 }
 
@@ -70,7 +73,8 @@ const deliverableSelect = `
   created_at,
   updated_at,
   client:clients!deliverables_client_id_fkey(id, company_name, trade_name),
-  assignee:profiles!deliverables_assigned_to_fkey(id, name, email, roles(name))
+  assignee:profiles!deliverables_assigned_to_fkey(id, name, email, roles(name)),
+  document:documents!deliverables_document_id_fkey(id, title)
 `;
 
 export async function listDeliverables(): Promise<Deliverable[]> {
@@ -109,10 +113,13 @@ export async function getDeliverable(id: string): Promise<Deliverable> {
   return mapDeliverable(data as unknown as DeliverableRow);
 }
 
+// Clientes "operacionais" para o board de entregaveis: mesmo criterio ja usado em
+// meeting-console.api.ts (ativo/onboarding) - pausado/encerrado/deletado saem da visao.
 export async function listDeliverableClients(): Promise<DeliverableClient[]> {
   const { data, error } = await supabase
     .from('clients')
     .select('id, company_name, trade_name, responsible_user_id, responsible:profiles!clients_responsible_user_id_fkey(id, name, email, roles(name))')
+    .in('status', ['ativo', 'onboarding'])
     .is('deleted_at', null)
     .order('company_name', { ascending: true });
 

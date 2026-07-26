@@ -80,7 +80,9 @@ export function DeliverableListPage() {
       <PageHeader
         eyebrow="Operacao"
         title="Entregaveis"
-        description={canCreate ? 'Entregas por cliente - sem ordem fixa.' : 'Entregaveis atribuidos a voce.'}
+        description={canCreate
+          ? 'Board de entregas por cliente ativo: o que foi entregue, o que esta pendente e quem ainda nao tem entregavel.'
+          : 'Entregaveis atribuidos a voce.'}
       />
 
       {loading && <LoadingState title="Carregando entregaveis" />}

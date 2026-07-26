@@ -3,11 +3,9 @@ import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Badge, Button, Card } from '../../../components/ui';
 import {
   MEETING_EXPECTED_WEEKS,
-  MEETING_FREQUENCIES,
   MEETING_OPERATIONAL_STATUSES,
   MEETING_POST_STATUSES,
   meetingExpectedWeekLabels,
-  meetingFrequencyLabels,
   meetingOperationalStatusLabels,
   meetingPostStatusLabels,
 } from '../client-meeting-settings.types';
@@ -18,36 +16,57 @@ import type {
   MeetingPostStatus,
 } from '../client-meeting-settings.types';
 import { formatDateTime } from './MeetingTable';
+import { MeetingFrequencyCell } from './MeetingFrequencyCell';
 import { MeetingSettingSelect } from './MeetingSettingSelect';
 import { pendingMeeting } from '../meeting-console.types';
 import type { MeetingConsoleRow } from '../meeting-console.types';
 
 interface MeetingConsoleTableProps {
   rows: MeetingConsoleRow[];
+  hasAnyRows: boolean;
+  filtersActive: boolean;
   busyKey: string | null;
-  onChangeFrequency: (clientId: string, value: MeetingFrequency) => void;
+  onSaveFrequency: (clientId: string, patch: { frequency: MeetingFrequency; custom_frequency_days: number | null }) => void;
   onChangeExpectedWeek: (clientId: string, value: MeetingExpectedWeek) => void;
   onChangeOperationalStatus: (clientId: string, value: MeetingOperationalStatus) => void;
   onChangePostMeetingStatus: (clientId: string, value: MeetingPostStatus) => void;
   onMarkRealizada: (meetingId: string) => void;
+  onClearFilters: () => void;
 }
 
 export function MeetingConsoleTable({
   rows,
+  hasAnyRows,
+  filtersActive,
   busyKey,
-  onChangeFrequency,
+  onSaveFrequency,
   onChangeExpectedWeek,
   onChangeOperationalStatus,
   onChangePostMeetingStatus,
   onMarkRealizada,
+  onClearFilters,
 }: MeetingConsoleTableProps) {
   if (rows.length === 0) {
     return (
       <Card>
-        <EmptyState
-          title="Nenhum cliente encontrado"
-          description="Nenhum cliente ativo corresponde aos filtros selecionados."
-        />
+        {!hasAnyRows ? (
+          <EmptyState
+            title="Nenhum cliente ativo ainda"
+            description="Assim que um cliente estiver com status ativo ou onboarding, ele aparece automaticamente aqui - nao e preciso cadastrar nada manualmente."
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-3 py-6 text-center">
+            <EmptyState
+              title="Nenhum cliente encontrado"
+              description="Nenhum cliente corresponde aos filtros selecionados."
+            />
+            {filtersActive && (
+              <Button type="button" variant="secondary" size="sm" onClick={onClearFilters}>
+                Limpar filtros
+              </Button>
+            )}
+          </div>
+        )}
       </Card>
     );
   }
@@ -55,7 +74,7 @@ export function MeetingConsoleTable({
   return (
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1180px] border-collapse text-left">
+        <table className="w-full min-w-[1220px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3.5 font-semibold">Cliente</th>
@@ -78,22 +97,16 @@ export function MeetingConsoleTable({
               return (
                 <tr key={row.clientId} className="bg-card transition-colors hover:bg-card-elevated">
                   <td className="px-4 py-3">
-                    <Link to={`/app/clientes/${row.clientId}`} className="text-sm font-semibold text-foreground hover:text-primary">
-                      {row.tradeName || row.companyName}
-                    </Link>
+                    <p className="text-sm font-semibold text-foreground">{row.tradeName || row.companyName}</p>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{row.responsibleName}</td>
                   <td className="px-4 py-3">
-                    <MeetingSettingSelect
-                      value={row.frequency}
-                      options={MEETING_FREQUENCIES}
-                      labels={meetingFrequencyLabels}
+                    <MeetingFrequencyCell
+                      frequency={row.frequency}
+                      customFrequencyDays={row.customFrequencyDays}
                       disabled={saving}
-                      onChange={(value) => onChangeFrequency(row.clientId, value)}
+                      onSave={(patch) => onSaveFrequency(row.clientId, patch)}
                     />
-                    {row.frequency === 'personalizada' && row.customFrequencyDays && (
-                      <p className="mt-1 text-xs text-muted-foreground">{row.customFrequencyDays} dias</p>
-                    )}
                   </td>
                   <td className="px-4 py-3">
                     <MeetingSettingSelect
@@ -168,6 +181,9 @@ export function MeetingConsoleTable({
                           Pos-reuniao feito
                         </Button>
                       )}
+                      <Link to={`/app/clientes/${row.clientId}`}>
+                        <Button type="button" variant="ghost" size="sm">Abrir cliente</Button>
+                      </Link>
                     </div>
                   </td>
                 </tr>

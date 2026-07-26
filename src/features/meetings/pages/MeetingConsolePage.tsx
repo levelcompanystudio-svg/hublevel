@@ -5,6 +5,7 @@ import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
 import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import {
@@ -31,6 +32,30 @@ import type { MeetingConsoleQuickFilter, MeetingConsoleRow } from '../meeting-co
 
 const QUICK_FILTERS: MeetingConsoleQuickFilter[] = ['todos', 'sem_agendamento', 'proximas', 'atrasadas'];
 const FILTER_ALL = 'todos';
+
+interface FilterSelectProps<T extends string> {
+  label: string;
+  value: T;
+  onChange: (value: T) => void;
+  options: Array<{ value: T; label: string }>;
+}
+
+function FilterSelect<T extends string>({ label, value, onChange, options }: FilterSelectProps<T>) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as T)}
+        className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 export function MeetingConsolePage() {
   const { profile } = useAuth();
@@ -100,23 +125,22 @@ export function MeetingConsolePage() {
     }
   }
 
-  async function handleChangeFrequency(clientId: string, value: MeetingFrequency) {
-    if (value !== 'personalizada') {
-      await applySettingPatch(clientId, { frequency: value, custom_frequency_days: null });
-      return;
-    }
-
-    const input = window.prompt('Informe a quantidade de dias para a frequencia personalizada.');
-    if (input === null) return;
-
-    const customDays = Number(input);
-    if (!Number.isInteger(customDays) || customDays <= 0) {
-      setError('Frequencia personalizada exige uma quantidade de dias valida.');
-      return;
-    }
-
-    await applySettingPatch(clientId, { frequency: value, custom_frequency_days: customDays });
+  function handleClearFilters() {
+    setQuickFilter('todos');
+    setResponsibleFilter(FILTER_ALL);
+    setFrequencyFilter(FILTER_ALL);
+    setWeekFilter(FILTER_ALL);
+    setStatusFilter(FILTER_ALL);
+    setPostFilter(FILTER_ALL);
   }
+
+  const filtersActive =
+    quickFilter !== 'todos' ||
+    responsibleFilter !== FILTER_ALL ||
+    frequencyFilter !== FILTER_ALL ||
+    weekFilter !== FILTER_ALL ||
+    statusFilter !== FILTER_ALL ||
+    postFilter !== FILTER_ALL;
 
   const nowMs = Date.now();
 
@@ -141,6 +165,7 @@ export function MeetingConsolePage() {
   const overdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows]);
   const upcomingCount = useMemo(() => rows.filter((row) => isUpcoming(row, nowMs)).length, [rows, nowMs]);
   const noSchedulingCount = useMemo(() => rows.filter((row) => hasNoScheduling(row)).length, [rows]);
+  const postPendingCount = useMemo(() => rows.filter((row) => row.postMeetingStatus === 'pendente').length, [rows]);
 
   if (role !== 'admin' && role !== 'gestor') {
     return <AccessDeniedPlaceholder />;
@@ -151,7 +176,7 @@ export function MeetingConsolePage() {
       <PageHeader
         eyebrow="Operacao"
         title="Reunioes"
-        description="Visao operacional de reunioes por cliente ativo: cadencia esperada, ultimo encontro, proximo agendamento e pendencias de pos-reuniao."
+        description="Cadencia de reunioes por cliente ativo: quem esta em dia, quem precisa ser agendado e o que ficou pendente depois do encontro."
       />
 
       {loading && <LoadingState title="Carregando operacao de reunioes" />}
@@ -159,11 +184,12 @@ export function MeetingConsolePage() {
 
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
-            <SummaryCard label="Clientes ativos" value={rows.length} tone="brand" />
-            <SummaryCard label="Reunioes atrasadas" value={overdueCount} tone={overdueCount > 0 ? 'warning' : 'neutral'} />
+          <StatsGrid className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <SummaryCard label="Clientes na rotina" value={rows.length} tone="brand" />
+            <SummaryCard label="Sem agendamento" value={noSchedulingCount} tone={noSchedulingCount > 0 ? 'warning' : 'neutral'} />
             <SummaryCard label="Reunioes proximas (7d)" value={upcomingCount} tone="neutral" />
-            <SummaryCard label="Sem agendamento" value={noSchedulingCount} tone="neutral" />
+            <SummaryCard label="Reunioes atrasadas" value={overdueCount} tone={overdueCount > 0 ? 'warning' : 'neutral'} />
+            <SummaryCard label="Pos-reuniao pendente" value={postPendingCount} tone={postPendingCount > 0 ? 'warning' : 'neutral'} />
           </StatsGrid>
 
           <FilterBar label="Visao rapida">
@@ -186,72 +212,71 @@ export function MeetingConsolePage() {
           </FilterBar>
 
           <FilterBar label="Filtros">
-            <div className="flex flex-wrap gap-2">
-              <select
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+              <FilterSelect
+                label="Gestor"
                 value={responsibleFilter}
-                onChange={(event) => setResponsibleFilter(event.target.value)}
-                className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value={FILTER_ALL}>Todos os gestores</option>
-                {responsibleOptions.map((option) => (
-                  <option key={option.id} value={option.id}>{option.name}</option>
-                ))}
-              </select>
-
-              <select
+                onChange={setResponsibleFilter}
+                options={[
+                  { value: FILTER_ALL, label: 'Todos' },
+                  ...responsibleOptions.map((option) => ({ value: option.id, label: option.name })),
+                ]}
+              />
+              <FilterSelect
+                label="Frequencia"
                 value={frequencyFilter}
-                onChange={(event) => setFrequencyFilter(event.target.value as MeetingFrequency | 'todos')}
-                className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value={FILTER_ALL}>Todas as frequencias</option>
-                {MEETING_FREQUENCIES.map((option) => (
-                  <option key={option} value={option}>{meetingFrequencyLabels[option]}</option>
-                ))}
-              </select>
-
-              <select
+                onChange={setFrequencyFilter}
+                options={[
+                  { value: FILTER_ALL, label: 'Todas' },
+                  ...MEETING_FREQUENCIES.map((option) => ({ value: option, label: meetingFrequencyLabels[option] })),
+                ]}
+              />
+              <FilterSelect
+                label="Semana prevista"
                 value={weekFilter}
-                onChange={(event) => setWeekFilter(event.target.value as MeetingExpectedWeek | 'todos')}
-                className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value={FILTER_ALL}>Todas as semanas</option>
-                {MEETING_EXPECTED_WEEKS.map((option) => (
-                  <option key={option} value={option}>{meetingExpectedWeekLabels[option]}</option>
-                ))}
-              </select>
-
-              <select
+                onChange={setWeekFilter}
+                options={[
+                  { value: FILTER_ALL, label: 'Todas' },
+                  ...MEETING_EXPECTED_WEEKS.map((option) => ({ value: option, label: meetingExpectedWeekLabels[option] })),
+                ]}
+              />
+              <FilterSelect
+                label="Status da reuniao"
                 value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value as MeetingOperationalStatus | 'todos')}
-                className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value={FILTER_ALL}>Todos os status</option>
-                {MEETING_OPERATIONAL_STATUSES.map((option) => (
-                  <option key={option} value={option}>{meetingOperationalStatusLabels[option]}</option>
-                ))}
-              </select>
-
-              <select
+                onChange={setStatusFilter}
+                options={[
+                  { value: FILTER_ALL, label: 'Todos' },
+                  ...MEETING_OPERATIONAL_STATUSES.map((option) => ({ value: option, label: meetingOperationalStatusLabels[option] })),
+                ]}
+              />
+              <FilterSelect
+                label="Pos-reuniao"
                 value={postFilter}
-                onChange={(event) => setPostFilter(event.target.value as MeetingPostStatus | 'todos')}
-                className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value={FILTER_ALL}>Todo pos-reuniao</option>
-                {MEETING_POST_STATUSES.map((option) => (
-                  <option key={option} value={option}>{meetingPostStatusLabels[option]}</option>
-                ))}
-              </select>
+                onChange={setPostFilter}
+                options={[
+                  { value: FILTER_ALL, label: 'Todos' },
+                  ...MEETING_POST_STATUSES.map((option) => ({ value: option, label: meetingPostStatusLabels[option] })),
+                ]}
+              />
             </div>
+            {filtersActive && (
+              <Button type="button" variant="ghost" size="sm" onClick={handleClearFilters} className="shrink-0">
+                Limpar filtros
+              </Button>
+            )}
           </FilterBar>
 
           <MeetingConsoleTable
             rows={filteredRows}
+            hasAnyRows={rows.length > 0}
+            filtersActive={filtersActive}
             busyKey={busyKey}
-            onChangeFrequency={(clientId, value) => void handleChangeFrequency(clientId, value)}
+            onSaveFrequency={(clientId, patch) => void applySettingPatch(clientId, patch)}
             onChangeExpectedWeek={(clientId, value) => void applySettingPatch(clientId, { expected_week: value })}
             onChangeOperationalStatus={(clientId, value) => void applySettingPatch(clientId, { operational_status: value })}
             onChangePostMeetingStatus={(clientId, value) => void applySettingPatch(clientId, { post_meeting_status: value })}
             onMarkRealizada={(meetingId) => void handleMarkRealizada(meetingId)}
+            onClearFilters={handleClearFilters}
           />
         </>
       )}

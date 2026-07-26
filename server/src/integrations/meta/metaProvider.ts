@@ -1,3 +1,5 @@
+import { toDbProviderCode } from '../core/providerDbCode.js';
+import { upsertDailyMetrics } from '../core/metricsRepository.js';
 import type {
   AdsProvider,
   AdsProviderCredentials,
@@ -7,33 +9,105 @@ import type {
   ProviderAccountRef,
 } from '../core/types.js';
 import { ProviderNotImplementedError } from '../core/types.js';
+import { fetchMetaDailyInsights, listMetaAdAccounts, MetaApiError } from './metaApiClient.js';
+import { normalizeMetaDailyInsight } from './normalizer.js';
 
 const PROVIDER_NAME = 'meta' as const;
+const DEFAULT_SYNC_LOOKBACK_DAYS = 30;
 
-// Placeholder do provider Meta Ads. Nenhum metodo aqui chama a Graph API - isso e trabalho de um
-// bloco futuro. getConnectionStatus e a unica excecao: retorna um status estatico "not_connected"
-// sem tocar em rede, so para o endpoint /integrations/meta/status ter uma resposta real hoje.
+function todayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function daysAgoIsoDate(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().slice(0, 10);
+}
+
+// Bloco 2: validateConnection/listAccounts/fetchDailyMetrics/syncAccount chamam a Graph API de
+// verdade usando o META_SYSTEM_USER_TOKEN do env (nunca um token vindo de "credentials" - a Meta
+// usa um unico system user do Business para todas as contas, nao OAuth por cliente). disconnect
+// e refreshCredentials continuam nao implementados neste bloco (fora do escopo pedido).
 export const metaProvider: AdsProvider = {
   name: PROVIDER_NAME,
 
   async validateConnection(_credentials: AdsProviderCredentials): Promise<boolean> {
-    throw new ProviderNotImplementedError(PROVIDER_NAME, 'validateConnection');
+    try {
+      await listMetaAdAccounts();
+      return true;
+    } catch (error) {
+      if (error instanceof MetaApiError) return false;
+      throw error;
+    }
   },
 
   async listAccounts(_credentials: AdsProviderCredentials): Promise<ProviderAccountRef[]> {
-    throw new ProviderNotImplementedError(PROVIDER_NAME, 'listAccounts');
+    const accounts = await listMetaAdAccounts();
+    return accounts.map((account) => ({ id: account.id, name: account.name }));
   },
 
-  async syncAccount(_accountId: string, _credentials: AdsProviderCredentials): Promise<void> {
-    throw new ProviderNotImplementedError(PROVIDER_NAME, 'syncAccount');
+  async fetchDailyMetrics(accountId: string, range: DateRange, _credentials: AdsProviderCredentials): Promise<DailyMetric[]> {
+    const rows = await fetchMetaDailyInsights(accountId, range.start, range.end);
+    return rows.map((row) => {
+      const normalized = normalizeMetaDailyInsight(row);
+      return {
+        date: normalized.metricDate,
+        accountId,
+        investment: normalized.spend,
+        leads: normalized.leads,
+        clicks: normalized.clicks,
+        impressions: normalized.impressions,
+      };
+    });
   },
 
-  async fetchDailyMetrics(
-    _accountId: string,
-    _range: DateRange,
-    _credentials: AdsProviderCredentials,
-  ): Promise<DailyMetric[]> {
-    throw new ProviderNotImplementedError(PROVIDER_NAME, 'fetchDailyMetrics');
+  // credentials precisa trazer hublevelClientId e clientIntegrationId (setados pela rota que
+  // dispara o sync) - sem isso nao ha como saber em qual linha de client_integrations gravar.
+  async syncAccount(accountId: string, credentials: AdsProviderCredentials): Promise<void> {
+    const clientIntegrationId = credentials.clientIntegrationId;
+    if (typeof clientIntegrationId !== 'string' || !clientIntegrationId) {
+      throw new Error('syncAccount (meta): credentials.clientIntegrationId e obrigatorio.');
+    }
+
+    const lookbackDays =
+      typeof credentials.lookbackDays === 'number' && credentials.lookbackDays > 0
+        ? credentials.lookbackDays
+        : DEFAULT_SYNC_LOOKBACK_DAYS;
+
+    const since = daysAgoIsoDate(lookbackDays);
+    const until = todayIsoDate();
+
+    const rows = await fetchMetaDailyInsights(accountId, since, until);
+    const currencyCode = typeof credentials.currencyCode === 'string' ? credentials.currencyCode : null;
+    const actorId = typeof credentials.actorId === 'string' ? credentials.actorId : null;
+
+    const records = rows.map((row) => {
+      const normalized = normalizeMetaDailyInsight(row);
+      return {
+        clientIntegrationId,
+        clientId: credentials.hublevelClientId,
+        provider: toDbProviderCode(PROVIDER_NAME),
+        externalAccountId: accountId,
+        metricDate: normalized.metricDate,
+        spend: normalized.spend,
+        impressions: normalized.impressions,
+        reach: normalized.reach,
+        clicks: normalized.clicks,
+        ctr: normalized.ctr,
+        cpc: normalized.cpc,
+        cpm: normalized.cpm,
+        leads: normalized.leads,
+        conversions: normalized.conversions,
+        conversionValue: normalized.conversionValue,
+        roas: normalized.roas,
+        currencyCode,
+        rawMetrics: normalized.rawMetrics,
+        actorId,
+      };
+    });
+
+    await upsertDailyMetrics(records);
   },
 
   async disconnect(_accountId: string): Promise<void> {

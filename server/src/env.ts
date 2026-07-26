@@ -25,6 +25,10 @@ const envSchema = z.object({
 
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+  // Origin do frontend em producao, usado exclusivamente para a allowlist de CORS (ver server.ts).
+  // Em desenvolvimento, http://localhost:5173 e sempre permitido independente desta variavel.
+  FRONTEND_URL: z.string().url({ message: 'FRONTEND_URL deve ser uma URL valida (ex.: https://hublevel-production.up.railway.app).' }).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

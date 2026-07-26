@@ -25,6 +25,7 @@ Configurar direto no painel do servico `hublevel-api` no Railway (nunca em arqui
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key - uso exclusivo do servidor, nunca no frontend |
 | `META_SYSTEM_USER_TOKEN` | Token do system user do Business Meta (permissao `ads_read`, no minimo) |
 | `META_API_VERSION` | Versao da Graph API usada pelo cliente Meta (ex.: `v21.0`) |
+| `FRONTEND_URL` | Origin publica do frontend em producao (ex.: `https://hublevel-production.up.railway.app`, sem barra final) - usada exclusivamente para a allowlist de CORS, ver secao 9 |
 
 ## 4. Variaveis de ambiente opcionais
 
@@ -82,3 +83,29 @@ Para quem tiver acesso real ao Railway e a um token Meta valido:
 12. Conferir o Dashboard (`/app/dashboard`) - a secao Performance deve trocar o placeholder "Nenhuma integracao conectada" pelos totais agregados.
 
 Nenhum destes passos foi executado nesta etapa (sem acesso ao Railway nem a um `META_SYSTEM_USER_TOKEN` real neste ambiente) - fica registrado como checklist para quem for aplicar o deploy de fato.
+
+## 9. CORS
+
+O `/server` usa `@fastify/cors` com uma allowlist explicita (`server/src/server.ts`), registrada antes de todas as rotas - nunca `origin: "*"`, nem em desenvolvimento nem em producao:
+
+- **Desenvolvimento** (`NODE_ENV !== 'production'`): `http://localhost:5173` e sempre permitido, sem precisar configurar nada.
+- **Producao**: apenas a origin definida em `FRONTEND_URL` e permitida. Se `FRONTEND_URL` nao estiver configurada, nenhuma origin de producao passa (alem de requisicoes sem header `Origin`, como healthchecks e chamadas servidor-a-servidor, que nao passam por CORS).
+- **Metodos permitidos**: `GET`, `POST`, `OPTIONS`.
+- **Headers permitidos**: `Authorization`, `Content-Type`.
+- **Credentials**: `false` (o frontend nao usa cookies para autenticar contra este servidor - o JWT vai no header `Authorization`, nao em cookie).
+
+Para o frontend em `https://hublevel-production.up.railway.app` funcionar, configurar no servico `hublevel-api` do Railway:
+
+```
+FRONTEND_URL=https://hublevel-production.up.railway.app
+```
+
+Teste rapido (sem nenhum secret, so confirma o header de resposta):
+
+```bash
+curl -i -X OPTIONS https://<url-publica-da-api>/integrations/meta/accounts \
+  -H "Origin: https://hublevel-production.up.railway.app" \
+  -H "Access-Control-Request-Method: GET"
+```
+
+A resposta deve incluir `Access-Control-Allow-Origin: https://hublevel-production.up.railway.app` (nunca `*`). Testando com uma origin fora da allowlist, o header `Access-Control-Allow-Origin` nao deve aparecer na resposta.

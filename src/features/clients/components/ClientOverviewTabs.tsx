@@ -80,7 +80,7 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         ) : overviewError ? (
           <ErrorState description={overviewError} />
         ) : overview && metrics ? (
-          <ClientOverviewSummary data={overview} metrics={metrics} />
+          <ClientOverviewSummary clientId={client.id} data={overview} metrics={metrics} />
         ) : null
       ) : activeTab === 'Operacao' ? (
         <ClientOperationSummary client={client} />

@@ -4,14 +4,27 @@ import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
-import { getPortfolioPerformanceMetrics } from '../performance.api';
-import type { ClientPerformanceMetrics } from '../performance.types';
-import { emptyClientPerformanceMetrics } from '../performance.types';
+import { getPortfolioPerformanceOverview } from '../performance.api';
+import { getDefaultPerformancePeriod } from '../performance-period';
+import type { PerformancePeriodRange } from '../performance-period';
+import type { PerformanceOverview } from '../performance.types';
+import { emptyPerformanceOverview } from '../performance.types';
+import { PerformanceEmptyState } from '../components/PerformanceEmptyState';
 import { PerformanceHeader } from '../components/PerformanceHeader';
-import { PerformanceMetricsGrid } from '../components/PerformanceMetricsGrid';
+import { PerformancePeriodFilter } from '../components/PerformancePeriodFilter';
+import { PerformanceSummaryGrid } from '../components/PerformanceSummaryGrid';
+import { PerformanceTrendChart } from '../components/PerformanceTrendChart';
 
-function hasAnyData(metrics: ClientPerformanceMetrics): boolean {
-  return metrics.investment !== null || metrics.leads !== null || metrics.clicks !== null;
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+function formatCount(value: number): string {
+  return new Intl.NumberFormat('pt-BR').format(value);
+}
+
+function formatDate(value: string): string {
+  return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR');
 }
 
 export function PerformanceOverviewPage() {
@@ -19,7 +32,8 @@ export function PerformanceOverviewPage() {
   const role = profile?.roles?.name;
   const canAccess = role === 'admin' || role === 'gestor';
 
-  const [metrics, setMetrics] = useState<ClientPerformanceMetrics>(emptyClientPerformanceMetrics);
+  const [period, setPeriod] = useState<PerformancePeriodRange>(getDefaultPerformancePeriod());
+  const [overview, setOverview] = useState<PerformanceOverview>(emptyPerformanceOverview);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,8 +47,8 @@ export function PerformanceOverviewPage() {
       try {
         setLoading(true);
         setError(null);
-        const result = await getPortfolioPerformanceMetrics();
-        if (active) setMetrics(result);
+        const result = await getPortfolioPerformanceOverview(period);
+        if (active) setOverview(result);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar performance.');
       } finally {
@@ -45,7 +59,7 @@ export function PerformanceOverviewPage() {
     return () => {
       active = false;
     };
-  }, [canAccess]);
+  }, [canAccess, period]);
 
   if (!canAccess) return <AccessDeniedPlaceholder />;
 
@@ -53,27 +67,59 @@ export function PerformanceOverviewPage() {
     <div className="space-y-5">
       <PerformanceHeader
         title="Performance"
-        description="Visao consolidada de investimento, leads e cliques nos ultimos 30 dias (Meta Ads real; Google Ads preparado)."
+        description="Visao consolidada de investimento, impressoes, cliques, leads e resultados de campanhas pagas (Meta Ads real; Google Ads preparado)."
       />
+
+      <Card>
+        <PerformancePeriodFilter value={period} onChange={setPeriod} />
+      </Card>
 
       {loading && <LoadingState title="Carregando performance" />}
       {error && <ErrorState description={error} />}
 
       {!loading && !error && (
-        <>
-          <PerformanceMetricsGrid metrics={metrics} />
+        !overview.hasData ? (
+          <PerformanceEmptyState title="Nenhuma métrica encontrada para este período." />
+        ) : (
+          <>
+            <PerformanceSummaryGrid overview={overview} variant="full" />
 
-          {!hasAnyData(metrics) && (
             <Card>
-              <h3 className="text-sm font-semibold text-foreground">Nenhuma metrica sincronizada ainda</h3>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Conecte uma conta Meta Ads na aba Integracoes de um cliente e sincronize manualmente para ver
-                investimento, leads, CPL, ROAS e cliques aqui. Google Ads segue preparado na arquitetura, sem
-                integracao real ainda.
-              </p>
+              <h3 className="mb-3 text-sm font-semibold text-foreground">Tendencia diaria</h3>
+              <PerformanceTrendChart data={overview.dailySeries} />
             </Card>
-          )}
-        </>
+
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-foreground">Detalhamento por dia</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+                      <th className="py-2 pr-4">Data</th>
+                      <th className="py-2 pr-4">Investimento</th>
+                      <th className="py-2 pr-4">Cliques</th>
+                      <th className="py-2 pr-4">Leads</th>
+                      <th className="py-2 pr-4">CPL</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {overview.dailySeries.map((point) => (
+                      <tr key={point.date}>
+                        <td className="py-2 pr-4 text-foreground">{formatDate(point.date)}</td>
+                        <td className="py-2 pr-4 text-foreground">{formatCurrency(point.spend)}</td>
+                        <td className="py-2 pr-4 text-foreground">{formatCount(point.clicks)}</td>
+                        <td className="py-2 pr-4 text-foreground">{formatCount(point.leads)}</td>
+                        <td className="py-2 pr-4 text-foreground">
+                          {point.leads > 0 ? formatCurrency(point.spend / point.leads) : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </>
+        )
       )}
     </div>
   );

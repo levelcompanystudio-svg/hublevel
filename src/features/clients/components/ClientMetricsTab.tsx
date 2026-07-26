@@ -1,18 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
-import { EmptyState } from '../../../components/feedback/EmptyState';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { Card } from '../../../components/ui';
-import { getClientPerformanceMetrics } from '../../performance/performance.api';
-import { PerformanceMetricsGrid } from '../../performance/components/PerformanceMetricsGrid';
-import type { ClientPerformanceMetrics } from '../../performance/performance.types';
+import { getClientPerformanceOverview } from '../../performance/performance.api';
+import { getDefaultPerformancePeriod } from '../../performance/performance-period';
+import type { PerformancePeriodRange } from '../../performance/performance-period';
+import type { PerformanceOverview } from '../../performance/performance.types';
+import { emptyPerformanceOverview } from '../../performance/performance.types';
+import { PerformanceEmptyState } from '../../performance/components/PerformanceEmptyState';
+import { PerformancePeriodFilter } from '../../performance/components/PerformancePeriodFilter';
+import { PerformanceSummaryGrid } from '../../performance/components/PerformanceSummaryGrid';
+import { PerformanceTrendChart } from '../../performance/components/PerformanceTrendChart';
 
 interface ClientMetricsTabProps {
   clientId: string;
 }
 
 export function ClientMetricsTab({ clientId }: ClientMetricsTabProps) {
-  const [metrics, setMetrics] = useState<ClientPerformanceMetrics | null>(null);
+  const [period, setPeriod] = useState<PerformancePeriodRange>(getDefaultPerformancePeriod());
+  const [overview, setOverview] = useState<PerformanceOverview>(emptyPerformanceOverview);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,35 +26,42 @@ export function ClientMetricsTab({ clientId }: ClientMetricsTabProps) {
     try {
       setLoading(true);
       setError(null);
-      const result = await getClientPerformanceMetrics(clientId);
-      setMetrics(result);
+      const result = await getClientPerformanceOverview(clientId, period);
+      setOverview(result);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar metricas do cliente.');
     } finally {
       setLoading(false);
     }
-  }, [clientId]);
+  }, [clientId, period]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  if (loading) return <LoadingState title="Carregando metricas de performance" />;
-  if (error) return <ErrorState description={error} />;
-  if (!metrics) return null;
-
-  const hasAnyData = Object.values(metrics).some((value) => value !== null);
-
   return (
     <div className="space-y-4">
-      <PerformanceMetricsGrid metrics={metrics} />
-      {!hasAnyData && (
-        <Card>
-          <EmptyState
-            title="Sem dados de performance conectados"
-            description="Conecte uma conta Meta Ads na aba Integracoes deste cliente e sincronize manualmente para ver investimento, leads, CPL, ROAS e cliques aqui. Google Ads segue preparado na arquitetura, sem integracao real ainda."
-          />
-        </Card>
+      <Card>
+        <PerformancePeriodFilter value={period} onChange={setPeriod} />
+      </Card>
+
+      {loading ? (
+        <LoadingState title="Carregando metricas de performance" />
+      ) : error ? (
+        <ErrorState description={error} />
+      ) : !overview.hasData ? (
+        <PerformanceEmptyState
+          title="Nenhuma métrica encontrada para este período."
+          description="Ajuste o periodo selecionado ou conecte uma conta Meta Ads na aba Integracoes deste cliente e sincronize manualmente."
+        />
+      ) : (
+        <div className="space-y-4">
+          <PerformanceSummaryGrid overview={overview} variant="full" />
+          <Card>
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Tendencia diaria</h3>
+            <PerformanceTrendChart data={overview.dailySeries} />
+          </Card>
+        </div>
       )}
     </div>
   );

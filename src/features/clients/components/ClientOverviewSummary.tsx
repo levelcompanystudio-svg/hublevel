@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Card } from '../../../components/ui';
+import { ClientPerformanceRecent } from '../../performance/components/ClientPerformanceRecent';
 import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overview.types';
 
 interface ClientOverviewSummaryProps {
+  clientId: string;
   data: ClientOverviewData;
   metrics: ClientOverviewMetrics;
 }
@@ -15,7 +17,7 @@ function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
 
-export function ClientOverviewSummary({ data, metrics }: ClientOverviewSummaryProps) {
+export function ClientOverviewSummary({ clientId, data, metrics }: ClientOverviewSummaryProps) {
   const risks: string[] = [];
   if (metrics.overdueTasks > 0) risks.push(`${metrics.overdueTasks} tarefa(s) vencida(s).`);
   if (!metrics.lastUpdate) risks.push('Nenhuma atualizacao registrada ainda.');
@@ -50,6 +52,8 @@ export function ClientOverviewSummary({ data, metrics }: ClientOverviewSummaryPr
           <p className="mt-3 text-sm text-success">Nenhum risco identificado com os dados atuais.</p>
         )}
       </Card>
+
+      <ClientPerformanceRecent clientId={clientId} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

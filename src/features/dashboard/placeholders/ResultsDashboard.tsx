@@ -16,9 +16,14 @@ import { getRecentPortfolioActivity } from '../dashboard-activity.api';
 import type { ActivityItem, ActivityType } from '../dashboard-activity.api';
 import { getDashboardOperationalOverview } from '../dashboard.api';
 import type { DashboardOperationalOverview } from '../dashboard.api';
-import { getPortfolioPerformanceMetrics } from '../../performance/performance.api';
-import type { ClientPerformanceMetrics } from '../../performance/performance.types';
-import { emptyClientPerformanceMetrics } from '../../performance/performance.types';
+import { getPortfolioPerformanceOverview } from '../../performance/performance.api';
+import { getDefaultPerformancePeriod } from '../../performance/performance-period';
+import type { PerformancePeriodRange } from '../../performance/performance-period';
+import type { PerformanceOverview } from '../../performance/performance.types';
+import { emptyPerformanceOverview } from '../../performance/performance.types';
+import { PerformancePeriodFilter } from '../../performance/components/PerformancePeriodFilter';
+import { PerformanceSummaryGrid } from '../../performance/components/PerformanceSummaryGrid';
+import { PerformanceTrendChart } from '../../performance/components/PerformanceTrendChart';
 
 const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; barClassName: string }> = [
   { status: 'saudavel', label: 'Saudaveis', barClassName: 'bg-success' },
@@ -37,29 +42,6 @@ function formatRelativeDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value));
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
-
-function PortfolioMetric({
-  label,
-  value,
-  format,
-}: {
-  label: string;
-  value: number | null;
-  format?: (value: number) => string;
-}) {
-  return (
-    <div>
-      <p className="text-caption uppercase">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-foreground">
-        {value === null ? '-' : format ? format(value) : value}
-      </p>
-    </div>
-  );
-}
-
 // Cockpit operacional (admin/gestor) para /app/dashboard. Nenhum dado financeiro aqui - isso fica
 // exclusivo do Painel Administrativo (/app/painel-administrativo). Todas as secoes usam dados reais
 // ja existentes no banco (clientes, alertas operacionais, tarefas, reunioes, atividade recente);
@@ -72,7 +54,9 @@ export function ResultsDashboard() {
   const [clients, setClients] = useState<Client[]>([]);
   const [alerts, setAlerts] = useState<OperationalAlert[]>([]);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
-  const [performance, setPerformance] = useState<ClientPerformanceMetrics>(emptyClientPerformanceMetrics);
+  const [period, setPeriod] = useState<PerformancePeriodRange>(getDefaultPerformancePeriod());
+  const [performance, setPerformance] = useState<PerformanceOverview>(emptyPerformanceOverview);
+  const [performanceLoading, setPerformanceLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,19 +69,17 @@ export function ResultsDashboard() {
       try {
         setLoading(true);
         setError(null);
-        const [overviewResult, clientsResult, alertsResult, activityResult, performanceResult] = await Promise.all([
+        const [overviewResult, clientsResult, alertsResult, activityResult] = await Promise.all([
           getDashboardOperationalOverview(),
           listClients(),
           getOperationalAlerts(role as 'admin' | 'gestor'),
           getRecentPortfolioActivity(),
-          getPortfolioPerformanceMetrics(),
         ]);
         if (!active) return;
         setOverview(overviewResult);
         setClients(clientsResult);
         setAlerts(alertsResult);
         setActivity(activityResult);
-        setPerformance(performanceResult);
       } catch (err: unknown) {
         if (active) setError(err instanceof Error ? err.message : 'Erro ao carregar o dashboard.');
       } finally {
@@ -110,6 +92,23 @@ export function ResultsDashboard() {
       active = false;
     };
   }, [role]);
+
+  useEffect(() => {
+    if (role !== 'admin' && role !== 'gestor') return;
+
+    let active = true;
+    setPerformanceLoading(true);
+    getPortfolioPerformanceOverview(period)
+      .then((result) => {
+        if (active) setPerformance(result);
+      })
+      .finally(() => {
+        if (active) setPerformanceLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [role, period]);
 
   if (loading) return <LoadingState title="Carregando dashboard" />;
   if (error) return <ErrorState description={error} />;
@@ -194,66 +193,67 @@ export function ResultsDashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
-          <SectionHeader
-            title="Performance"
-            caption="Investimento, leads e resultados de campanhas pagas"
-            action={
-              <Link to="/app/integracoes" className="text-xs font-semibold text-primary hover:underline">
-                Integracoes
-              </Link>
-            }
-          />
-          {performance.investment === null && performance.leads === null && performance.clicks === null ? (
-            <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-surface/40 py-8 text-center">
-              <p className="text-sm font-semibold text-foreground">Nenhuma integracao conectada</p>
-              <p className="max-w-xs text-xs text-muted-foreground">
-                Conecte Meta Ads em um cliente (aba Integracoes) para ver investimento, leads e ROAS aqui.
-              </p>
-            </div>
+      <Card>
+        <SectionHeader
+          title="Performance"
+          caption="Investimento, impressoes, cliques, leads, CPL e ROAS de todos os clientes conectados"
+          action={
+            <Link to="/app/performance" className="text-xs font-semibold text-primary hover:underline">
+              Ver detalhes
+            </Link>
+          }
+        />
+        <div className="mt-4">
+          <PerformancePeriodFilter value={period} onChange={setPeriod} />
+        </div>
+        {performanceLoading ? (
+          <p className="mt-4 py-6 text-center text-sm text-muted-foreground">Carregando performance...</p>
+        ) : !performance.hasData ? (
+          <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-surface/40 py-8 text-center">
+            <p className="text-sm font-semibold text-foreground">Nenhuma métrica sincronizada ainda.</p>
+            <p className="max-w-xs text-xs text-muted-foreground">
+              Conecte Meta Ads em um cliente (aba Integracoes) para ver investimento, leads e ROAS aqui.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-4">
+            <PerformanceSummaryGrid overview={performance} variant="dashboard" />
+            <PerformanceTrendChart data={performance.dailySeries} />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionHeader title="Atividade recente" />
+        <div className="mt-3">
+          {activity.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
           ) : (
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <PortfolioMetric label="Investimento (30d)" value={performance.investment} format={formatCurrency} />
-              <PortfolioMetric label="Leads (30d)" value={performance.leads} />
-              <PortfolioMetric label="CPL" value={performance.cpl} format={formatCurrency} />
-              <PortfolioMetric label="ROAS" value={performance.roas} format={(value) => `${value.toFixed(2)}x`} />
+            <div className="divide-y divide-border">
+              {activity.map((item) => {
+                const Icon = ACTIVITY_ICONS[item.type];
+                return (
+                  <Link
+                    key={item.id}
+                    to={item.href}
+                    className="flex items-start gap-2.5 py-2.5 transition-colors duration-150 hover:bg-card-elevated"
+                  >
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-foreground">{item.title}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {item.clientName ?? 'Interno'} - {formatRelativeDate(item.createdAt)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
-        </Card>
-
-        <Card>
-          <SectionHeader title="Atividade recente" />
-          <div className="mt-3">
-            {activity.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
-            ) : (
-              <div className="divide-y divide-border">
-                {activity.map((item) => {
-                  const Icon = ACTIVITY_ICONS[item.type];
-                  return (
-                    <Link
-                      key={item.id}
-                      to={item.href}
-                      className="flex items-start gap-2.5 py-2.5 transition-colors duration-150 hover:bg-card-elevated"
-                    >
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm text-foreground">{item.title}</p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {item.clientName ?? 'Interno'} - {formatRelativeDate(item.createdAt)}
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
     </div>
   );
 }

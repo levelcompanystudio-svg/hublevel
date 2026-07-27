@@ -62,7 +62,14 @@ export function PerformanceTrendChart({ data, height = 220 }: PerformanceTrendCh
         ))}
       </div>
 
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full" role="img" aria-label="Grafico de tendencia diaria de performance">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        className="w-full"
+        style={{ height }}
+        role="img"
+        aria-label="Grafico de tendencia diaria de performance"
+      >
         <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="var(--border)" strokeWidth="1" />
         {SERIES.map((series) => {
           const values = data.map((point) => point[series.key]);

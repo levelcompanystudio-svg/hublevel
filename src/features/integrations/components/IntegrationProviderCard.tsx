@@ -138,7 +138,7 @@ export function IntegrationProviderCard({ integration, isAdmin, onChanged }: Int
               ) : accounts && accounts.length > 0 ? (
                 <>
                   <label className="flex flex-col gap-1">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Conta de anuncio</span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Conta de anuncio</span>
                     <select
                       value={selectedAccountId}
                       onChange={(event) => setSelectedAccountId(event.target.value)}

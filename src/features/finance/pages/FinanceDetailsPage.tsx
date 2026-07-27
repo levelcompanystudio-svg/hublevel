@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { createPayment, getFinancialRecord, listPayments } from '../finance.api';
 import type { FinancialRecord, Payment, PaymentFormValues } from '../finance.types';
 import { emptyPaymentFormValues } from '../finance.types';
-import { FinanceHeader } from '../components/FinanceHeader';
 import { FinanceStatusBadge } from '../components/FinanceStatusBadge';
 import { clientName, formatCurrency, formatDate, formatMonth } from '../components/FinanceTable';
 import { PaymentForm } from '../components/PaymentForm';
@@ -74,7 +74,7 @@ export function FinanceDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <FinanceHeader title="Registro financeiro" description="Detalhe administrativo do lancamento e seus pagamentos." />
+      <PageHeader eyebrow="Gestao" title="Registro financeiro" description="Detalhe administrativo do lancamento e seus pagamentos." />
       {loading && <LoadingState title="Carregando registro financeiro" />}
       {error && <ErrorState description={error} />}
       {!loading && record && (

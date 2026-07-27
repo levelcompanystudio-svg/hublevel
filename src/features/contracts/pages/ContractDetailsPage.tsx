@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getContract } from '../contracts.api';
 import type { Contract } from '../contracts.types';
-import { ContractHeader } from '../components/ContractHeader';
 import { ContractStatusBadge } from '../components/ContractStatusBadge';
 import { clientName, contractLabel, formatCurrency, formatDate } from '../components/ContractTable';
 
@@ -55,7 +55,8 @@ export function ContractDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <ContractHeader
+      <PageHeader
+        eyebrow="Gestao"
         title={contract ? contractLabel(contract) : 'Contrato'}
         description="Visualizacao individual do contrato administrativo."
       />

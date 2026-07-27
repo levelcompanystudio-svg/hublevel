@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { createFinancialRecord, getFinancialRecord, listFinanceClients, updateFinancialRecord } from '../finance.api';
 import type { FinanceClient, FinancialRecordFormValues } from '../finance.types';
 import { emptyFinancialRecordFormValues } from '../finance.types';
 import { FinanceForm } from '../components/FinanceForm';
-import { FinanceHeader } from '../components/FinanceHeader';
 
 export function FinanceFormPage() {
   const { id } = useParams();
@@ -83,7 +83,7 @@ export function FinanceFormPage() {
 
   return (
     <div className="space-y-6">
-      <FinanceHeader title={editing ? 'Editar registro financeiro' : 'Novo registro financeiro'} description="Controle financeiro administrativo da Level Company." />
+      <PageHeader eyebrow="Gestao" title={editing ? 'Editar registro financeiro' : 'Novo registro financeiro'} description="Controle financeiro administrativo da Level Company." />
       {loading && <LoadingState title="Preparando formulario" />}
       {error && <ErrorState description={error} />}
       {!loading && <FinanceForm values={values} clients={clients} loading={saving} submitLabel={editing ? 'Salvar alteracoes' : 'Criar registro'} onChange={setValues} onSubmit={handleSubmit} />}

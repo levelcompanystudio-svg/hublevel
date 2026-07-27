@@ -26,18 +26,18 @@ export function ContractTable({ contracts }: ContractTableProps) {
         <table className="w-full min-w-[860px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3.5 font-semibold">Contrato</th>
-              <th className="px-5 py-3.5 font-semibold">Vigencia</th>
-              <th className="px-5 py-3.5 font-semibold">Valor mensal</th>
-              <th className="px-5 py-3.5 font-semibold">Dia de cobranca</th>
-              <th className="px-5 py-3.5 font-semibold">Status</th>
-              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Contrato</th>
+              <th className="px-4 py-3.5 font-semibold">Vigencia</th>
+              <th className="px-4 py-3.5 font-semibold">Valor mensal</th>
+              <th className="px-4 py-3.5 font-semibold">Dia de cobranca</th>
+              <th className="px-4 py-3.5 font-semibold">Status</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {contracts.map((contract) => (
               <tr key={contract.id} className="bg-card transition-colors hover:bg-card-elevated">
-                <td className="px-5 py-4">
+                <td className="px-4 py-3">
                   <p className="text-sm font-semibold text-foreground">{contractLabel(contract)}</p>
                   <Link
                     to={`/app/clientes/${contract.client_id}`}
@@ -46,13 +46,13 @@ export function ContractTable({ contracts }: ContractTableProps) {
                     {clientName(contract)}
                   </Link>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground">
                   {formatDate(contract.start_date)} - {contract.end_date ? formatDate(contract.end_date) : 'Sem termino'}
                 </td>
-                <td className="px-5 py-4 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(contract.monthly_value)}</td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">Dia {contract.billing_day}</td>
-                <td className="px-5 py-4"><ContractStatusBadge status={contract.status} /></td>
-                <td className="px-5 py-4">
+                <td className="px-4 py-3 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(contract.monthly_value)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">Dia {contract.billing_day}</td>
+                <td className="px-4 py-3"><ContractStatusBadge status={contract.status} /></td>
+                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Link to={`/app/contratos/${contract.id}`}>
                       <Button type="button" variant="ghost">Ver</Button>

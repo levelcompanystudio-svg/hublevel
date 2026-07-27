@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { createService, getService, updateService } from '../services.api';
 import type { ServiceFormValues } from '../services.types';
 import { emptyServiceFormValues } from '../services.types';
 import { ServiceForm } from '../components/ServiceForm';
-import { ServiceHeader } from '../components/ServiceHeader';
 
 export function ServiceFormPage() {
   const { id } = useParams();
@@ -91,7 +91,8 @@ export function ServiceFormPage() {
 
   return (
     <div className="space-y-6">
-      <ServiceHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={editing ? 'Editar servico' : 'Novo servico'}
         description={editing ? 'Atualize os dados do catalogo interno.' : 'Cadastre um servico para uso operacional e contratos futuros.'}
       />

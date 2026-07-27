@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getService } from '../services.api';
 import type { Service } from '../services.types';
 import { BillingCycleBadge } from '../components/BillingCycleBadge';
-import { ServiceHeader } from '../components/ServiceHeader';
 import { formatPrice } from '../components/ServiceTable';
 import { ServiceStatusBadge } from '../components/ServiceStatusBadge';
 
@@ -59,7 +59,8 @@ export function ServiceDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <ServiceHeader
+      <PageHeader
+        eyebrow="Operacao"
         title={service?.name ?? 'Servico'}
         description="Visualizacao individual do servico no catalogo interno da Level Company."
       />

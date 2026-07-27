@@ -4,6 +4,7 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
@@ -52,7 +53,7 @@ export function ContractListPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Administracao"
+        eyebrow="Gestao"
         title="Contratos"
         description="Controle administrativo de contratos vinculados aos clientes da Level Company."
         action={(
@@ -66,13 +67,13 @@ export function ContractListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
             <SummaryCard label="Total de contratos" value={contracts.length} tone="brand" />
             <SummaryCard label="Contratos ativos" value={activeContracts.length} tone="success" />
             <SummaryCard label="Contratos vencidos" value={expiredContracts} tone="warning" />
             <SummaryCard label="Receita mensal contratada" value={formatCurrency(monthlyRevenue)} tone="brand" />
-          </div>
-          <FilterBar label="Filtros visuais">
+          </StatsGrid>
+          <FilterBar label="Contexto">
             <Badge tone="brand">Admin only</Badge>
             <Badge>Vinculado a clientes</Badge>
           </FilterBar>

@@ -1,3 +1,4 @@
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
 import type { ClientIntegration } from '../integrations.types';
 
@@ -12,11 +13,11 @@ export function IntegrationSummary({ integrations }: IntegrationSummaryProps) {
   const neverSynced = integrations.filter((item) => !item.last_sync_at).length;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
       <SummaryCard label="Clientes com Meta Ads conectado" value={metaConnected} tone="brand" />
       <SummaryCard label="Clientes com Google Ads conectado" value={googleConnected} tone="brand" />
       <SummaryCard label="Integracoes com erro" value={withError} tone={withError > 0 ? 'warning' : 'neutral'} />
       <SummaryCard label="Nunca sincronizadas" value={neverSynced} />
-    </div>
+    </StatsGrid>
   );
 }

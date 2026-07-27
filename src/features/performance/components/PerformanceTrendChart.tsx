@@ -81,7 +81,7 @@ export function PerformanceTrendChart({ data, height = 220 }: PerformanceTrendCh
         })}
       </svg>
 
-      <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+      <div className="mt-1 flex justify-between text-xs text-muted-foreground">
         <span>{formatDateShort(data[0].date)}</span>
         <span>{formatDateShort(data[data.length - 1].date)}</span>
       </div>

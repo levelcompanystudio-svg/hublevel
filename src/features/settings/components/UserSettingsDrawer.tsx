@@ -101,7 +101,7 @@ export function UserSettingsDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
       <button type="button" className="absolute inset-0 cursor-default" aria-label="Fechar" onClick={onClose} />
-      <aside className="relative flex h-full w-full max-w-md flex-col border-l border-border bg-card shadow-2xl">
+      <aside className="relative flex h-full w-full max-w-md flex-col border-l border-border bg-card shadow-soft">
         <header className="border-b border-border px-5 py-4">
           <div className="flex items-start justify-between gap-3">
             <div>

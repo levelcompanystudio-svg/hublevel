@@ -42,11 +42,11 @@ export function UserTable({
         <table className="w-full min-w-[820px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3.5 font-semibold">Nome</th>
-              <th className="px-5 py-3.5 font-semibold">Email</th>
-              <th className="px-5 py-3.5 font-semibold">Papel</th>
-              <th className="px-5 py-3.5 font-semibold">Status</th>
-              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Nome</th>
+              <th className="px-4 py-3.5 font-semibold">Email</th>
+              <th className="px-4 py-3.5 font-semibold">Papel</th>
+              <th className="px-4 py-3.5 font-semibold">Status</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -57,12 +57,12 @@ export function UserTable({
 
               return (
                 <tr key={profile.id} className="bg-card transition-colors hover:bg-card-elevated">
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3">
                     <p className="text-sm font-semibold text-foreground">{profile.name}</p>
                     {isSelf && <p className="mt-1 text-xs text-muted-foreground">Voce</p>}
                   </td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground">{profile.email}</td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{profile.email}</td>
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       {currentRole && <UserRoleBadge role={currentRole} />}
                       <select
@@ -80,8 +80,8 @@ export function UserTable({
                       </select>
                     </div>
                   </td>
-                  <td className="px-5 py-4"><UserStatusBadge status={profile.status} /></td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3"><UserStatusBadge status={profile.status} /></td>
+                  <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button type="button" variant="ghost" onClick={() => onConfigure(profile)}>
                         Configurar

@@ -8,7 +8,7 @@ import { createContract, getContract, listContractClients, updateContract } from
 import type { ContractClient, ContractFormValues } from '../contracts.types';
 import { emptyContractFormValues, validateContractForm } from '../contracts.types';
 import { ContractForm } from '../components/ContractForm';
-import { ContractHeader } from '../components/ContractHeader';
+import { PageHeader } from '../../../components/layout/PageHeader';
 
 export function ContractFormPage() {
   const { id } = useParams();
@@ -91,7 +91,8 @@ export function ContractFormPage() {
 
   return (
     <div className="space-y-6">
-      <ContractHeader
+      <PageHeader
+        eyebrow="Gestao"
         title={editing ? 'Editar contrato' : 'Novo contrato'}
         description={editing ? 'Atualize os dados administrativos do contrato.' : 'Cadastre um novo contrato vinculado a um cliente.'}
       />

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { Badge, Card } from '../../../components/ui';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
+import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { Badge, Card, SectionHeader } from '../../../components/ui';
 import { getAdminDashboardMetrics } from '../dashboard.api';
 import type { AdminDashboardMetrics } from '../dashboard.types';
-import { DashboardSection } from '../components/DashboardSection';
-import { MetricCard } from '../components/MetricCard';
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -53,16 +53,14 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <DashboardSection
-        title="Visao administrativa"
-        description="Indicadores globais de operacao, receita, clientes, tarefas e reunioes."
-      >
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="space-y-4">
+        <SectionHeader title="Visao administrativa" caption="Indicadores globais de operacao, receita, clientes, tarefas e reunioes." />
+        <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
           {cards.map((card) => (
-            <MetricCard key={card.title} title={card.title} value={card.value} description={card.description} />
+            <SummaryCard key={card.title} label={card.title} value={card.value} description={card.description} />
           ))}
-        </div>
-      </DashboardSection>
+        </StatsGrid>
+      </section>
 
       <Card>
         <div className="flex items-center gap-2">

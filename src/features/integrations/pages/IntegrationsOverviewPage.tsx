@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { listClients } from '../../clients/clients.api';
 import { listAllClientIntegrations, mergeIntegrationsForClients } from '../integrations.api';
 import type { ClientIntegration } from '../integrations.types';
-import { IntegrationHeader } from '../components/IntegrationHeader';
 import { IntegrationSummary } from '../components/IntegrationSummary';
 import { IntegrationTable } from '../components/IntegrationTable';
 
@@ -46,7 +46,8 @@ export function IntegrationsOverviewPage() {
 
   return (
     <div className="space-y-5">
-      <IntegrationHeader
+      <PageHeader
+        eyebrow="Gestao"
         title="Integracoes"
         description="Status de conexao de Meta Ads e Google Ads por cliente. Meta Ads ja sincroniza metricas reais; Google Ads segue preparado na arquitetura."
       />

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { Badge, Card } from '../../../components/ui';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
+import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { Badge, Card, SectionHeader } from '../../../components/ui';
 import { getManagerDashboardMetrics } from '../dashboard.api';
 import type { ManagerDashboardMetrics } from '../dashboard.types';
-import { DashboardSection } from '../components/DashboardSection';
-import { MetricCard } from '../components/MetricCard';
 
 export function ManagerDashboard() {
   const [metrics, setMetrics] = useState<ManagerDashboardMetrics | null>(null);
@@ -46,16 +46,14 @@ export function ManagerDashboard() {
 
   return (
     <div className="space-y-6">
-      <DashboardSection
-        title="Minha carteira"
-        description="Acompanhamento operacional dos clientes e atividades sob responsabilidade do gestor."
-      >
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="space-y-4">
+        <SectionHeader title="Minha carteira" caption="Acompanhamento operacional dos clientes e atividades sob responsabilidade do gestor." />
+        <StatsGrid className="sm:grid-cols-2 xl:grid-cols-3">
           {cards.map((card) => (
-            <MetricCard key={card.title} title={card.title} value={card.value} description={card.description} />
+            <SummaryCard key={card.title} label={card.title} value={card.value} description={card.description} />
           ))}
-        </div>
-      </DashboardSection>
+        </StatsGrid>
+      </section>
 
       <Card>
         <div className="flex items-center gap-2">

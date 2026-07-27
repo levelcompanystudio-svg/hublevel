@@ -26,29 +26,29 @@ export function FinanceTable({ records }: FinanceTableProps) {
         <table className="w-full min-w-[820px] border-collapse text-left">
           <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-5 py-3.5 font-semibold">Cliente</th>
-              <th className="px-5 py-3.5 font-semibold">Descricao</th>
-              <th className="px-5 py-3.5 font-semibold">Competencia</th>
-              <th className="px-5 py-3.5 font-semibold">Valor</th>
-              <th className="px-5 py-3.5 font-semibold">Vencimento</th>
-              <th className="px-5 py-3.5 font-semibold">Status</th>
-              <th className="px-5 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Cliente</th>
+              <th className="px-4 py-3.5 font-semibold">Descricao</th>
+              <th className="px-4 py-3.5 font-semibold">Competencia</th>
+              <th className="px-4 py-3.5 font-semibold">Valor</th>
+              <th className="px-4 py-3.5 font-semibold">Vencimento</th>
+              <th className="px-4 py-3.5 font-semibold">Status</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {records.map((record) => (
               <tr key={record.id} className="bg-card transition-colors hover:bg-card-elevated">
-                <td className="px-5 py-4 text-sm text-foreground">
+                <td className="px-4 py-3 text-sm text-foreground">
                   <Link to={`/app/clientes/${record.client_id}`} className="text-primary hover:underline">
                     {clientName(record)}
                   </Link>
                 </td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{record.description || '-'}</td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
-                <td className="px-5 py-4 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(record.amount)}</td>
-                <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(record.due_date)}</td>
-                <td className="px-5 py-4"><FinanceStatusBadge status={record.status} /></td>
-                <td className="px-5 py-4">
+                <td className="px-4 py-3 text-sm text-muted-foreground">{record.description || '-'}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
+                <td className="px-4 py-3 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(record.amount)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(record.due_date)}</td>
+                <td className="px-4 py-3"><FinanceStatusBadge status={record.status} /></td>
+                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Link to={`/app/financeiro/${record.id}`}>
                       <Button type="button" variant="ghost">Ver</Button>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
@@ -10,7 +11,6 @@ import type { PerformancePeriodRange } from '../performance-period';
 import type { PerformanceOverview } from '../performance.types';
 import { emptyPerformanceOverview } from '../performance.types';
 import { PerformanceEmptyState } from '../components/PerformanceEmptyState';
-import { PerformanceHeader } from '../components/PerformanceHeader';
 import { PerformancePeriodFilter } from '../components/PerformancePeriodFilter';
 import { PerformanceSummaryGrid } from '../components/PerformanceSummaryGrid';
 import { PerformanceTrendChart } from '../components/PerformanceTrendChart';
@@ -65,7 +65,8 @@ export function PerformanceOverviewPage() {
 
   return (
     <div className="space-y-5">
-      <PerformanceHeader
+      <PageHeader
+        eyebrow="Gestao"
         title="Performance"
         description="Visao consolidada de investimento, impressoes, cliques, leads e resultados de campanhas pagas (Meta Ads real; Google Ads preparado)."
       />

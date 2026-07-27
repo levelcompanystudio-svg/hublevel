@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { Badge, Card } from '../../../components/ui';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
+import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { Badge, Card, SectionHeader } from '../../../components/ui';
 import { getCollaboratorDashboardMetrics } from '../dashboard.api';
 import type { CollaboratorDashboardMetrics } from '../dashboard.types';
-import { DashboardSection } from '../components/DashboardSection';
-import { MetricCard } from '../components/MetricCard';
 
 export function CollaboratorDashboard() {
   const [metrics, setMetrics] = useState<CollaboratorDashboardMetrics | null>(null);
@@ -44,16 +44,14 @@ export function CollaboratorDashboard() {
 
   return (
     <div className="space-y-6">
-      <DashboardSection
-        title="Minha rotina"
-        description="Resumo individual de tarefas e reunioes atribuidas ao colaborador."
-      >
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="space-y-4">
+        <SectionHeader title="Minha rotina" caption="Resumo individual de tarefas e reunioes atribuidas ao colaborador." />
+        <StatsGrid className="sm:grid-cols-2 xl:grid-cols-3">
           {cards.map((card) => (
-            <MetricCard key={card.title} title={card.title} value={card.value} description={card.description} />
+            <SummaryCard key={card.title} label={card.title} value={card.value} description={card.description} />
           ))}
-        </div>
-      </DashboardSection>
+        </StatsGrid>
+      </section>
 
       <Card>
         <div className="flex items-center gap-2">

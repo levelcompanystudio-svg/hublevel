@@ -129,7 +129,7 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Administracao"
+        eyebrow="Gestao"
         title="Configuracoes"
         description="Gestao de usuarios, papeis e status de acesso ao HubLevel."
       />

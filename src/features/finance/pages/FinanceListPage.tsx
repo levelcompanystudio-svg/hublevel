@@ -4,6 +4,7 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
+import { StatsGrid } from '../../../components/layout/StatsGrid';
 import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
@@ -59,7 +60,7 @@ export function FinanceListPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Administracao"
+        eyebrow="Gestao"
         title="Financeiro"
         description="Registros financeiros e pagamentos da operacao."
         action={(
@@ -72,13 +73,13 @@ export function FinanceListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
             <SummaryCard label="Total previsto" value={formatCurrency(totalPrevisto)} tone="brand" />
             <SummaryCard label="Total pago" value={formatCurrency(totalPago)} tone="success" />
             <SummaryCard label="Total atrasado" value={formatCurrency(totalAtrasado)} tone="warning" />
             <SummaryCard label="Registros em aberto" value={openRecords} />
-          </div>
-          <FilterBar label="Filtros visuais">
+          </StatsGrid>
+          <FilterBar label="Contexto">
             <Badge tone="brand">Admin only</Badge>
             <Badge>Pagamentos vinculados</Badge>
           </FilterBar>

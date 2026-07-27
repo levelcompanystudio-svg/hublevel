@@ -320,8 +320,8 @@ export function DeliverableClientBoard({
                     className="flex min-w-0 flex-1 items-center gap-2 text-left"
                   >
                     <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${opened ? '' : '-rotate-90'}`} aria-hidden="true" />
-                    <span className="truncate text-sm font-semibold text-foreground">{clientDisplayName(client)}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground">{responsible?.name ?? 'Sem responsavel'}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{clientDisplayName(client)}</span>
+                    <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">{responsible?.name ?? 'Sem responsavel'}</span>
                   </button>
                   <Link
                     to={`/app/clientes/${client.id}`}

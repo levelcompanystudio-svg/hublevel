@@ -25,9 +25,9 @@ export function ClientHistoryFilters({ active, counts, onChange }: ClientHistory
             key={option}
             type="button"
             onClick={() => onChange(option)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
               active === option
-                ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
+                ? 'border-primary/60 bg-primary text-primary-foreground'
                 : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
             }`}
           >

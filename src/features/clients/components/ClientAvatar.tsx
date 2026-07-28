@@ -30,7 +30,7 @@ function initialsFor(name: string): string {
 interface ClientAvatarProps {
   name: string;
   logoUrl?: string | null;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 // Quando o cliente tem uma logo real enviada (logo_url), ela e exibida. Caso contrario, cai para
@@ -38,7 +38,7 @@ interface ClientAvatarProps {
 // nenhum dado.
 export function ClientAvatar({ name, logoUrl, size = 'md' }: ClientAvatarProps) {
   const color = PALETTE[hashString(name) % PALETTE.length];
-  const sizeClass = size === 'sm' ? 'h-8 w-8 text-xs' : 'h-11 w-11 text-sm';
+  const sizeClass = size === 'sm' ? 'h-8 w-8 text-xs' : size === 'lg' ? 'h-14 w-14 text-lg' : 'h-11 w-11 text-sm';
 
   if (logoUrl) {
     return (

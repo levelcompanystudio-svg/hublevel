@@ -1,5 +1,5 @@
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import type { Client } from '../clients.types';
+import { ClientKpiStrip } from './ClientKpiStrip';
 
 interface ClientSummaryGridProps {
   clients: Client[];
@@ -20,13 +20,15 @@ export function ClientSummaryGrid({ clients }: ClientSummaryGridProps) {
   const summary = getClientSummary(clients);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-      <SummaryCard label="Total de clientes" value={summary.total} tone="brand" />
-      <SummaryCard label="Saudaveis" value={summary.healthy} tone="success" />
-      <SummaryCard label="Atencao" value={summary.attention} tone="warning" />
-      <SummaryCard label="Criticos" value={summary.critical} tone="warning" />
-      <SummaryCard label="Onboarding" value={summary.onboarding} />
-      <SummaryCard label="Inativos" value={summary.inactive} />
-    </div>
+    <ClientKpiStrip
+      items={[
+        { label: 'Total de clientes', value: summary.total, tone: 'brand' },
+        { label: 'Saudaveis', value: summary.healthy, tone: 'success' },
+        { label: 'Atencao', value: summary.attention, tone: 'warning' },
+        { label: 'Criticos', value: summary.critical, tone: summary.critical > 0 ? 'destructive' : 'neutral' },
+        { label: 'Onboarding', value: summary.onboarding, tone: 'neutral' },
+        { label: 'Inativos', value: summary.inactive, tone: 'neutral' },
+      ]}
+    />
   );
 }

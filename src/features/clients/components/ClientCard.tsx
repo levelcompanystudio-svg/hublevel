@@ -19,12 +19,12 @@ function formatShortDate(value: string | null) {
   return new Date(value).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-function getHealthAccent(client: Client) {
-  if (client.status === 'onboarding') return 'border-l-primary';
-  if (client.status === 'pausado' || client.status === 'encerrado') return 'border-l-muted-foreground';
-  if (client.health_status === 'saudavel') return 'border-l-success';
-  if (client.health_status === 'atencao') return 'border-l-warning';
-  return 'border-l-destructive';
+function getHealthRing(client: Client) {
+  if (client.status === 'onboarding') return 'ring-primary/50';
+  if (client.status === 'pausado' || client.status === 'encerrado') return 'ring-muted-foreground/40';
+  if (client.health_status === 'saudavel') return 'ring-success/50';
+  if (client.health_status === 'atencao') return 'ring-warning/50';
+  return 'ring-destructive/50';
 }
 
 // Reaproveita os mesmos sinais ja calculados para o modulo de Alertas (sem atualizacao recente,
@@ -46,11 +46,11 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
 
   return (
     <Card
-      className={`flex min-h-full flex-col gap-4 border-l-[3px] p-4 transition hover:border-primary/50 hover:bg-card-elevated ${getHealthAccent(client)}`}
+      className="flex min-h-full flex-col gap-4 transition-colors duration-150 hover:bg-card-elevated"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative shrink-0">
+          <div className={`relative shrink-0 rounded-xl ring-2 ring-offset-2 ring-offset-card ${getHealthRing(client)}`}>
             <ClientAvatar name={displayName} logoUrl={logoUrl} />
             <ClientLogoSettings clientId={client.id} hasLogo={Boolean(logoUrl)} onUpdated={(updated) => setLogoUrl(updated.logo_url)} />
           </div>

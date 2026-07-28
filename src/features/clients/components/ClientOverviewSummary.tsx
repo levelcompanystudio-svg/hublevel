@@ -1,3 +1,4 @@
+import { AlertTriangle, CalendarClock, FileText, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card } from '../../../components/ui';
 import { ClientPerformanceRecent } from '../../performance/components/ClientPerformanceRecent';
@@ -37,8 +38,15 @@ export function ClientOverviewSummary({ clientId, data, metrics }: ClientOvervie
 
   return (
     <div className="space-y-4">
-      <Card className={risks.length > 0 ? 'border-warning/40' : 'border-success/40'}>
-        <h3 className="text-sm font-semibold text-foreground">Sinais de risco</h3>
+      <Card className={risks.length > 0 ? 'border-warning/40 bg-warning/5' : 'border-success/40 bg-success/5'}>
+        <div className="flex items-center gap-2">
+          {risks.length > 0 ? (
+            <AlertTriangle className="h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
+          ) : (
+            <ShieldCheck className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+          )}
+          <h3 className="text-sm font-semibold text-foreground">Sinais de risco</h3>
+        </div>
         {risks.length > 0 ? (
           <ul className="mt-3 space-y-2">
             {risks.map((risk) => (
@@ -57,7 +65,10 @@ export function ClientOverviewSummary({ clientId, data, metrics }: ClientOvervie
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <h3 className="text-sm font-semibold text-foreground">Atividade recente</h3>
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <h3 className="text-sm font-semibold text-foreground">Atividade recente</h3>
+          </div>
           <div className="mt-3 space-y-3 text-sm">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ultima atualizacao</p>
@@ -90,7 +101,10 @@ export function ClientOverviewSummary({ clientId, data, metrics }: ClientOvervie
         </Card>
 
         <Card>
-          <h3 className="text-sm font-semibold text-foreground">Proximos passos</h3>
+          <div className="flex items-center gap-2">
+            <CalendarClock className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <h3 className="text-sm font-semibold text-foreground">Proximos passos</h3>
+          </div>
           <div className="mt-3 space-y-3 text-sm">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Proxima reuniao</p>

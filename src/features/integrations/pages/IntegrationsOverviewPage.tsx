@@ -1,3 +1,4 @@
+import { Zap } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
@@ -47,7 +48,7 @@ export function IntegrationsOverviewPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="Gestao"
+        eyebrow="Conexoes"
         title="Integracoes"
         description="Status de conexao de Meta Ads e Google Ads por cliente. Meta Ads ja sincroniza metricas reais; Google Ads segue preparado na arquitetura."
       />
@@ -59,7 +60,10 @@ export function IntegrationsOverviewPage() {
           <IntegrationSummary integrations={integrations} />
           <IntegrationTable integrations={integrations} isAdmin={isAdmin} onChanged={() => void load()} />
           <Card>
-            <h3 className="text-sm font-semibold text-foreground">Meta Ads real, Google Ads preparado</h3>
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <h3 className="text-sm font-semibold text-foreground">Meta Ads real, Google Ads preparado</h3>
+            </div>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Conectar uma conta e a sincronizacao manual ficam disponiveis na aba Integracoes de cada cliente (admin).
               Google Ads ja tem a mesma arquitetura pronta no servidor, mas ainda sem chamada real a API do Google.

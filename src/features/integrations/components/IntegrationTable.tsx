@@ -4,7 +4,7 @@ import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Button, Card } from '../../../components/ui';
 import { integrationClientRef, syncClientIntegration } from '../integrations.api';
 import type { ClientIntegration } from '../integrations.types';
-import { integrationLabels } from '../integrations.types';
+import { integrationLabels, integrationMonograms } from '../integrations.types';
 import { IntegrationStatusBadge } from './IntegrationStatusBadge';
 
 interface IntegrationTableProps {
@@ -66,7 +66,10 @@ export function IntegrationTable({ integrations, isAdmin, onChanged }: Integrati
               const busy = busyId === integration.id;
 
               return (
-                <tr key={rowKey} className="bg-card transition-colors hover:bg-card-elevated">
+                <tr
+                  key={rowKey}
+                  className={`bg-card transition-colors hover:bg-card-elevated ${integration.status === 'error' ? 'bg-destructive/5' : ''}`}
+                >
                   <td className="px-4 py-3 text-sm">
                     {client ? (
                       <Link to={`/app/clientes/${client.id}`} className="font-semibold text-primary hover:underline">
@@ -76,7 +79,14 @@ export function IntegrationTable({ integrations, isAdmin, onChanged }: Integrati
                       <span className="text-muted-foreground">-</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{integrationLabels[integration.provider]}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-[10px] font-bold text-muted-foreground">
+                        {integrationMonograms[integration.provider]}
+                      </span>
+                      <span className="text-sm text-muted-foreground">{integrationLabels[integration.provider]}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3"><IntegrationStatusBadge status={integration.status} /></td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{integration.external_account_name ?? '-'}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{formatDateTime(integration.last_success_at)}</td>

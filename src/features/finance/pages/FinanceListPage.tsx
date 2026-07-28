@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
@@ -73,12 +72,14 @@ export function FinanceListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
-            <SummaryCard label="Total previsto" value={formatCurrency(totalPrevisto)} tone="brand" />
-            <SummaryCard label="Total pago" value={formatCurrency(totalPago)} tone="success" />
-            <SummaryCard label="Total atrasado" value={formatCurrency(totalAtrasado)} tone="warning" />
-            <SummaryCard label="Registros em aberto" value={openRecords} />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Total previsto', value: formatCurrency(totalPrevisto), tone: 'brand' },
+              { label: 'Total pago', value: formatCurrency(totalPago), tone: 'success' },
+              { label: 'Total atrasado', value: formatCurrency(totalAtrasado), tone: totalAtrasado > 0 ? 'warning' : 'neutral' },
+              { label: 'Registros em aberto', value: openRecords, tone: 'neutral' },
+            ]}
+          />
           <FilterBar label="Contexto">
             <Badge tone="brand">Admin only</Badge>
             <Badge>Pagamentos vinculados</Badge>

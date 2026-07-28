@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
@@ -67,12 +66,14 @@ export function ContractListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
-            <SummaryCard label="Total de contratos" value={contracts.length} tone="brand" />
-            <SummaryCard label="Contratos ativos" value={activeContracts.length} tone="success" />
-            <SummaryCard label="Contratos vencidos" value={expiredContracts} tone="warning" />
-            <SummaryCard label="Receita mensal contratada" value={formatCurrency(monthlyRevenue)} tone="brand" />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Receita mensal contratada', value: formatCurrency(monthlyRevenue), tone: 'brand' },
+              { label: 'Total de contratos', value: contracts.length, tone: 'neutral' },
+              { label: 'Contratos ativos', value: activeContracts.length, tone: 'success' },
+              { label: 'Contratos vencidos', value: expiredContracts, tone: expiredContracts > 0 ? 'warning' : 'neutral' },
+            ]}
+          />
           <FilterBar label="Contexto">
             <Badge tone="brand">Admin only</Badge>
             <Badge>Vinculado a clientes</Badge>

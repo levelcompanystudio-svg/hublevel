@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { listServices } from '../services.api';
 import type { Service } from '../services.types';
-import { ServiceTable } from '../components/ServiceTable';
+import { ServiceCatalogGrid } from '../components/ServiceCatalogGrid';
 
 export function ServiceListPage() {
   const { profile } = useAuth();
@@ -62,7 +61,7 @@ export function ServiceListPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Operacao"
+        eyebrow="Catalogo"
         title="Servicos"
         description="Catalogo interno de servicos da Level Company para operacao e contratos futuros."
         action={canEdit ? (
@@ -76,16 +75,18 @@ export function ServiceListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-3">
-            <SummaryCard label="Total de servicos" value={services.length} tone="brand" />
-            <SummaryCard label="Servicos ativos" value={activeServices} tone="success" />
-            <SummaryCard label="Servicos inativos" value={inactiveServices} />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Total de servicos', value: services.length, tone: 'brand' },
+              { label: 'Servicos ativos', value: activeServices, tone: 'success' },
+              { label: 'Servicos inativos', value: inactiveServices, tone: 'neutral' },
+            ]}
+          />
           <FilterBar label="Contexto">
             <Badge tone="brand">{canEdit ? 'Todos os status' : 'Apenas ativos'}</Badge>
             <Badge>Catalogo interno</Badge>
           </FilterBar>
-          <ServiceTable services={services} canEdit={canEdit} />
+          <ServiceCatalogGrid services={services} canEdit={canEdit} />
         </>
       )}
     </div>

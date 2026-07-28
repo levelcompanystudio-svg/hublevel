@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { Badge, Card, SectionHeader } from '../../../components/ui';
 import { getAdminDashboardMetrics } from '../dashboard.api';
 import type { AdminDashboardMetrics } from '../dashboard.types';
@@ -40,26 +39,34 @@ export function AdminDashboard() {
   if (error) return <ErrorState description={error} />;
   if (!metrics) return null;
 
-  const cards = [
-    { title: 'Clientes Ativos', value: metrics.activeClients, description: 'Clientes com status ativo na carteira.' },
-    { title: 'Clientes Em Atraso', value: metrics.overdueClients, description: 'Clientes com ao menos um registro financeiro atrasado.' },
-    { title: 'Clientes Sem Atualizacao', value: metrics.clientsWithoutRecentUpdate, description: 'Clientes ativos sem atualizacao nos ultimos 7 dias.' },
-    { title: 'Clientes Sem Reuniao', value: metrics.clientsWithoutRecentMeeting, description: 'Clientes ativos sem reuniao nos ultimos 30 dias.' },
-    { title: 'Receita Prevista', value: formatCurrency(metrics.expectedRevenue), description: 'Soma de registros financeiros previstos e atrasados.' },
-    { title: 'Receita Recebida', value: formatCurrency(metrics.receivedRevenue), description: 'Soma de registros financeiros pagos.' },
-    { title: 'Tarefas Vencidas', value: metrics.overdueTasks, description: 'Tarefas com prazo expirado e nao concluidas.' },
-    { title: 'Reunioes Da Semana', value: metrics.meetingsThisWeek, description: 'Reunioes agendadas para a semana atual.' },
-  ];
-
   return (
     <div className="space-y-6">
       <section className="space-y-4">
         <SectionHeader title="Visao administrativa" caption="Indicadores globais de operacao, receita, clientes, tarefas e reunioes." />
-        <StatsGrid className="sm:grid-cols-2 xl:grid-cols-4">
-          {cards.map((card) => (
-            <SummaryCard key={card.title} label={card.title} value={card.value} description={card.description} />
-          ))}
-        </StatsGrid>
+
+        <div className="space-y-3">
+          <p className="text-caption uppercase text-muted-foreground">Carteira</p>
+          <KpiStrip
+            items={[
+              { label: 'Clientes ativos', value: metrics.activeClients, tone: 'brand', description: 'Status ativo na carteira' },
+              { label: 'Clientes em atraso', value: metrics.overdueClients, tone: metrics.overdueClients > 0 ? 'warning' : 'neutral', description: 'Financeiro atrasado' },
+              { label: 'Sem atualizacao', value: metrics.clientsWithoutRecentUpdate, tone: metrics.clientsWithoutRecentUpdate > 0 ? 'warning' : 'neutral', description: 'Ultimos 7 dias' },
+              { label: 'Sem reuniao', value: metrics.clientsWithoutRecentMeeting, tone: metrics.clientsWithoutRecentMeeting > 0 ? 'warning' : 'neutral', description: 'Ultimos 30 dias' },
+            ]}
+          />
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-caption uppercase text-muted-foreground">Receita e operacao</p>
+          <KpiStrip
+            items={[
+              { label: 'Receita prevista', value: formatCurrency(metrics.expectedRevenue), tone: 'brand', description: 'Previsto + atrasado' },
+              { label: 'Receita recebida', value: formatCurrency(metrics.receivedRevenue), tone: 'success', description: 'Registros pagos' },
+              { label: 'Tarefas vencidas', value: metrics.overdueTasks, tone: metrics.overdueTasks > 0 ? 'warning' : 'neutral', description: 'Prazo expirado' },
+              { label: 'Reunioes da semana', value: metrics.meetingsThisWeek, tone: 'neutral', description: 'Agendadas' },
+            ]}
+          />
+        </div>
       </section>
 
       <Card>

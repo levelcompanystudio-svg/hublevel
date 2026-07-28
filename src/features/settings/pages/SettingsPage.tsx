@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { Button, Card } from '../../../components/ui';
+import { Button, SectionHeader } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { deleteUser, listProfiles, listRoles, updateProfileRole, updateProfileStatus } from '../settings.api';
@@ -147,19 +147,15 @@ export function SettingsPage() {
       )}
 
       {!loading && !error && (
-        <Card>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">Usuarios</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Adicione usuarios e configure papel/status em uma janela dedicada.
-              </p>
-            </div>
+        <SectionHeader
+          title="Usuarios"
+          caption="Adicione usuarios e configure papel/status em uma janela dedicada."
+          action={(
             <Button type="button" variant="primary" onClick={openCreateDrawer}>
               Adicionar usuario
             </Button>
-          </div>
-        </Card>
+          )}
+        />
       )}
 
       {loading && <LoadingState title="Carregando usuarios" />}

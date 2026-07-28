@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
 import { Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
@@ -12,7 +13,6 @@ import type { PerformanceOverview } from '../performance.types';
 import { emptyPerformanceOverview } from '../performance.types';
 import { PerformanceEmptyState } from '../components/PerformanceEmptyState';
 import { PerformancePeriodFilter } from '../components/PerformancePeriodFilter';
-import { PerformanceSummaryGrid } from '../components/PerformanceSummaryGrid';
 import { PerformanceTrendChart } from '../components/PerformanceTrendChart';
 
 function formatCurrency(value: number): string {
@@ -23,8 +23,20 @@ function formatCount(value: number): string {
   return new Intl.NumberFormat('pt-BR').format(value);
 }
 
+function formatPercent(value: number): string {
+  return `${value.toFixed(2)}%`;
+}
+
+function formatMultiplier(value: number): string {
+  return `${value.toFixed(2)}x`;
+}
+
 function formatDate(value: string): string {
   return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR');
+}
+
+function ratio(value: number | null, format: (value: number) => string): string {
+  return value === null ? '-' : format(value);
 }
 
 export function PerformanceOverviewPage() {
@@ -83,12 +95,36 @@ export function PerformanceOverviewPage() {
           <PerformanceEmptyState title="Nenhuma métrica encontrada para este período." />
         ) : (
           <>
-            <PerformanceSummaryGrid overview={overview} variant="full" />
+            <KpiStrip
+              items={[
+                { label: 'Investimento', value: formatCurrency(overview.totals.investment), tone: 'brand' },
+                { label: 'Cliques', value: formatCount(overview.totals.clicks), tone: 'neutral' },
+                { label: 'Leads', value: formatCount(overview.totals.leads), tone: 'neutral' },
+                { label: 'CPL', value: ratio(overview.totals.cpl, formatCurrency), tone: 'neutral' },
+                { label: 'ROAS', value: ratio(overview.totals.roas, formatMultiplier), tone: 'success' },
+              ]}
+            />
 
-            <Card>
+            <Card className="border-t-2 border-t-primary/50">
               <h3 className="mb-3 text-sm font-semibold text-foreground">Tendencia diaria</h3>
               <PerformanceTrendChart data={overview.dailySeries} />
             </Card>
+
+            <div>
+              <p className="text-caption mb-2 uppercase text-muted-foreground">Metricas complementares</p>
+              <KpiStrip
+                density="compact"
+                items={[
+                  { label: 'Impressoes', value: formatCount(overview.totals.impressions) },
+                  { label: 'Alcance', value: formatCount(overview.totals.reach) },
+                  { label: 'CTR', value: ratio(overview.totals.ctr, formatPercent) },
+                  { label: 'CPC', value: ratio(overview.totals.cpc, formatCurrency) },
+                  { label: 'CPM', value: ratio(overview.totals.cpm, formatCurrency) },
+                  { label: 'Conversoes', value: formatCount(overview.totals.conversions) },
+                  { label: 'Valor de conversao', value: formatCurrency(overview.totals.conversionValue) },
+                ]}
+              />
+            </div>
 
             <Card>
               <h3 className="mb-3 text-sm font-semibold text-foreground">Detalhamento por dia</h3>

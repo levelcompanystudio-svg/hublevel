@@ -41,7 +41,7 @@ export function AppLayout() {
 
       <div className="min-h-screen md:pl-64">
         <AppTopbar role={profile?.roles?.name} userName={profile?.name} onOpenMenu={() => setMobileMenuOpen(true)} />
-        <main className="mx-auto w-full max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8 xl:px-10">
+        <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
           <Outlet />
         </main>
       </div>

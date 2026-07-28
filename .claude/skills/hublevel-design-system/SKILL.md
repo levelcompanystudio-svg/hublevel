@@ -132,7 +132,7 @@ Regras objetivas:
 - Entre secoes de pagina: `space-y-5` ou `space-y-6`.
 - Titulo/subtitulo: `mt-1` ou `mt-1.5`.
 - Tabela: `py-2` a `py-3`, `px-3` a `px-4`.
-- AppShell: conteudo `px-4 sm:px-6 lg:px-8 xl:px-10`, `py-5`.
+- AppShell: conteudo `px-4 sm:px-6 lg:px-8 xl:px-10`, `py-6` (Fase R1: mais respiro vertical no topo/base do conteudo).
 - Notebook: evitar largura estreita artificial; conteudo deve usar a area disponivel.
 - Desktop amplo: `max-w-[1600px]` no shell atual; nao reduzir sem motivo.
 - Densidade compacta: tabelas, lists, nav, dashboards operacionais.
@@ -195,7 +195,7 @@ Sidebar:
 
 - Usar para modulos principais persistentes.
 - Agrupar por areas: Visao Geral, Operacao, Gestao.
-- Item ativo usa `bg-sidebar-accent`, indicador lateral e icone em `text-primary`.
+- Item ativo usa `bg-primary/10` (tinta suave, sem barra lateral) e icone em `text-primary` (Fase R1: selecao mais calma, sem indicador extra).
 - Sidebar item: `rounded-lg`, `px-2.5`, `py-2`, `text-sm`.
 - Rodape da sidebar concentra usuario, notificacoes, tema e logout.
 - Nao duplicar no topbar as mesmas acoes do rodape.

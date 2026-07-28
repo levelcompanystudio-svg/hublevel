@@ -27,7 +27,7 @@ export function MobileSidebar({ open, role, userName, onClose, onLogout, logging
           type="button"
           onClick={onClose}
           aria-label="Fechar menu"
-          className="absolute right-3 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar text-sidebar-accent-foreground transition-colors duration-150 hover:border-primary/50 hover:bg-sidebar-accent hover:text-primary"
+          className="absolute right-3 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-sidebar-border bg-sidebar text-sidebar-accent-foreground transition-colors duration-150 hover:border-primary/50 hover:bg-sidebar-accent hover:text-primary"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>

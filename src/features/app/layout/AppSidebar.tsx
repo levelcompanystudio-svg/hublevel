@@ -28,8 +28,8 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
 
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-      <div className="flex items-center gap-2.5 border-b border-sidebar-border px-4 py-5">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-white p-1">
+      <div className="flex items-center gap-2.5 px-4 py-5">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-card p-1 shadow-soft">
           <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full object-contain" />
         </div>
         <div className="min-w-0">
@@ -37,15 +37,17 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
         </div>
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-2.5 py-4">
+      <div className="mx-4 border-t border-sidebar-border/70" aria-hidden="true" />
+
+      <nav className="flex-1 space-y-6 overflow-y-auto px-2.5 py-4">
         {groups.map((group) => {
           const groupItems = items.filter((item) => item.group === group);
           if (groupItems.length === 0) return null;
 
           return (
             <div key={group}>
-              <p className="px-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{groupLabels[group]}</p>
-              <div className="mt-1.5 space-y-0.5">
+              <p className="px-2.5 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">{groupLabels[group]}</p>
+              <div className="mt-2 space-y-1">
                 {groupItems.map((item) => (
                   <AppNavItem key={item.path} item={item} onNavigate={onNavigate} />
                 ))}
@@ -55,8 +57,8 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
         })}
       </nav>
 
-      <div className="relative border-t border-sidebar-border px-3 py-3">
-        <div className="flex items-center gap-2 rounded-lg">
+      <div className="border-t border-sidebar-border/70 p-3">
+        <div className="flex items-center gap-2 rounded-lg p-2 transition-colors duration-150 hover:bg-sidebar-accent/50">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
             {initials}
           </div>

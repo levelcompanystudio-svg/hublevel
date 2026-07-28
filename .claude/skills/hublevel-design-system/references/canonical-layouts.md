@@ -16,7 +16,7 @@ AppShell atual:
 
 - sidebar desktop: `w-64`;
 - conteudo: `md:pl-64`;
-- main: `max-w-[1600px]`, `px-4 sm:px-6 lg:px-8 xl:px-10`, `py-5`;
+- main: `max-w-[1600px]`, `px-4 sm:px-6 lg:px-8 xl:px-10`, `py-6`;
 - mobile: `MobileSidebar` como drawer, nunca sidebar fixa espremida.
 
 ## Regras globais de acoes

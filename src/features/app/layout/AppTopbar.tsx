@@ -13,10 +13,11 @@ interface AppTopbarProps {
 export function AppTopbar({ role, userName, onOpenMenu }: AppTopbarProps) {
   const location = useLocation();
   const item = getNavigationItem(location.pathname);
+  const Icon = item?.icon;
   const initial = (userName ?? 'U').trim().charAt(0).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <Button
@@ -29,7 +30,10 @@ export function AppTopbar({ role, userName, onOpenMenu }: AppTopbarProps) {
           >
             <Menu className="h-4 w-4" aria-hidden="true" />
           </Button>
-          <h1 className="truncate text-sm font-semibold text-foreground">{item?.label ?? 'HubLevel'}</h1>
+          <div className="flex min-w-0 items-center gap-2">
+            {Icon && <Icon className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={2} aria-hidden="true" />}
+            <h1 className="truncate text-sm font-semibold text-foreground">{item?.label ?? 'HubLevel'}</h1>
+          </div>
         </div>
 
         {/* Identidade ja aparece no rodape da sidebar (visivel junto no desktop); mostrar aqui so

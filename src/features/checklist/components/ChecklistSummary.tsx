@@ -1,5 +1,4 @@
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { getChecklistBucket } from '../checklist.types';
 import type { ChecklistItem } from '../checklist.types';
 
@@ -15,12 +14,14 @@ export function ChecklistSummary({ items }: ChecklistSummaryProps) {
   const vencidos = buckets.filter((bucket) => bucket === 'vencido').length;
 
   return (
-    <StatsGrid className="sm:grid-cols-2 xl:grid-cols-5">
-      <SummaryCard label="Total" value={items.length} tone="brand" />
-      <SummaryCard label="Pendentes" value={pendentes} />
-      <SummaryCard label="Em andamento" value={emAndamento} tone="warning" />
-      <SummaryCard label="Concluidos" value={concluidos} tone="success" />
-      <SummaryCard label="Vencidos" value={vencidos} tone="warning" />
-    </StatsGrid>
+    <KpiStrip
+      items={[
+        { label: 'Total', value: items.length, tone: 'brand' },
+        { label: 'Pendentes', value: pendentes, tone: 'neutral' },
+        { label: 'Em andamento', value: emAndamento, tone: 'warning' },
+        { label: 'Concluidos', value: concluidos, tone: 'success' },
+        { label: 'Vencidos', value: vencidos, tone: 'warning' },
+      ]}
+    />
   );
 }

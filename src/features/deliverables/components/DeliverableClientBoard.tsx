@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { EmptyState } from '../../../components/feedback/EmptyState';
-import { FilterBar } from '../../../components/layout/FilterBar';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { FilterPanel } from '../../../components/layout/FilterPanel';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
+import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { Badge, Button, Card } from '../../../components/ui';
 import type {
   Deliverable,
@@ -216,37 +216,31 @@ export function DeliverableClientBoard({
 
   return (
     <div className="space-y-4">
-      <StatsGrid className="sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard label="Entregas realizadas" value={summary.delivered} tone="success" />
-        <SummaryCard label="Pendentes" value={summary.pending} tone="neutral" />
-        <SummaryCard label="Clientes atrasados" value={summary.delayedClients} tone={summary.delayedClients > 0 ? 'warning' : 'neutral'} />
-        <SummaryCard label="Sem entregavel" value={summary.withoutDeliverable} tone={summary.withoutDeliverable > 0 ? 'warning' : 'neutral'} />
-      </StatsGrid>
+      <KpiStrip
+        items={[
+          { label: 'Entregas realizadas', value: summary.delivered, tone: 'success' },
+          { label: 'Pendentes', value: summary.pending, tone: 'neutral' },
+          { label: 'Clientes atrasados', value: summary.delayedClients, tone: summary.delayedClients > 0 ? 'warning' : 'neutral' },
+          { label: 'Sem entregavel', value: summary.withoutDeliverable, tone: summary.withoutDeliverable > 0 ? 'warning' : 'neutral' },
+        ]}
+      />
 
-      <FilterBar label="Visao rapida">
-        <div className="flex flex-wrap gap-1.5">
-          {([
-            { value: 'todos', label: 'Todos' },
-            { value: 'sem_entregavel', label: 'Sem entregavel' },
-            { value: 'atrasados', label: 'Clientes atrasados' },
-          ] as Array<{ value: QuickFilter; label: string }>).map((filter) => (
-            <button
-              key={filter.value}
-              type="button"
-              onClick={() => setQuickFilter(filter.value)}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                quickFilter === filter.value
-                  ? 'border-primary/60 bg-primary text-primary-foreground'
-                  : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-      </FilterBar>
-
-      <FilterBar label="Filtros">
+      <FilterPanel
+        filtersActive={filtersActive}
+        onClearFilters={handleClearFilters}
+        quickFilters={([
+          { value: 'todos', label: 'Todos' },
+          { value: 'sem_entregavel', label: 'Sem entregavel' },
+          { value: 'atrasados', label: 'Clientes atrasados' },
+        ] as Array<{ value: QuickFilter; label: string }>).map((filter) => (
+          <QuickFilterPill
+            key={filter.value}
+            label={filter.label}
+            active={quickFilter === filter.value}
+            onClick={() => setQuickFilter(filter.value)}
+          />
+        ))}
+      >
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           <label className="flex flex-col gap-1">
             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Cliente</span>
@@ -279,12 +273,7 @@ export function DeliverableClientBoard({
             options={[{ value: FILTER_ALL, label: 'Todos' }, ...months.map((option) => ({ value: option, label: option }))]}
           />
         </div>
-        {filtersActive && (
-          <Button type="button" variant="ghost" size="sm" onClick={handleClearFilters} className="shrink-0">
-            Limpar filtros
-          </Button>
-        )}
-      </FilterBar>
+      </FilterPanel>
 
       {grouped.length === 0 ? (
         <Card>

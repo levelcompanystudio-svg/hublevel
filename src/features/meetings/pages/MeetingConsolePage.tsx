@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { FilterBar } from '../../../components/layout/FilterBar';
+import { FilterPanel } from '../../../components/layout/FilterPanel';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
-import { Button } from '../../../components/ui';
+import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import {
@@ -184,34 +183,28 @@ export function MeetingConsolePage() {
 
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            <SummaryCard label="Clientes na rotina" value={rows.length} tone="brand" />
-            <SummaryCard label="Sem agendamento" value={noSchedulingCount} tone={noSchedulingCount > 0 ? 'warning' : 'neutral'} />
-            <SummaryCard label="Reunioes proximas (7d)" value={upcomingCount} tone="neutral" />
-            <SummaryCard label="Reunioes atrasadas" value={overdueCount} tone={overdueCount > 0 ? 'warning' : 'neutral'} />
-            <SummaryCard label="Pos-reuniao pendente" value={postPendingCount} tone={postPendingCount > 0 ? 'warning' : 'neutral'} />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Clientes na rotina', value: rows.length, tone: 'brand' },
+              { label: 'Sem agendamento', value: noSchedulingCount, tone: noSchedulingCount > 0 ? 'warning' : 'neutral' },
+              { label: 'Reunioes proximas (7d)', value: upcomingCount, tone: 'neutral' },
+              { label: 'Reunioes atrasadas', value: overdueCount, tone: overdueCount > 0 ? 'warning' : 'neutral' },
+              { label: 'Pos-reuniao pendente', value: postPendingCount, tone: postPendingCount > 0 ? 'warning' : 'neutral' },
+            ]}
+          />
 
-          <FilterBar label="Visao rapida">
-            <div className="flex flex-wrap gap-1.5">
-              {QUICK_FILTERS.map((filter) => (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => setQuickFilter(filter)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                    quickFilter === filter
-                      ? 'border-primary/60 bg-primary text-primary-foreground'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }`}
-                >
-                  {meetingConsoleQuickFilterLabels[filter]}
-                </button>
-              ))}
-            </div>
-          </FilterBar>
-
-          <FilterBar label="Filtros">
+          <FilterPanel
+            filtersActive={filtersActive}
+            onClearFilters={handleClearFilters}
+            quickFilters={QUICK_FILTERS.map((filter) => (
+              <QuickFilterPill
+                key={filter}
+                label={meetingConsoleQuickFilterLabels[filter]}
+                active={quickFilter === filter}
+                onClick={() => setQuickFilter(filter)}
+              />
+            ))}
+          >
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
               <FilterSelect
                 label="Gestor"
@@ -259,12 +252,7 @@ export function MeetingConsolePage() {
                 ]}
               />
             </div>
-            {filtersActive && (
-              <Button type="button" variant="ghost" size="sm" onClick={handleClearFilters} className="shrink-0">
-                Limpar filtros
-              </Button>
-            )}
-          </FilterBar>
+          </FilterPanel>
 
           <MeetingConsoleTable
             rows={filteredRows}

@@ -1,5 +1,4 @@
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import type { Deliverable } from '../deliverables.types';
 
 interface DeliverableSummaryProps {
@@ -13,12 +12,14 @@ export function DeliverableSummary({ items }: DeliverableSummaryProps) {
   const urgent = items.filter((item) => item.priority === 'urgent').length;
 
   return (
-    <StatsGrid className="sm:grid-cols-2 xl:grid-cols-5">
-      <SummaryCard label="Total" value={items.length} tone="brand" />
-      <SummaryCard label="Pendentes" value={pending} tone="neutral" />
-      <SummaryCard label="Entregues" value={delivered} tone="success" />
-      <SummaryCard label="Atrasados" value={overdue} tone={overdue > 0 ? 'warning' : 'neutral'} />
-      <SummaryCard label="Urgentes" value={urgent} tone={urgent > 0 ? 'warning' : 'neutral'} />
-    </StatsGrid>
+    <KpiStrip
+      items={[
+        { label: 'Total', value: items.length, tone: 'brand' },
+        { label: 'Pendentes', value: pending, tone: 'neutral' },
+        { label: 'Entregues', value: delivered, tone: 'success' },
+        { label: 'Atrasados', value: overdue, tone: overdue > 0 ? 'warning' : 'neutral' },
+        { label: 'Urgentes', value: urgent, tone: urgent > 0 ? 'warning' : 'neutral' },
+      ]}
+    />
   );
 }

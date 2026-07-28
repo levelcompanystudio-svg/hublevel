@@ -3,6 +3,7 @@ import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
+import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { Badge } from '../../../components/ui';
 import { useAuth } from '../../auth/useAuth';
 import { listChecklistItems } from '../checklist.api';
@@ -70,18 +71,12 @@ export function ChecklistPage() {
           <FilterBar label={role === 'colaborador' ? 'Meus itens' : role === 'admin' ? 'Todos os clientes' : 'Minha carteira'}>
             <div className="flex flex-wrap gap-1.5">
               {filters.map((filter) => (
-                <button
+                <QuickFilterPill
                   key={filter.value}
-                  type="button"
+                  label={filter.label}
+                  active={activeFilter === filter.value}
                   onClick={() => setActiveFilter(filter.value)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
-                    activeFilter === filter.value
-                      ? 'border-primary/60 bg-primary text-primary-foreground'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }`}
-                >
-                  {filter.label}
-                </button>
+                />
               ))}
             </div>
             <Badge>Baseado em Tarefas</Badge>

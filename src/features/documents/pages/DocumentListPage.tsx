@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
@@ -69,11 +68,13 @@ export function DocumentListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-3">
-            <SummaryCard label="Total de documentos" value={documents.length} tone="brand" />
-            <SummaryCard label="Operacionais" value={operationalDocuments} tone="success" />
-            <SummaryCard label="Sensiveis (contrato/comprovante)" value={sensitiveDocuments} tone="warning" />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Total de documentos', value: documents.length, tone: 'brand' },
+              { label: 'Operacionais', value: operationalDocuments, tone: 'success' },
+              { label: 'Sensiveis (contrato/comprovante)', value: sensitiveDocuments, tone: 'warning' },
+            ]}
+          />
           <FilterBar label="Contexto">
             <Badge tone="brand">{role === 'admin' ? 'Todos os documentos' : 'Documentos operacionais da carteira'}</Badge>
             <Badge>Vinculado a clientes</Badge>

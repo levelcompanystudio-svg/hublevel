@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { FilterBar } from '../../../components/layout/FilterBar';
+import { FilterPanel } from '../../../components/layout/FilterPanel';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
@@ -168,38 +168,32 @@ export function UpdateListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <StatsGrid className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            <SummaryCard label="Total de atualizacoes" value={updates.length} tone="brand" />
-            <SummaryCard label="Pendentes (rascunho)" value={draftUpdates} tone={draftUpdates > 0 ? 'warning' : 'neutral'} />
-            <SummaryCard label="Enviadas ao cliente" value={sentUpdates} tone="success" />
-            <SummaryCard label="Com proxima acao" value={withNextAction} tone="neutral" />
-            <SummaryCard label="Sem proxima acao" value={withoutNextAction} tone="neutral" />
-          </StatsGrid>
+          <KpiStrip
+            items={[
+              { label: 'Total de atualizacoes', value: updates.length, tone: 'brand' },
+              { label: 'Pendentes (rascunho)', value: draftUpdates, tone: draftUpdates > 0 ? 'warning' : 'neutral' },
+              { label: 'Enviadas ao cliente', value: sentUpdates, tone: 'success' },
+              { label: 'Com proxima acao', value: withNextAction, tone: 'neutral' },
+              { label: 'Sem proxima acao', value: withoutNextAction, tone: 'neutral' },
+            ]}
+          />
 
-          <FilterBar label="Visao rapida">
-            <div className="flex flex-wrap gap-1.5">
-              {([
-                { value: 'todos', label: 'Todas' },
-                { value: 'com_proxima_acao', label: 'Com proxima acao' },
-                { value: 'sem_proxima_acao', label: 'Sem proxima acao' },
-              ] as Array<{ value: QuickFilter; label: string }>).map((filter) => (
-                <button
-                  key={filter.value}
-                  type="button"
-                  onClick={() => setQuickFilter(filter.value)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                    quickFilter === filter.value
-                      ? 'border-primary/60 bg-primary text-primary-foreground'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-          </FilterBar>
-
-          <FilterBar label="Filtros">
+          <FilterPanel
+            filtersActive={filtersActive}
+            onClearFilters={handleClearFilters}
+            quickFilters={([
+              { value: 'todos', label: 'Todas' },
+              { value: 'com_proxima_acao', label: 'Com proxima acao' },
+              { value: 'sem_proxima_acao', label: 'Sem proxima acao' },
+            ] as Array<{ value: QuickFilter; label: string }>).map((filter) => (
+              <QuickFilterPill
+                key={filter.value}
+                label={filter.label}
+                active={quickFilter === filter.value}
+                onClick={() => setQuickFilter(filter.value)}
+              />
+            ))}
+          >
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               <FilterSelect
                 label="Status"
@@ -229,12 +223,7 @@ export function UpdateListPage() {
                 options={[{ value: FILTER_ALL, label: 'Todos' }, ...responsibleOptions]}
               />
             </div>
-            {filtersActive && (
-              <Button type="button" variant="ghost" size="sm" onClick={handleClearFilters} className="shrink-0">
-                Limpar filtros
-              </Button>
-            )}
-          </FilterBar>
+          </FilterPanel>
 
           <UpdateTable
             updates={filteredUpdates}

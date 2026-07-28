@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { FilterBar } from '../../../components/layout/FilterBar';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
+import { PageHeader } from '../../../components/layout/PageHeader';
+import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { Badge } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getOperationalAlerts } from '../alerts.api';
 import type { AlertType, OperationalAlert } from '../alerts.types';
-import { AlertHeader } from '../components/AlertHeader';
 import { AlertTable } from '../components/AlertTable';
 
 type FilterValue = 'todos' | AlertType;
@@ -70,7 +71,8 @@ export function AlertListPage() {
 
   return (
     <div className="space-y-6">
-      <AlertHeader
+      <PageHeader
+        eyebrow="Riscos"
         title="Alertas operacionais"
         description="Riscos calculados a partir de clientes, tarefas, reunioes e acompanhamento. Sem persistencia: um alerta some assim que a condicao deixa de existir."
       />
@@ -79,30 +81,28 @@ export function AlertListPage() {
       {error && <ErrorState description={error} />}
       {!loading && !error && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <SummaryCard label="Total de alertas" value={alerts.length} tone="brand" />
-            <SummaryCard label="Alta prioridade" value={highPriorityCount} tone="warning" />
-            <SummaryCard label="Clientes com risco" value={clientAlertsCount} />
-            {role === 'admin' && <SummaryCard label="Financeiro atrasado" value={financialAlertsCount} tone="warning" />}
-          </div>
+          <KpiStrip
+            items={[
+              { label: 'Total de alertas', value: alerts.length, tone: 'brand' },
+              { label: 'Alta prioridade', value: highPriorityCount, tone: highPriorityCount > 0 ? 'warning' : 'neutral' },
+              { label: 'Clientes com risco', value: clientAlertsCount, tone: 'neutral' },
+              ...(role === 'admin'
+                ? [{ label: 'Financeiro atrasado', value: financialAlertsCount, tone: financialAlertsCount > 0 ? 'warning' as const : 'neutral' as const }]
+                : []),
+            ]}
+          />
 
           <FilterBar label={role === 'admin' ? 'Todos os clientes' : 'Minha carteira'}>
             <div className="flex flex-wrap gap-1.5">
               {filters
                 .filter((filter) => role === 'admin' || filter.value !== 'financeiro_atrasado')
                 .map((filter) => (
-                  <button
+                  <QuickFilterPill
                     key={filter.value}
-                    type="button"
+                    label={filter.label}
+                    active={activeFilter === filter.value}
                     onClick={() => setActiveFilter(filter.value)}
-                    className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                      activeFilter === filter.value
-                        ? 'border-primary/60 bg-primary text-primary-foreground shadow-[0_4px_14px_-4px_var(--color-primary)]'
-                        : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                    }`}
-                  >
-                    {filter.label}
-                  </button>
+                  />
                 ))}
             </div>
             <Badge tone="brand">Somente leitura</Badge>

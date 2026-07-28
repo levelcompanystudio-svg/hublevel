@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
+import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { Button, Card } from '../../../components/ui';
 import { listFinancialRecords } from '../../finance/finance.api';
 import { FinanceStatusBadge } from '../../finance/components/FinanceStatusBadge';
@@ -45,11 +45,13 @@ export function ClientFinanceTab({ clientId }: ClientFinanceTabProps) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <SummaryCard label="Registros" value={records.length} tone="brand" />
-        <SummaryCard label="Receita prevista" value={formatCurrency(previsto)} tone="warning" />
-        <SummaryCard label="Receita recebida" value={formatCurrency(recebido)} tone="success" />
-      </div>
+      <KpiStrip
+        items={[
+          { label: 'Registros', value: records.length, tone: 'brand' },
+          { label: 'Receita prevista', value: formatCurrency(previsto), tone: previsto > 0 ? 'warning' : 'neutral' },
+          { label: 'Receita recebida', value: formatCurrency(recebido), tone: 'success' },
+        ]}
+      />
 
       {records.length === 0 ? (
         <Card>

@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
+import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button, Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { listClients } from '../../clients/clients.api';
 import type { Client } from '../../clients/clients.types';
-import { LandingPageHeader } from '../components/LandingPageHeader';
 
 export function PlannerOverviewPage() {
   const { profile } = useAuth();
@@ -47,8 +47,9 @@ export function PlannerOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <LandingPageHeader
-        title="Planejador de landing pages"
+      <PageHeader
+        eyebrow="Landing pages"
+        title="Planejador"
         description="Central para acessar as landing pages dos clientes, preencher briefings, publicar paginas e acompanhar leads."
       />
 
@@ -70,12 +71,12 @@ export function PlannerOverviewPage() {
             ) : (
               clients.map((client) => (
                 <div key={client.id} className="flex items-center justify-between gap-3 p-4">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-foreground">{client.company_name}</p>
                     <p className="truncate text-xs text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>
                   </div>
-                  <Link to={`/app/clientes/${client.id}`}>
-                    <Button type="button" variant="secondary">Abrir cliente</Button>
+                  <Link to={`/app/clientes/${client.id}`} className="shrink-0">
+                    <Button type="button" variant="secondary" className="whitespace-nowrap">Abrir cliente</Button>
                   </Link>
                 </div>
               ))

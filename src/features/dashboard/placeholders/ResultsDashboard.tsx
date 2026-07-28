@@ -1,10 +1,8 @@
-import { Activity, CalendarDays, CheckSquare, FileText } from 'lucide-react';
+import { Activity, CalendarDays, CheckSquare, ChevronRight, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Card, SectionHeader } from '../../../components/ui';
 import { getOperationalAlerts } from '../../alerts/alerts.api';
 import type { OperationalAlert } from '../../alerts/alerts.types';
@@ -24,11 +22,13 @@ import { emptyPerformanceOverview } from '../../performance/performance.types';
 import { PerformancePeriodFilter } from '../../performance/components/PerformancePeriodFilter';
 import { PerformanceSummaryGrid } from '../../performance/components/PerformanceSummaryGrid';
 import { PerformanceTrendChart } from '../../performance/components/PerformanceTrendChart';
+import { DashboardKpiStrip } from '../components/DashboardKpiStrip';
+import { PortfolioHealthMeter } from '../components/PortfolioHealthMeter';
 
-const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; barClassName: string }> = [
-  { status: 'saudavel', label: 'Saudaveis', barClassName: 'bg-success' },
-  { status: 'atencao', label: 'Atencao', barClassName: 'bg-warning' },
-  { status: 'critico', label: 'Criticos', barClassName: 'bg-destructive' },
+const HEALTH_GROUPS: Array<{ status: ClientHealthStatus; label: string; barClassName: string; dotClassName: string }> = [
+  { status: 'saudavel', label: 'Saudaveis', barClassName: 'bg-success', dotClassName: 'bg-success' },
+  { status: 'atencao', label: 'Atencao', barClassName: 'bg-warning', dotClassName: 'bg-warning' },
+  { status: 'critico', label: 'Criticos', barClassName: 'bg-destructive', dotClassName: 'bg-destructive' },
 ];
 
 const ACTIVITY_ICONS: Record<ActivityType, typeof CheckSquare> = {
@@ -118,24 +118,33 @@ export function ResultsDashboard() {
   const topAlerts = alerts.slice(0, 5);
   const operationalClients = clients.filter((client) => client.status === 'ativo' || client.status === 'onboarding');
   const totalClientsForHealth = operationalClients.length;
+  const healthGroups = HEALTH_GROUPS.map((group) => ({
+    key: group.status,
+    label: group.label,
+    count: operationalClients.filter((client) => client.health_status === group.status).length,
+    barClassName: group.barClassName,
+    dotClassName: group.dotClassName,
+  }));
 
   return (
-    <div className="space-y-5">
-      <StatsGrid>
-        <SummaryCard
-          label="Clientes ativos"
-          value={overview.activeClients}
-          description={`${operationalClients.length} clientes operacionais incluindo onboarding`}
-          tone="brand"
-        />
-        <SummaryCard
-          label="Precisam de atencao"
-          value={clientsNeedingAttention}
-          tone={clientsNeedingAttention > 0 ? 'warning' : 'neutral'}
-        />
-        <SummaryCard label="Tarefas pendentes" value={overview.openTasks} tone="neutral" />
-        <SummaryCard label="Reunioes proximas (7d)" value={overview.meetingsNext7Days} tone="neutral" />
-      </StatsGrid>
+    <div className="space-y-6">
+      <DashboardKpiStrip
+        items={[
+          {
+            label: 'Clientes ativos',
+            value: overview.activeClients,
+            description: `${operationalClients.length} operacionais incluindo onboarding`,
+            tone: 'brand',
+          },
+          {
+            label: 'Precisam de atencao',
+            value: clientsNeedingAttention,
+            tone: clientsNeedingAttention > 0 ? 'warning' : 'neutral',
+          },
+          { label: 'Tarefas pendentes', value: overview.openTasks, tone: 'neutral' },
+          { label: 'Reunioes proximas (7d)', value: overview.meetingsNext7Days, tone: 'neutral' },
+        ]}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
@@ -163,7 +172,10 @@ export function ResultsDashboard() {
                       <p className="truncate text-sm font-medium text-foreground">{alert.clientName ?? alert.title}</p>
                       <p className="truncate text-xs text-muted-foreground">{alert.description}</p>
                     </div>
-                    <AlertPriorityBadge severity={alert.severity} />
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <AlertPriorityBadge severity={alert.severity} />
+                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" aria-hidden="true" />
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -173,36 +185,22 @@ export function ResultsDashboard() {
 
         <Card>
           <SectionHeader title="Saude da carteira" caption="Distribuicao dos clientes por status de saude" />
-          <div className="mt-4 space-y-3">
-            {HEALTH_GROUPS.map((group) => {
-              const count = operationalClients.filter((client) => client.health_status === group.status).length;
-              const percent = totalClientsForHealth > 0 ? Math.round((count / totalClientsForHealth) * 100) : 0;
-              return (
-                <div key={group.status}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-foreground">{group.label}</span>
-                    <span className="text-muted-foreground">{count} - {percent}%</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                    <div className={`h-full rounded-full ${group.barClassName}`} style={{ width: `${percent}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="mt-5">
+            <PortfolioHealthMeter groups={healthGroups} total={totalClientsForHealth} />
           </div>
         </Card>
       </div>
 
-      <Card>
-        <SectionHeader
-          title="Performance"
-          caption="Investimento, impressoes, cliques, leads, CPL e ROAS de todos os clientes conectados"
-          action={
-            <Link to="/app/performance" className="text-xs font-semibold text-primary hover:underline">
-              Ver detalhes
-            </Link>
-          }
-        />
+      <Card className="border-t-2 border-t-primary/50">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h3 className="text-h2 text-foreground">Performance</h3>
+            <p className="text-caption mt-1">Investimento, impressoes, cliques, leads, CPL e ROAS de todos os clientes conectados</p>
+          </div>
+          <Link to="/app/performance" className="text-xs font-semibold text-primary hover:underline">
+            Ver detalhes
+          </Link>
+        </div>
         <div className="mt-4">
           <PerformancePeriodFilter value={period} onChange={setPeriod} />
         </div>
@@ -216,7 +214,7 @@ export function ResultsDashboard() {
             </p>
           </div>
         ) : (
-          <div className="mt-4 space-y-4">
+          <div className="mt-5 space-y-5">
             <PerformanceSummaryGrid overview={performance} variant="dashboard" />
             <PerformanceTrendChart data={performance.dailySeries} />
           </div>
@@ -225,7 +223,7 @@ export function ResultsDashboard() {
 
       <Card>
         <SectionHeader title="Atividade recente" />
-        <div className="mt-3">
+        <div className="mt-2">
           {activity.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
           ) : (
@@ -236,7 +234,7 @@ export function ResultsDashboard() {
                   <Link
                     key={item.id}
                     to={item.href}
-                    className="flex items-start gap-2.5 py-2.5 transition-colors duration-150 hover:bg-card-elevated"
+                    className="flex items-start gap-2.5 py-2 transition-colors duration-150 hover:bg-card-elevated"
                   >
                     <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" />

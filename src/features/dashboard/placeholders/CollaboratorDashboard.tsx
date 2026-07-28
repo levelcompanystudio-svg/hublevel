@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
-import { StatsGrid } from '../../../components/layout/StatsGrid';
-import { SummaryCard } from '../../../components/layout/SummaryCard';
 import { Badge, Card, SectionHeader } from '../../../components/ui';
 import { getCollaboratorDashboardMetrics } from '../dashboard.api';
 import type { CollaboratorDashboardMetrics } from '../dashboard.types';
+import { DashboardKpiStrip } from '../components/DashboardKpiStrip';
 
 export function CollaboratorDashboard() {
   const [metrics, setMetrics] = useState<CollaboratorDashboardMetrics | null>(null);
@@ -36,21 +35,22 @@ export function CollaboratorDashboard() {
   if (error) return <ErrorState description={error} />;
   if (!metrics) return null;
 
-  const cards = [
-    { title: 'Minhas Tarefas', value: metrics.myTasks, description: 'Total de tarefas atribuidas a voce.' },
-    { title: 'Tarefas Vencidas', value: metrics.overdueTasks, description: 'Suas tarefas com prazo expirado e nao concluidas.' },
-    { title: 'Minhas Reunioes', value: metrics.myMeetingsThisWeek, description: 'Reunioes desta semana em que voce e participante.' },
-  ];
-
   return (
     <div className="space-y-6">
       <section className="space-y-4">
         <SectionHeader title="Minha rotina" caption="Resumo individual de tarefas e reunioes atribuidas ao colaborador." />
-        <StatsGrid className="sm:grid-cols-2 xl:grid-cols-3">
-          {cards.map((card) => (
-            <SummaryCard key={card.title} label={card.title} value={card.value} description={card.description} />
-          ))}
-        </StatsGrid>
+        <DashboardKpiStrip
+          items={[
+            { label: 'Minhas tarefas', value: metrics.myTasks, description: 'Total atribuidas a voce', tone: 'brand' },
+            {
+              label: 'Tarefas vencidas',
+              value: metrics.overdueTasks,
+              description: 'Prazo expirado e nao concluidas',
+              tone: metrics.overdueTasks > 0 ? 'warning' : 'neutral',
+            },
+            { label: 'Minhas reunioes', value: metrics.myMeetingsThisWeek, description: 'Nesta semana', tone: 'neutral' },
+          ]}
+        />
       </section>
 
       <Card>

@@ -8,6 +8,10 @@ export function DashboardPage() {
   const { profile } = useAuth();
   const role = profile?.roles?.name;
 
+  if (role === 'admin' || role === 'gestor') {
+    return <ResultsDashboard />;
+  }
+
   return (
     <div className="space-y-5">
       <PageHeader
@@ -16,7 +20,6 @@ export function DashboardPage() {
         description="Panorama geral de resultados: carteira ativa, saude dos clientes e desempenho de campanhas assim que integracoes forem conectadas."
       />
 
-      {(role === 'admin' || role === 'gestor') && <ResultsDashboard />}
       {role === 'colaborador' && <CollaboratorDashboard />}
       {!role && (
         <Card>

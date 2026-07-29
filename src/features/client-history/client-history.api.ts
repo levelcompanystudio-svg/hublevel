@@ -2,8 +2,6 @@ import { listDeliverablesByClient } from '../deliverables/deliverables.api';
 import type { Deliverable } from '../deliverables/deliverables.types';
 import { listDocumentsByClient } from '../documents/documents.api';
 import type { Document } from '../documents/documents.types';
-import { getClientLandingPage } from '../landing-pages/landing-page.api';
-import type { ClientLandingPage } from '../landing-pages/landing-page.types';
 import { listMeetingsByClient } from '../meetings/meetings.api';
 import type { Meeting } from '../meetings/meetings.types';
 import { listTasks } from '../tasks/tasks.api';
@@ -13,10 +11,10 @@ import type { Update } from '../updates/updates.types';
 import type { ClientHistoryEvent } from './client-history.types';
 
 // Nao existe tabela de historico/auditoria ainda: este modulo apenas normaliza, em memoria,
-// eventos ja existentes de outras tabelas (tasks/updates/meetings/documents/deliverables/
-// client_landing_pages) reaproveitando as APIs de listagem por cliente ja existentes. A RLS de
-// cada tabela de origem continua sendo quem decide o que o usuario atual pode ver; nenhuma
-// query nova ou bypass de RLS e feito aqui.
+// eventos ja existentes de outras tabelas (tasks/updates/meetings/documents/deliverables)
+// reaproveitando as APIs de listagem por cliente ja existentes. A RLS de cada tabela de origem
+// continua sendo quem decide o que o usuario atual pode ver; nenhuma query nova ou bypass de
+// RLS e feito aqui.
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) return value[0] ?? null;
@@ -94,28 +92,14 @@ function deliverableToEvent(deliverable: Deliverable): ClientHistoryEvent {
   };
 }
 
-function landingPageToEvent(page: ClientLandingPage): ClientHistoryEvent {
-  return {
-    id: `landing_page-${page.id}`,
-    type: 'landing_page',
-    title: page.display_name || 'Briefing de landing page',
-    description: page.headline,
-    date: page.updated_at,
-    status: page.status,
-    actorName: null,
-    href: null,
-  };
-}
-
 export async function listClientHistory(clientId: string): Promise<ClientHistoryEvent[]> {
-  const [tasks, updates, meetings, documents, deliverables, landingPage] = await Promise.all([
+  const [tasks, updates, meetings, documents, deliverables] = await Promise.all([
     // tasks nao tem um listByClient dedicado; filtramos no cliente aqui, igual ao ClientTasksTab.
     listTasks(),
     listUpdatesByClient(clientId),
     listMeetingsByClient(clientId),
     listDocumentsByClient(clientId),
     listDeliverablesByClient(clientId),
-    getClientLandingPage(clientId),
   ]);
 
   const clientTasks = tasks.filter((task) => task.client_id === clientId);
@@ -126,7 +110,6 @@ export async function listClientHistory(clientId: string): Promise<ClientHistory
     ...meetings.map(meetingToEvent),
     ...documents.map(documentToEvent),
     ...deliverables.map(deliverableToEvent),
-    ...(landingPage ? [landingPageToEvent(landingPage)] : []),
   ];
 
   return events.sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date));

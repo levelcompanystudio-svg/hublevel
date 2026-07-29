@@ -1,4 +1,4 @@
-export type ClientHistoryEventType = 'task' | 'update' | 'meeting' | 'document' | 'deliverable' | 'landing_page';
+export type ClientHistoryEventType = 'task' | 'update' | 'meeting' | 'document' | 'deliverable';
 
 export interface ClientHistoryEvent {
   id: string;
@@ -17,5 +17,4 @@ export const clientHistoryEventTypeLabels: Record<ClientHistoryEventType, string
   meeting: 'Reuniao',
   document: 'Documento',
   deliverable: 'Entregavel',
-  landing_page: 'Landing page',
 };

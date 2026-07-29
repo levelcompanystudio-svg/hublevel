@@ -25,8 +25,6 @@ import { FinanceDetailsPage } from '../features/finance/pages/FinanceDetailsPage
 import { FinanceFormPage } from '../features/finance/pages/FinanceFormPage';
 import { FinanceListPage } from '../features/finance/pages/FinanceListPage';
 import { IntegrationsOverviewPage } from '../features/integrations/pages/IntegrationsOverviewPage';
-import { PlannerOverviewPage } from '../features/landing-pages/pages/PlannerOverviewPage';
-import { PublicLandingPage } from '../features/landing-pages/pages/PublicLandingPage';
 import { MeetingConsolePage } from '../features/meetings/pages/MeetingConsolePage';
 import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
 import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
@@ -56,8 +54,6 @@ export const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/lp/:id" element={<PublicLandingPage />} />
-
       <Route
         path="/login"
         element={
@@ -131,7 +127,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="entregaveis/:id/editar" element={<DeliverableFormPage />} />
         <Route path="performance" element={<PerformanceOverviewPage />} />
         <Route path="integracoes" element={<IntegrationsOverviewPage />} />
-        <Route path="planejador" element={<PlannerOverviewPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPlaceholder />} />
       </Route>

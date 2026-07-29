@@ -14,7 +14,6 @@ const typeDotClassName: Record<ClientHistoryEventType, string> = {
   meeting: 'bg-chart-4',
   document: 'bg-muted-foreground',
   deliverable: 'bg-success',
-  landing_page: 'bg-warning',
 };
 
 function formatDateTime(value: string): string {

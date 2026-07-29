@@ -14,7 +14,6 @@ import {
   Settings,
   TrendingUp,
   Users,
-  WandSparkles,
 } from 'lucide-react';
 import type { RoleName } from '../../auth/auth.types';
 import type { NavigationItem } from './navigation.types';
@@ -129,14 +128,6 @@ export const navigationItems: NavigationItem[] = [
     label: 'Integracoes',
     description: 'Status de conexao Meta Ads e Google Ads por cliente',
     icon: Plug,
-    roles: ['admin', 'gestor'],
-    group: 'Gestao',
-  },
-  {
-    path: '/app/planejador',
-    label: 'Planejador',
-    description: 'Briefing de landing page por cliente (rascunho local)',
-    icon: WandSparkles,
     roles: ['admin', 'gestor'],
     group: 'Gestao',
   },

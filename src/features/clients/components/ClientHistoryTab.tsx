@@ -42,7 +42,6 @@ export function ClientHistoryTab({ clientId }: ClientHistoryTabProps) {
       meeting: 0,
       document: 0,
       deliverable: 0,
-      landing_page: 0,
     };
     for (const event of events) {
       base[event.type] += 1;

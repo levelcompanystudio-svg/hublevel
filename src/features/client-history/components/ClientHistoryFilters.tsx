@@ -10,7 +10,7 @@ interface ClientHistoryFiltersProps {
   onChange: (filter: ClientHistoryFilter) => void;
 }
 
-const options: ClientHistoryFilter[] = ['todos', 'task', 'update', 'meeting', 'document', 'deliverable', 'landing_page'];
+const options: ClientHistoryFilter[] = ['todos', 'task', 'update', 'meeting', 'document', 'deliverable'];
 
 function optionLabel(filter: ClientHistoryFilter): string {
   return filter === 'todos' ? 'Todos' : clientHistoryEventTypeLabels[filter];

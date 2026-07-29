@@ -6,7 +6,7 @@ export function ClientHistoryEmptyState() {
     <Card>
       <EmptyState
         title="Nenhum evento encontrado"
-        description="Tarefas, atualizacoes, reunioes, documentos, entregaveis e o briefing de landing page deste cliente aparecerao aqui conforme forem criados."
+        description="Tarefas, atualizacoes, reunioes, documentos e entregaveis deste cliente aparecerao aqui conforme forem criados."
       />
     </Card>
   );

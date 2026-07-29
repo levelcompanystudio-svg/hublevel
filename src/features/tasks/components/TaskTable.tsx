@@ -49,15 +49,15 @@ export function TaskTable({
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px] border-collapse text-left">
-          <thead className="border-b border-border bg-surface text-label text-left">
+          <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-4 py-3.5">Tarefa</th>
-              <th className="px-4 py-3.5">Cliente</th>
-              <th className="px-4 py-3.5">Responsavel</th>
-              <th className="px-4 py-3.5">Prioridade</th>
-              <th className="px-4 py-3.5">Status</th>
-              <th className="px-4 py-3.5">Prazo</th>
-              <th className="px-4 py-3.5 text-right">Acoes</th>
+              <th className="px-4 py-3.5 font-semibold">Tarefa</th>
+              <th className="px-4 py-3.5 font-semibold">Cliente</th>
+              <th className="px-4 py-3.5 font-semibold">Responsavel</th>
+              <th className="px-4 py-3.5 font-semibold">Prioridade</th>
+              <th className="px-4 py-3.5 font-semibold">Status</th>
+              <th className="px-4 py-3.5 font-semibold">Prazo</th>
+              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -83,7 +83,7 @@ export function TaskTable({
                   <td className="px-4 py-3 text-sm text-muted-foreground">{profileName(task.assignee)}</td>
                   <td className="px-4 py-3"><TaskPriorityBadge priority={task.priority} /></td>
                   <td className="px-4 py-3"><TaskStatusBadge status={task.status} /></td>
-                  <td className="px-4 py-3 font-mono text-sm text-muted-foreground">{formatDate(task.due_date)}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(task.due_date)}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-1.5">
                       <Link to={`/app/tarefas/${task.id}`}>

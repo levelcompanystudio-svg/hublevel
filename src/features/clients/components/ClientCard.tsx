@@ -93,19 +93,19 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
       <dl className="space-y-1 text-xs text-muted-foreground">
         <div className="flex items-center justify-between gap-2">
           <dt>Atualizacao</dt>
-          <dd className={`font-mono ${aggregate.hasRecentUpdate ? 'font-medium text-foreground' : 'font-medium text-warning'}`}>
+          <dd className={aggregate.hasRecentUpdate ? 'font-medium text-foreground' : 'font-medium text-warning'}>
             {formatShortDate(aggregate.lastUpdateDate)}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-2">
           <dt>Proxima reuniao</dt>
-          <dd className={`font-mono ${aggregate.nextMeetingDate ? 'font-medium text-foreground' : 'font-medium text-warning'}`}>
+          <dd className={aggregate.nextMeetingDate ? 'font-medium text-foreground' : 'font-medium text-warning'}>
             {formatShortDate(aggregate.nextMeetingDate)}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-2">
           <dt>Documentos (30d)</dt>
-          <dd className="font-mono font-medium text-foreground">{aggregate.recentDocuments}</dd>
+          <dd className="font-medium text-foreground">{aggregate.recentDocuments}</dd>
         </div>
       </dl>
 
@@ -135,10 +135,10 @@ function Stat({
 }) {
   return (
     <div className="min-w-0">
-      <p className={`font-mono text-sm font-bold tabular-nums ${tone === 'destructive' ? 'text-destructive' : 'text-foreground'}`}>
+      <p className={`text-sm font-bold tabular-nums ${tone === 'destructive' ? 'text-destructive' : 'text-foreground'}`}>
         {display ?? value}
       </p>
-      <p className="text-label truncate">{label}</p>
+      <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { FilterBar } from '../../../components/layout/FilterBar';
 import { PageHeader } from '../../../components/layout/PageHeader';
 import { Button } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
+import { useTopbarAction } from '../../app/layout/TopbarContext';
 import { useAuth } from '../../auth/useAuth';
 import { getClientAggregate, getClientAggregates } from '../client-aggregates.api';
 import type { ClientAggregate } from '../client-aggregates.types';
@@ -121,6 +122,15 @@ export function ClientListPage() {
     });
   }, [activeFilter, aggregates, clients, search]);
 
+  useTopbarAction(
+    role === 'admin' || role === 'gestor' ? (
+      <Link to="/app/clientes/novo">
+        <Button type="button" variant="primary" size="sm">Novo cliente</Button>
+      </Link>
+    ) : null,
+    [role],
+  );
+
   if (role !== 'admin' && role !== 'gestor') {
     return <AccessDeniedPlaceholder />;
   }
@@ -131,11 +141,6 @@ export function ClientListPage() {
         eyebrow="Operacao"
         title="Clientes"
         description={`${summary.total} clientes cadastrados - ${summary.healthy} saudaveis - ${summary.attention} em atencao - ${summary.critical} criticos`}
-        action={(
-          <Link to="/app/clientes/novo">
-            <Button type="button" variant="primary">Novo cliente</Button>
-          </Link>
-        )}
       />
 
       {loading && <LoadingState title="Carregando clientes" />}
@@ -183,7 +188,7 @@ export function ClientListPage() {
           </FilterBar>
 
           {filteredClients.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3 min-[1800px]:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3 min-[1800px]:grid-cols-4">
               {filteredClients.map((client) => (
                 <ClientCard key={client.id} client={client} aggregate={getClientAggregate(aggregates, client.id)} />
               ))}

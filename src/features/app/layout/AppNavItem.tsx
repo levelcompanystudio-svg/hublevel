@@ -4,16 +4,19 @@ import type { NavigationItem } from '../navigation/navigation.types';
 interface AppNavItemProps {
   item: NavigationItem;
   onNavigate?: () => void;
+  collapsed?: boolean;
 }
 
-export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
+export function AppNavItem({ item, onNavigate, collapsed = false }: AppNavItemProps) {
   return (
     <NavLink
       to={item.path}
       onClick={onNavigate}
+      title={collapsed ? item.label : undefined}
       className={({ isActive }) =>
         [
           'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors duration-150',
+          collapsed ? 'justify-center' : '',
           isActive
             ? 'bg-primary/10 font-semibold text-foreground'
             : 'font-medium text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground',
@@ -29,7 +32,7 @@ export function AppNavItem({ item, onNavigate }: AppNavItemProps) {
               strokeWidth={2}
               aria-hidden="true"
             />
-            <span className="truncate">{item.label}</span>
+            {!collapsed && <span className="truncate">{item.label}</span>}
           </>
         );
       }}

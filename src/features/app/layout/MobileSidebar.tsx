@@ -9,9 +9,10 @@ interface MobileSidebarProps {
   onClose: () => void;
   onLogout?: () => void;
   loggingOut?: boolean;
+  onOpenSearch: () => void;
 }
 
-export function MobileSidebar({ open, role, userName, onClose, onLogout, loggingOut }: MobileSidebarProps) {
+export function MobileSidebar({ open, role, userName, onClose, onLogout, loggingOut, onOpenSearch }: MobileSidebarProps) {
   if (!open) return null;
 
   return (
@@ -31,7 +32,18 @@ export function MobileSidebar({ open, role, userName, onClose, onLogout, logging
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
-        <AppSidebar role={role} userName={userName} onNavigate={onClose} onLogout={onLogout} loggingOut={loggingOut} />
+        <AppSidebar
+          role={role}
+          userName={userName}
+          onNavigate={onClose}
+          onLogout={onLogout}
+          loggingOut={loggingOut}
+          allowCollapse={false}
+          onOpenSearch={() => {
+            onClose();
+            onOpenSearch();
+          }}
+        />
       </div>
     </div>
   );

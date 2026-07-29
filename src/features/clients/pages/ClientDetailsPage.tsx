@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ErrorState } from '../../../components/feedback/ErrorState';
 import { LoadingState } from '../../../components/feedback/LoadingState';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
+import { useBreadcrumbLabel } from '../../app/layout/TopbarContext';
 import { useAuth } from '../../auth/useAuth';
 import { computeClientOverviewMetrics, getClientOverview } from '../client-overview.api';
 import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overview.types';
@@ -73,6 +74,8 @@ export function ClientDetailsPage() {
       active = false;
     };
   }, [id, role]);
+
+  useBreadcrumbLabel(client ? client.trade_name || client.company_name : null);
 
   if (role !== 'admin' && role !== 'gestor') {
     return <AccessDeniedPlaceholder />;

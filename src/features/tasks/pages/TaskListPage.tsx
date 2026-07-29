@@ -7,6 +7,7 @@ import { KpiStrip } from '../../../components/layout/KpiStrip';
 import { PageHeader } from '../../../components/layout/PageHeader';
 import { QuickFilterPill } from '../../../components/layout/QuickFilterPill';
 import { Button } from '../../../components/ui';
+import { useTopbarAction } from '../../app/layout/TopbarContext';
 import { useAuth } from '../../auth/useAuth';
 import { listTasks, updateTaskStatus } from '../tasks.api';
 import type { Task, TaskPriority, TaskStatus } from '../tasks.types';
@@ -152,17 +153,21 @@ export function TaskListPage() {
   const overdueTasks = tasks.filter((task) => isOverdue(task)).length;
   const urgentTasks = tasks.filter((task) => task.priority === 'urgente' && !CLOSED_STATUSES.includes(task.status)).length;
 
+  useTopbarAction(
+    canCreate ? (
+      <Link to="/app/tarefas/novo">
+        <Button type="button" variant="primary" size="sm">Nova tarefa</Button>
+      </Link>
+    ) : null,
+    [canCreate],
+  );
+
   return (
     <div className="space-y-5">
       <PageHeader
         eyebrow="Operacao"
         title="Tarefas"
         description="Central operacional de tarefas: prioridades, prazos e responsaveis da equipe."
-        action={canCreate ? (
-          <Link to="/app/tarefas/novo">
-            <Button type="button" variant="primary">Nova tarefa</Button>
-          </Link>
-        ) : undefined}
       />
       {loading && <LoadingState title="Carregando tarefas" />}
       {error && <ErrorState description={error} />}

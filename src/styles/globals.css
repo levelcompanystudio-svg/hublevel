@@ -253,6 +253,16 @@ body {
   color: var(--muted-foreground);
 }
 
+/* Numero herói - reservado para 1-2 valores de destaque por tela (ex.: saldo recebido,
+   investimento total). Nao usar para titulo de pagina/secao; ver text-h1/h2. */
+.text-metric-hero {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Soft shadow utilities - single source of truth, replaces per-component hardcoded shadows */
 
 .shadow-soft {

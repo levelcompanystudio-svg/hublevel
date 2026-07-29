@@ -33,7 +33,7 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
 
   return (
     <aside className={`flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ${collapsed ? 'w-[72px]' : 'w-64'}`}>
-      <div className={`flex items-center gap-2.5 px-4 py-5 ${collapsed ? 'justify-center px-2.5' : ''}`}>
+      <div className={`flex px-4 py-5 ${collapsed ? 'flex-col items-center gap-2 px-2.5' : 'items-center gap-2.5'}`}>
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-card p-1 shadow-soft">
           <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full object-contain" />
         </div>

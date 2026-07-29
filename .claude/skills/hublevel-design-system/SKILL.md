@@ -76,15 +76,21 @@ Classes oficiais em `globals.css`:
 | Body | `text-sm` | 400/500 | 1.5-1.6 | Texto padrao de UI e conteudo. |
 | Label | `text-xs font-semibold uppercase` | 600 | 1.4 | Rotulos de campo, coluna e metadado. |
 | Helper text | `text-xs text-muted-foreground` | 400/500 | 1.4-1.6 | Ajuda, subtitulo curto e legenda. |
-| Table text | `text-sm` | 400/500 | compacto | Linha de tabela. Cabecalho usa `text-xs uppercase`. |
-| KPI value | `text-lg` a `text-2xl` | 600/700 | 1.1-1.25 | Numeros importantes; usar fonte tabular quando alinhar valores. |
+| Table text | `text-sm` | 400/500 | compacto | Linha de tabela. Cabecalho usa `text-label`. |
+| KPI value | `text-lg` a `text-2xl` | 600/700 | 1.1-1.25 | Numeros importantes; usar `font-mono tabular-nums`. |
+| Metric hero | `text-metric-hero` / 2.25rem | 700 | 1.1 | 1-2 numeros de destaque por tela (ver Fase R7). Sempre `font-mono tabular-nums`. |
+| Label/status | `text-label` | 600 | 1.4 | Mono, uppercase, tracking 0.06em. Eyebrow de PageHeader, rotulo de KPI, Badge, grupo de sidebar, cabecalho de tabela. |
 
-Regras:
+Regras (Fase R8 - identity system reset):
 
-- Nao usar `text-4xl`, `text-5xl` ou hero type dentro do app autenticado.
+- Nao usar `text-4xl`, `text-5xl` ou hero type dentro do app autenticado (excecao: `.text-metric-hero`, ver acima).
 - Evitar `font-bold` em excesso; reservar para valor KPI, logo e acao muito importante.
 - Texto secundario usa `text-muted-foreground`, nunca cinza hardcoded.
 - Numeros comparaveis devem ter alinhamento consistente e, quando possivel, `tabular-nums`.
+- **Regra de identidade**: `font-mono` = dado/sistema (numero, rotulo, badge, cabecalho de tabela,
+  timestamp); `font-sans` (padrao) = conteudo (nome, titulo, descricao, corpo de texto). Nunca
+  usar mono em titulo de pagina/secao ou texto corrido. Usar a classe `.text-label` para todo
+  rotulo/metadado em vez de recriar `text-xs uppercase tracking-wide` ad hoc.
 
 ### Radius
 
@@ -148,6 +154,8 @@ Relacao de superficies:
 - `bg-surface`: blocos baixos, filtros, inputs.
 - `bg-card`: cards e containers principais.
 - `bg-card-elevated`: hover/elevacao discreta.
+- `bg-sidebar`: moldura da navegacao - deliberadamente mais funda/saturada (dark) ou mais tingida
+  (light) que `--background`, nunca uma variacao quase identica dele (Fase R8).
 - `border-border`: divisao estrutural.
 - `text-foreground`: texto principal.
 - `text-muted-foreground`: texto secundario.
@@ -158,6 +166,8 @@ Dark mode:
 - Cards precisam se distinguir do background por contraste de superficie e borda.
 - Sombras devem ser discretas; profundidade vem mais de contraste do que de blur pesado.
 - Roxo (`--primary`) e acento, nao fundo de area grande.
+- Fundo do `body` usa aurora em duas cores (`--primary` + `--chart-2`) via `radial-gradient` -
+  mais moody/tecnico, nao decorativo (Fase R8).
 
 Light mode:
 
@@ -165,6 +175,8 @@ Light mode:
 - Bordas ficam mais importantes para definir containers.
 - Texto secundario precisa manter contraste legivel.
 - Sombras devem ser suaves; nada de card "flutuando" pesado.
+- Fundo do `body` usa uma unica lavagem suave (so `--primary`, 2 radiais) - light mode nao deve
+  ser "o dark mode invertido"; e uma paleta pensada a parte, mais contida (Fase R8).
 
 Estados semanticos:
 
@@ -180,7 +192,7 @@ Usar antes de criar variacoes:
 
 - `Card`: container padrao (`rounded-xl`, `border-border`, `bg-card`, `shadow-soft`, `p-4`).
 - `Button`: variantes `primary`, `secondary`, `ghost`; tamanhos `sm`, `md`.
-- `Badge`: tons `neutral`, `brand`, `success`, `warning`, `destructive`.
+- `Badge`: tons `neutral`, `brand`, `success`, `warning`, `destructive`. Texto em `font-mono` uppercase (Fase R8, ver regra de identidade em Tipografia).
 - `Tabs`: navegacao secundaria horizontal com scroll.
 - `SectionHeader`: titulo/caption/acao em card ou secao.
 - `LoadingState`: loading de pagina/secao central.

@@ -24,15 +24,15 @@ export function FinanceTable({ records }: FinanceTableProps) {
     <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[820px] border-collapse text-left">
-          <thead className="border-b border-border bg-surface text-xs uppercase tracking-wide text-muted-foreground">
+          <thead className="border-b border-border bg-surface text-label text-left">
             <tr>
-              <th className="px-4 py-3.5 font-semibold">Cliente</th>
-              <th className="px-4 py-3.5 font-semibold">Descricao</th>
-              <th className="px-4 py-3.5 font-semibold">Competencia</th>
-              <th className="px-4 py-3.5 font-semibold">Valor</th>
-              <th className="px-4 py-3.5 font-semibold">Vencimento</th>
-              <th className="px-4 py-3.5 font-semibold">Status</th>
-              <th className="px-4 py-3.5 text-right font-semibold">Acoes</th>
+              <th className="px-4 py-3.5">Cliente</th>
+              <th className="px-4 py-3.5">Descricao</th>
+              <th className="px-4 py-3.5">Competencia</th>
+              <th className="px-4 py-3.5 text-right">Valor</th>
+              <th className="px-4 py-3.5">Vencimento</th>
+              <th className="px-4 py-3.5">Status</th>
+              <th className="px-4 py-3.5 text-right">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -44,9 +44,9 @@ export function FinanceTable({ records }: FinanceTableProps) {
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-sm text-muted-foreground">{record.description || '-'}</td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
-                <td className="px-4 py-3 text-sm font-semibold tabular-nums text-foreground">{formatCurrency(record.amount)}</td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(record.due_date)}</td>
+                <td className="px-4 py-3 font-mono text-sm text-muted-foreground">{formatMonth(record.competence_month)}</td>
+                <td className="px-4 py-3 text-right font-mono text-sm font-semibold tabular-nums text-foreground">{formatCurrency(record.amount)}</td>
+                <td className="px-4 py-3 font-mono text-sm text-muted-foreground">{formatDate(record.due_date)}</td>
                 <td className="px-4 py-3"><FinanceStatusBadge status={record.status} /></td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">

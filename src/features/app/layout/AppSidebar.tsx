@@ -38,20 +38,9 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
           <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full object-contain" />
         </div>
         {!collapsed && (
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <p className="truncate text-sm font-bold tracking-tight text-sidebar-foreground">HubLevel</p>
           </div>
-        )}
-        {allowCollapse && (
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            aria-label={persistedCollapsed ? 'Expandir menu' : 'Recolher menu'}
-            title={persistedCollapsed ? 'Expandir menu' : 'Recolher menu'}
-            className={iconButtonClassName}
-          >
-            {persistedCollapsed ? <ChevronsRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : <ChevronsLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
-          </button>
         )}
       </div>
 
@@ -134,6 +123,19 @@ export function AppSidebar({ role, userName, onNavigate, onLogout, loggingOut = 
             )}
           </div>
         </div>
+
+        {allowCollapse && (
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            aria-label={persistedCollapsed ? 'Expandir menu' : 'Recolher menu'}
+            title={persistedCollapsed ? 'Expandir menu' : 'Recolher menu'}
+            className={`mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground ${collapsed ? 'justify-center' : ''}`}
+          >
+            {persistedCollapsed ? <ChevronsRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : <ChevronsLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+            {!collapsed && <span>Recolher</span>}
+          </button>
+        )}
       </div>
     </aside>
   );

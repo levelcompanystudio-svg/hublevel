@@ -60,14 +60,7 @@ export function AppLayout() {
         />
 
         <SidebarAwareMain>
-          <AppTopbar
-            role={role}
-            userName={profile?.name}
-            onOpenMenu={() => setMobileMenuOpen(true)}
-            onOpenSearch={() => setSearchOpen(true)}
-            onLogout={() => void handleLogout()}
-            loggingOut={signingOut}
-          />
+          <AppTopbar role={role} userName={profile?.name} onOpenMenu={() => setMobileMenuOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
           <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
             <Outlet />
           </main>

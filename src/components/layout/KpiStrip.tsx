@@ -31,9 +31,9 @@ export function KpiStrip({ items, density = 'default' }: KpiStripProps) {
           <div key={item.label} className={`flex-1 ${compact ? 'p-3' : 'p-4'}`}>
             <div className="flex items-center gap-1.5">
               <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotTones[item.tone ?? 'neutral']}`} aria-hidden="true" />
-              <p className="text-label truncate">{item.label}</p>
+              <p className="text-caption truncate uppercase tracking-wide text-muted-foreground">{item.label}</p>
             </div>
-            <p className={`${compact ? 'mt-1 text-lg' : 'text-h1 mt-2'} truncate font-mono font-semibold tabular-nums text-foreground`}>{item.value}</p>
+            <p className={`${compact ? 'mt-1 text-lg' : 'text-h1 mt-2'} truncate font-semibold text-foreground`}>{item.value}</p>
             {item.description && <p className="mt-1 truncate text-xs text-muted-foreground">{item.description}</p>}
           </div>
         ))}

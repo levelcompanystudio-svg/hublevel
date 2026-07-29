@@ -11,7 +11,7 @@ export function PageHeader({ title, description, eyebrow, action }: PageHeaderPr
   return (
     <div className="flex flex-col gap-4 border-b border-border/70 pb-6 lg:flex-row lg:items-start lg:justify-between">
       <div className="min-w-0">
-        {eyebrow && <p className="text-label mb-1.5 text-primary">{eyebrow}</p>}
+        {eyebrow && <p className="text-caption mb-1.5 uppercase tracking-wider text-primary">{eyebrow}</p>}
         <h2 className="text-h1 text-foreground">{title}</h2>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
       </div>

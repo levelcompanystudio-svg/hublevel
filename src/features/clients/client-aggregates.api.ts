@@ -18,8 +18,6 @@ function daysAgoDateOnly(days: number): string {
 interface TaskAgg {
   open: number;
   overdue: number;
-  checklistTotal: number;
-  checklistDone: number;
 }
 
 async function fetchServiceCountsByClient(): Promise<Map<string, number>> {
@@ -49,17 +47,12 @@ async function fetchTaskAggregatesByClient(): Promise<Map<string, TaskAgg>> {
   const map = new Map<string, TaskAgg>();
 
   for (const row of (data ?? []) as Array<{ client_id: string; status: string; due_date: string | null }>) {
-    const agg = map.get(row.client_id) ?? { open: 0, overdue: 0, checklistTotal: 0, checklistDone: 0 };
+    const agg = map.get(row.client_id) ?? { open: 0, overdue: 0 };
     const isOpen = !NON_OPEN_TASK_STATUSES.includes(row.status);
 
     if (isOpen) {
       agg.open += 1;
       if (row.due_date !== null && row.due_date < today) agg.overdue += 1;
-    }
-
-    if (row.status !== 'cancelada') {
-      agg.checklistTotal += 1;
-      if (row.status === 'concluida') agg.checklistDone += 1;
     }
 
     map.set(row.client_id, agg);
@@ -171,8 +164,6 @@ export async function getClientAggregates(): Promise<Map<string, ClientAggregate
       activeServices: services.get(clientId) ?? 0,
       openTasks: taskAgg?.open ?? 0,
       overdueTasks: taskAgg?.overdue ?? 0,
-      checklistTotal: taskAgg?.checklistTotal ?? 0,
-      checklistDone: taskAgg?.checklistDone ?? 0,
       lastUpdateDate: updateAgg?.lastDate ?? null,
       hasRecentUpdate: updateAgg?.recent ?? false,
       nextMeetingDate: meetingAgg?.nextDate ?? null,

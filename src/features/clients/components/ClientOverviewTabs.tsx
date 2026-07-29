@@ -6,7 +6,6 @@ import { Tabs } from '../../../components/ui';
 import type { RoleName } from '../../auth/auth.types';
 import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overview.types';
 import type { Client } from '../clients.types';
-import { ClientChecklistTab } from './ClientChecklistTab';
 import { ClientContractsTab } from './ClientContractsTab';
 import { ClientDeliverablesTab } from './ClientDeliverablesTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
@@ -39,7 +38,6 @@ const allTabs = [
   'Reunioes',
   'Entregaveis',
   'Documentos',
-  'Checklist',
   'Metricas',
   'Integracoes',
   'Financeiro',
@@ -98,8 +96,6 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
           canCreate={role === 'admin' || role === 'gestor'}
           canEdit={role === 'admin'}
         />
-      ) : activeTab === 'Checklist' ? (
-        <ClientChecklistTab clientId={client.id} />
       ) : activeTab === 'Metricas' ? (
         <ClientMetricsTab clientId={client.id} />
       ) : activeTab === 'Integracoes' ? (

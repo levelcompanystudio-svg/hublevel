@@ -9,7 +9,6 @@ import {
   FileText,
   LayoutDashboard,
   LayoutPanelTop,
-  ListChecks,
   Plug,
   Settings,
   TrendingUp,
@@ -81,14 +80,6 @@ export const navigationItems: NavigationItem[] = [
     description: 'Contratos, propostas e arquivos por cliente',
     icon: FileText,
     roles: ['admin', 'gestor'],
-    group: 'Operacao',
-  },
-  {
-    path: '/app/checklist',
-    label: 'Checklist',
-    description: 'Pendencias operacionais por cliente',
-    icon: ListChecks,
-    roles: ['admin', 'gestor', 'colaborador'],
     group: 'Operacao',
   },
   {

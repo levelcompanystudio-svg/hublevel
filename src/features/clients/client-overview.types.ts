@@ -16,8 +16,6 @@ export interface ClientOverviewMetrics {
   activeServices: number;
   openTasks: number;
   overdueTasks: number;
-  checklistTotal: number;
-  checklistDone: number;
   lastUpdate: Update | null;
   nextMeeting: Meeting | null;
   recentDocuments: Document[];

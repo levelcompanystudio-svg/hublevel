@@ -33,18 +33,12 @@ export function computeClientOverviewMetrics(data: ClientOverviewData): ClientOv
 
   let openTasks = 0;
   let overdueTasks = 0;
-  let checklistTotal = 0;
-  let checklistDone = 0;
 
   for (const task of data.tasks) {
     const isOpen = !NON_OPEN_TASK_STATUSES.includes(task.status);
     if (isOpen) {
       openTasks += 1;
       if (task.due_date !== null && task.due_date < today) overdueTasks += 1;
-    }
-    if (task.status !== 'cancelada') {
-      checklistTotal += 1;
-      if (task.status === 'concluida') checklistDone += 1;
     }
   }
 
@@ -65,8 +59,6 @@ export function computeClientOverviewMetrics(data: ClientOverviewData): ClientOv
     activeServices,
     openTasks,
     overdueTasks,
-    checklistTotal,
-    checklistDone,
     lastUpdate,
     nextMeeting,
     recentDocuments,

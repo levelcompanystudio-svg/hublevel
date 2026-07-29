@@ -37,11 +37,6 @@ export function ClientKpiRow({ metrics }: ClientKpiRowProps) {
           value: formatDateTime(metrics.nextMeeting?.scheduled_at ?? null),
           tone: metrics.nextMeeting ? 'success' : 'warning',
         },
-        {
-          label: 'Checklist',
-          value: `${metrics.checklistDone}/${metrics.checklistTotal}`,
-          description: 'Concluidas do total',
-        },
         { label: 'Documentos recentes', value: metrics.recentDocuments.length },
       ]}
     />

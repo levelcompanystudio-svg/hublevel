@@ -18,7 +18,10 @@
   --muted: hsl(220, 14%, 96%);
   --accent: hsl(263, 80%, 96%);
   --border: hsl(220, 13%, 91%);
-  --radius: 1rem;
+  /* Fase R8: raio mais fechado (era 1rem) - leitura mais tecnica/precisa (Linear/Attio), menos
+     "consumer app" arredondado. Ripple controlado: --radius-sm/md/lg/xl/2xl sao todos derivados
+     desta variavel em @theme inline. */
+  --radius: 0.875rem;
   --chart-1: hsl(263, 70%, 50%);
   --chart-2: hsl(190, 90%, 45%);
   --chart-3: hsl(150, 60%, 40%);
@@ -26,7 +29,9 @@
   --chart-5: hsl(330, 80%, 60%);
   --popover: hsl(0, 0%, 100%);
   --primary: hsl(263, 70%, 50%);
-  --sidebar: hsl(250, 40%, 99%);
+  /* Sidebar como painel proprio: mais tingido e ligeiramente mais escuro que o fundo (98%), nao
+     uma variacao quase identica dele - da ao shell uma leitura de "moldura", nao de template. */
+  --sidebar: hsl(252, 38%, 95%);
   --spacing: 0.25rem;
   --font-mono: 'JetBrains Mono', monospace;
   --font-sans: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
@@ -41,8 +46,8 @@
   --shadow-spread: -4px;
   --letter-spacing: 0;
   --shadow-opacity: 0.06;
-  --sidebar-accent: hsl(263, 20%, 94%);
-  --sidebar-border: hsl(220, 13%, 91%);
+  --sidebar-accent: hsl(263, 26%, 90%);
+  --sidebar-border: hsl(252, 24%, 88%);
   --card-foreground: hsl(224, 71%, 4%);
   --shadow-offset-x: 0px;
   --shadow-offset-y: 8px;
@@ -70,7 +75,10 @@
   --muted: hsl(258, 20%, 12%);
   --accent: hsl(263, 60%, 15%);
   --border: hsl(258, 18%, 16%);
-  --radius: 1rem;
+  /* Fase R8: raio mais fechado (era 1rem) - leitura mais tecnica/precisa (Linear/Attio), menos
+     "consumer app" arredondado. Ripple controlado: --radius-sm/md/lg/xl/2xl sao todos derivados
+     desta variavel em @theme inline. */
+  --radius: 0.875rem;
   --chart-1: hsl(263, 85%, 65%);
   --chart-2: hsl(190, 80%, 55%);
   --chart-3: hsl(150, 70%, 50%);
@@ -78,7 +86,9 @@
   --chart-5: hsl(330, 90%, 65%);
   --popover: hsl(258, 24%, 7%);
   --primary: hsl(263, 88%, 66%);
-  --sidebar: hsl(258, 32%, 4%);
+  /* Sidebar mais funda e saturada que o fundo (3%), nao uma variacao quase identica dele (era
+     32%/4%, quase igual ao --background) - da ao shell uma leitura de "moldura" propria. */
+  --sidebar: hsl(262, 45%, 2%);
   --spacing: 0.25rem;
   --font-mono: 'JetBrains Mono', monospace;
   --font-sans: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
@@ -93,8 +103,8 @@
   --shadow-spread: -8px;
   --letter-spacing: 0;
   --shadow-opacity: 0.4;
-  --sidebar-accent: hsl(263, 45%, 14%);
-  --sidebar-border: hsl(258, 25%, 10%);
+  --sidebar-accent: hsl(263, 50%, 12%);
+  --sidebar-border: hsl(262, 30%, 9%);
   --card-foreground: hsl(250, 30%, 97%);
   --shadow-offset-x: 0px;
   --shadow-offset-y: 20px;
@@ -167,19 +177,28 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/* Dark: aurora em duas cores (violeta + ciano) - mais moody/tecnica, condizente com "Linear
+   denso e maduro". Light: uma unica lavagem suave no topo - "limpo, mas nao sem graca", sem
+   tentar recriar o mesmo efeito do dark so que mais claro. */
 body {
   margin: 0;
   padding: 0;
   font-family: var(--font-sans);
   background-color: var(--background);
   background-image:
-    radial-gradient(760px circle at 8% -10%, color-mix(in oklch, var(--primary) 9%, transparent), transparent 60%),
-    radial-gradient(900px circle at 100% 0%, color-mix(in oklch, var(--primary) 6%, transparent), transparent 55%),
+    radial-gradient(760px circle at 8% -10%, color-mix(in oklch, var(--primary) 10%, transparent), transparent 60%),
+    radial-gradient(900px circle at 100% 0%, color-mix(in oklch, var(--chart-2) 5%, transparent), transparent 55%),
     radial-gradient(1200px circle at 50% 120%, color-mix(in oklch, var(--primary) 3%, transparent), transparent 60%);
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: var(--foreground);
   line-height: 1.6;
+}
+
+.light body {
+  background-image:
+    radial-gradient(900px circle at 12% -12%, color-mix(in oklch, var(--primary) 6%, transparent), transparent 62%),
+    radial-gradient(1100px circle at 100% 10%, color-mix(in oklch, var(--primary) 3%, transparent), transparent 55%);
 }
 
 #root {
@@ -250,6 +269,19 @@ body {
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+/* Rotulo/status/metadado - mono, nao sans. Regra de identidade: mono = sistema/dado, sans =
+   conteudo (nomes, titulos, descricoes). Usar em eyebrow de PageHeader, rotulo de KPI, badge,
+   rotulo de grupo de navegacao - nunca em titulo ou corpo de texto. */
+.text-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted-foreground);
 }
 

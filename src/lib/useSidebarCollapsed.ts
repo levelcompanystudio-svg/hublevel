@@ -29,12 +29,14 @@ export function useSidebarCollapsed() {
   }, []);
 
   function toggleCollapsed() {
-    setCollapsed((value) => {
-      const next = !value;
-      window.localStorage.setItem(STORAGE_KEY, next ? '1' : '0');
-      window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: next }));
-      return next;
-    });
+    // Nao fazer o setItem/dispatchEvent dentro do updater de setCollapsed: dispatchEvent e
+    // sincrono e dispara handleLocalChange em outras instancias do hook (ex.: SidebarAwareMain)
+    // enquanto o React ainda esta processando esta atualizacao - "Cannot update a component
+    // while rendering a different component", e o toggle podia virar no-op na pratica.
+    const next = !collapsed;
+    window.localStorage.setItem(STORAGE_KEY, next ? '1' : '0');
+    setCollapsed(next);
+    window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: next }));
   }
 
   return { collapsed, toggleCollapsed };

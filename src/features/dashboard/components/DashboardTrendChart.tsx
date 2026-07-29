@@ -25,6 +25,30 @@ interface Geometry {
   last: { x: number; y: number };
 }
 
+// Catmull-Rom -> Bezier: cada segmento usa os pontos vizinhos para calcular pontos de controle,
+// produzindo uma curva suave que ainda passa exatamente por todos os pontos originais (sem
+// distorcer os valores reais, so a forma como o traco entre eles e desenhado).
+function buildSmoothLinePath(points: Array<{ x: number; y: number }>): string {
+  if (points.length === 0) return '';
+  if (points.length === 1) return `M${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
+
+  let path = `M${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const p0 = points[i - 1] ?? points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2] ?? p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    path += ` C${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
+  }
+  return path;
+}
+
 function buildGeometry(values: number[], width: number, height: number, padding: number): Geometry {
   const max = Math.max(...values, 0);
   const min = Math.min(...values, 0);
@@ -38,7 +62,7 @@ function buildGeometry(values: number[], width: number, height: number, padding:
     return { x, y };
   });
 
-  const linePath = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
+  const linePath = buildSmoothLinePath(points);
   const baseline = height - padding;
   const areaPath = points.length
     ? `${linePath} L${points[points.length - 1].x.toFixed(2)},${baseline} L${points[0].x.toFixed(2)},${baseline} Z`

@@ -129,11 +129,11 @@ export function ResultsDashboard() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <PerformanceCommandPanel overview={performance} loading={performanceLoading} period={period} onPeriodChange={setPeriod} />
-        <OperationalRail alerts={alerts} meetingsNext7Days={overview.meetingsNext7Days} openTasks={overview.openTasks} />
+        <PortfolioPulse groups={healthGroups} total={totalClientsForHealth} />
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <PortfolioPulse groups={healthGroups} total={totalClientsForHealth} />
+        <OperationalRail alerts={alerts} meetingsNext7Days={overview.meetingsNext7Days} openTasks={overview.openTasks} />
         <ActivityStream items={activity} />
       </div>
     </div>

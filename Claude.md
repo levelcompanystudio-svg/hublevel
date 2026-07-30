@@ -9,13 +9,54 @@ Este arquivo orienta assistentes de IA e colaboradores que forem trabalhar neste
 - Nome do projeto: HubLevel
 - Produto: plataforma interna de gestao (SaaS)
 - Stack tecnica: React 19, TypeScript 6, Vite 8, Tailwind CSS 4, Supabase
-- Status: Autenticação Supabase configurada (Etapa 2 concluída)
+- Status: Consolidacao de escopo concluida (Etapas 1-5 da consolidacao HubLevel)
 
 Atualize esta secao assim que o projeto tiver codigo, dependencias, scripts, arquitetura ou decisoes tecnicas relevantes.
 
+## Escopo Atual do Produto (pos-consolidacao)
+
+Esta secao reflete o escopo real da interface apos a consolidacao registrada em `docs/easyhub-to-hublevel-action-plan.md`. Mantenha-a atualizada sempre que um modulo for adicionado ou removido da interface.
+
+### Nucleo operacional
+
+- Dashboard
+- Clientes
+- Tarefas
+- Acompanhamento
+- Reunioes
+- Entregaveis
+
+### Administracao
+
+- Painel administrativo
+- Contratos
+- Financeiro
+- Documentos
+- Usuarios
+- Configuracoes
+
+### Performance e integracoes
+
+- Integracoes Meta Ads
+- Integracoes Google Ads
+- Performance por cliente
+- Metricas reais de anuncios
+- Backend `/server` (preservado, sem alteracoes)
+
+### Removido da interface
+
+Os modulos abaixo foram implementados, avaliados e removidos da interface por decisao de produto (duplicacao operacional ou fora do foco atual):
+
+- Landing Pages (paginas publicas `/lp/:id` e geracao de conteudo)
+- Planejador (briefing de landing page por cliente)
+- Checklist (duplicava a funcao operacional de Tarefas)
+- Servicos (catalogo de servicos e servicos contratados por cliente)
+
+Importante: as tabelas `services` e `client_services` **permanecem no banco por compatibilidade historica** — nao foram apagadas, nenhuma migration foi criada ou revertida para remove-las. Apenas o codigo de interface (rotas, paginas, abas, componentes) que as consumia foi removido. O mesmo vale para as tabelas historicas de Landing Pages (`client_landing_pages`, `landing_page_ai_generations`, `landing_page_leads`), que permanecem no banco; as Supabase Edge Functions exclusivas de Landing Pages foram removidas do codigo na Etapa 1 da consolidacao.
+
 ## Fluxo Oficial de Trabalho
 
-Este projeto usa uma divisao clara de responsabilidades entre Codex e Claude.
+Este projeto usa uma divisao clara de responsabilidades entre Codex e Claude: **Codex planeja e revisa. Claude executa etapas.**
 
 ### Responsabilidades do Codex
 

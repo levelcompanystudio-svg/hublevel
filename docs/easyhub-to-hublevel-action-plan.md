@@ -5,6 +5,10 @@ Responsavel por arquitetura/revisao: Codex
 Responsavel por execucao: Claude Code / Antigravity  
 Base: `docs/easyhub-benchmark-analysis.md`
 
+## Status Atual (atualizado em 2026-07-29)
+
+As Fases 3 (Servicos Contratados), 10 (Checklist) e 12 (Planejador com IA) descritas abaixo **ja foram implementadas e, em seguida, removidas da interface** por decisao de produto (consolidacao de escopo — ver `PRD.md` secao 6 e `Claude.md`). As tabelas `services`/`client_services` e as tabelas historicas de Landing Pages permanecem no banco por compatibilidade; nenhuma migration foi revertida. Os trechos correspondentes abaixo ficam marcados como `[REMOVIDO DA INTERFACE]` e nao devem ser reexecutados sem nova instrucao explicita do Codex.
+
 ## 1. Objetivo
 
 Transformar os aprendizados do EasyHub em uma arquitetura evolutiva para o HubLevel, sem copiar codigo, dados ou arquitetura do EasyHub.
@@ -183,7 +187,7 @@ Critérios de aceite:
 - Contrato pode ser visualizado a partir do cliente.
 - `npm run check`, `lint`, `build` passam.
 
-### Fase 3 - Servicos Contratados Por Cliente
+### Fase 3 - Servicos Contratados Por Cliente [REMOVIDO DA INTERFACE em 2026-07-29 — banco preservado]
 
 Objetivo: conectar catalogo de servicos aos clientes.
 
@@ -404,7 +408,7 @@ Entregaveis:
 - Status entregue/pendente/atrasado.
 - Relacao com documentos e atualizacoes.
 
-Checklist:
+Checklist: **[REMOVIDO DA INTERFACE em 2026-07-29]** — implementado como visao derivada de Tarefas (sem tabela propria) e depois removido por duplicar a funcao operacional de Tarefas. Descricao original mantida abaixo para referencia historica:
 
 - Templates por servico.
 - Checklists por cliente.
@@ -437,7 +441,7 @@ Escopo futuro:
 
 Objetivo: evoluir para ferramenta estrategica.
 
-Planejador:
+Planejador: **[REMOVIDO DA INTERFACE em 2026-07-29]** — Landing Pages e Planejador foram implementados (incluindo geracao de conteudo com IA e pagina publica `/lp/:id`) e depois removidos da interface por decisao de produto; tabelas historicas preservadas no banco. Descricao original mantida abaixo para referencia historica:
 
 - Gerar planejamento a partir de briefing.
 - Usar documentos/briefings do cliente.

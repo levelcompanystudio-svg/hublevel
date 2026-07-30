@@ -34,22 +34,52 @@ Preencher em uma frase:
 
 > O PROJETO 1 ajuda [publico-alvo] a [resultado desejado] por meio de [diferencial principal].
 
-## 6. Escopo da Primeira Versao
+## 6. Escopo Atual da Interface (pos-consolidacao)
 
-### Incluido
+O HubLevel evoluiu de template generico para uma plataforma interna de gestao de clientes/agencia. Esta secao documenta o escopo real da interface apos a consolidacao registrada em `docs/easyhub-to-hublevel-action-plan.md` e nas Etapas 1-5 de remocao de modulos duplicados/fora de foco.
 
-- Definicao do fluxo principal do usuario.
-- Interface minima para executar o fluxo principal.
-- Persistencia ou armazenamento dos dados essenciais, se necessario.
-- Validacoes basicas para evitar erros comuns.
-- Documentacao dos comandos e configuracoes do projeto.
+### Nucleo operacional (incluido)
 
-### Fora do Escopo Inicial
+- Dashboard (cockpit operacional agregado)
+- Clientes (hub operacional por cliente)
+- Tarefas
+- Acompanhamento
+- Reunioes
+- Entregaveis
 
-- Funcionalidades avancadas sem impacto direto no fluxo principal.
-- Integracoes externas que nao sejam obrigatorias para validar o produto.
-- Automacoes complexas antes da validacao do uso real.
-- Personalizacoes visuais extensas antes da definicao da identidade do produto.
+### Administracao (incluido)
+
+- Painel administrativo
+- Contratos
+- Financeiro
+- Documentos
+- Usuarios
+- Configuracoes
+
+### Performance e integracoes (incluido)
+
+- Integracoes Meta Ads
+- Integracoes Google Ads
+- Performance por cliente
+- Metricas reais de anuncios
+- Backend `/server` (preservado, sem alteracoes)
+
+### Removido da interface
+
+Estes modulos foram implementados e depois removidos da interface por decisao de produto (duplicacao operacional com Tarefas, no caso de Checklist; fora do foco atual, nos demais casos):
+
+- Landing Pages (`/lp/:id` publico e geracao de conteudo com IA)
+- Planejador (briefing de landing page por cliente)
+- Checklist (duplicava a funcao operacional de Tarefas)
+- Servicos (catalogo de servicos e servicos contratados por cliente)
+
+As tabelas `services` e `client_services` **permanecem no banco por compatibilidade historica** — nenhuma tabela ou migration foi apagada; apenas o codigo de interface que as consumia foi removido. O mesmo se aplica as tabelas historicas de Landing Pages.
+
+### Fora do Escopo Atual
+
+- Reintroducao de Landing Pages, Planejador, Checklist ou Servicos na interface, sem nova decisao de produto explicita.
+- Automacoes complexas antes da validacao do uso real do nucleo operacional.
+- Personalizacoes visuais extensas fora do sistema de design ja definido (`.claude/skills/hublevel-design-system/`).
 
 ## 7. Funcionalidades
 
@@ -126,3 +156,4 @@ Registre aqui decisoes relevantes do produto:
 | Data | Decisao | Motivo |
 | --- | --- | --- |
 | 2026-07-03 | Criada documentacao inicial do projeto | Estabelecer base para produto e colaboracao com assistentes |
+| 2026-07-29 | Removidas Landing Pages/Planejador, Checklist e Servicos da interface (banco preservado) | Consolidacao de escopo: eliminar duplicacao operacional (Checklist vs. Tarefas) e modulos fora do foco atual do nucleo operacional |

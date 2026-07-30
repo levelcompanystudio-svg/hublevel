@@ -80,8 +80,7 @@ export function ClientCard({ client, aggregate }: ClientCardProps) {
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-lg border border-border/70 bg-surface/50 px-2 py-2.5 text-center">
-        <Stat label="Servicos" value={aggregate.activeServices} />
+      <div className="grid grid-cols-2 gap-2 rounded-lg border border-border/70 bg-surface/50 px-2 py-2.5 text-center">
         <Stat label="Abertas" value={aggregate.openTasks} />
         <Stat label="Vencidas" value={aggregate.overdueTasks} tone={aggregate.overdueTasks > 0 ? 'destructive' : undefined} />
       </div>

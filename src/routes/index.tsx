@@ -28,9 +28,6 @@ import { MeetingConsolePage } from '../features/meetings/pages/MeetingConsolePag
 import { MeetingDetailsPage } from '../features/meetings/pages/MeetingDetailsPage';
 import { MeetingFormPage } from '../features/meetings/pages/MeetingFormPage';
 import { PerformanceOverviewPage } from '../features/performance/pages/PerformanceOverviewPage';
-import { ServiceDetailsPage } from '../features/services/pages/ServiceDetailsPage';
-import { ServiceFormPage } from '../features/services/pages/ServiceFormPage';
-import { ServiceListPage } from '../features/services/pages/ServiceListPage';
 import { SettingsPage } from '../features/settings/pages/SettingsPage';
 import { TaskDetailsPage } from '../features/tasks/pages/TaskDetailsPage';
 import { TaskFormPage } from '../features/tasks/pages/TaskFormPage';
@@ -90,10 +87,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="clientes/novo" element={<ClientFormPage />} />
         <Route path="clientes/:id" element={<ClientDetailsPage />} />
         <Route path="clientes/:id/editar" element={<ClientFormPage />} />
-        <Route path="servicos" element={<ServiceListPage />} />
-        <Route path="servicos/novo" element={<ServiceFormPage />} />
-        <Route path="servicos/:id" element={<ServiceDetailsPage />} />
-        <Route path="servicos/:id/editar" element={<ServiceFormPage />} />
         <Route path="contratos" element={<ContractListPage />} />
         <Route path="contratos/novo" element={<ContractFormPage />} />
         <Route path="contratos/:id" element={<ContractDetailsPage />} />

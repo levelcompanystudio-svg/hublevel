@@ -20,7 +20,6 @@ export function ClientKpiRow({ metrics }: ClientKpiRowProps) {
     <ClientKpiStrip
       density="compact"
       items={[
-        { label: 'Servicos ativos', value: metrics.activeServices, tone: 'brand' },
         {
           label: 'Tarefas abertas',
           value: metrics.openTasks,

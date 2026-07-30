@@ -1,4 +1,3 @@
-import { listClientServices } from './client-services.api';
 import { listDocumentsByClient } from '../documents/documents.api';
 import { listMeetingsByClient } from '../meetings/meetings.api';
 import { listTasks } from '../tasks/tasks.api';
@@ -8,13 +7,12 @@ import type { ClientOverviewData, ClientOverviewMetrics } from './client-overvie
 const NON_OPEN_TASK_STATUSES = ['concluida', 'cancelada'];
 
 // Reaproveita as mesmas queries ja usadas pelas abas do cliente (tasks.api, updates.api,
-// meetings.api, client-services.api, documents.api) - nenhuma query nova e criada aqui.
+// meetings.api, documents.api) - nenhuma query nova e criada aqui.
 export async function getClientOverview(clientId: string): Promise<ClientOverviewData> {
-  const [allTasks, updates, meetings, services, documents] = await Promise.all([
+  const [allTasks, updates, meetings, documents] = await Promise.all([
     listTasks(),
     listUpdatesByClient(clientId),
     listMeetingsByClient(clientId),
-    listClientServices(clientId),
     listDocumentsByClient(clientId),
   ]);
 
@@ -22,7 +20,6 @@ export async function getClientOverview(clientId: string): Promise<ClientOvervie
     tasks: allTasks.filter((task) => task.client_id === clientId),
     updates,
     meetings,
-    services,
     documents,
   };
 }
@@ -42,8 +39,6 @@ export function computeClientOverviewMetrics(data: ClientOverviewData): ClientOv
     }
   }
 
-  const activeServices = data.services.filter((service) => service.status === 'ativo').length;
-
   // updates ja vem ordenado por update_date desc (listUpdatesByClient)
   const lastUpdate = data.updates[0] ?? null;
 
@@ -56,7 +51,6 @@ export function computeClientOverviewMetrics(data: ClientOverviewData): ClientOv
     .slice(0, 5);
 
   return {
-    activeServices,
     openTasks,
     overdueTasks,
     lastUpdate,

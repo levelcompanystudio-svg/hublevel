@@ -1,6 +1,5 @@
 import {
   Activity,
-  BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
   ClipboardCheck,
@@ -31,14 +30,6 @@ export const navigationItems: NavigationItem[] = [
     label: 'Clientes',
     description: 'Carteira de clientes',
     icon: Users,
-    roles: ['admin', 'gestor'],
-    group: 'Operacao',
-  },
-  {
-    path: '/app/servicos',
-    label: 'Servicos',
-    description: 'Catalogo de ofertas',
-    icon: BriefcaseBusiness,
     roles: ['admin', 'gestor'],
     group: 'Operacao',
   },

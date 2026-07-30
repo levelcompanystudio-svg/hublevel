@@ -1,4 +1,3 @@
-import type { ClientService } from './client-services.types';
 import type { Document } from '../documents/documents.types';
 import type { Meeting } from '../meetings/meetings.types';
 import type { Task } from '../tasks/tasks.types';
@@ -8,12 +7,10 @@ export interface ClientOverviewData {
   tasks: Task[];
   updates: Update[];
   meetings: Meeting[];
-  services: ClientService[];
   documents: Document[];
 }
 
 export interface ClientOverviewMetrics {
-  activeServices: number;
   openTasks: number;
   overdueTasks: number;
   lastUpdate: Update | null;

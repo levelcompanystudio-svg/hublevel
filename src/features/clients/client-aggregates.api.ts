@@ -20,21 +20,6 @@ interface TaskAgg {
   overdue: number;
 }
 
-async function fetchServiceCountsByClient(): Promise<Map<string, number>> {
-  const { data, error } = await supabase
-    .from('client_services')
-    .select('client_id')
-    .is('deleted_at', null)
-    .eq('status', 'ativo');
-
-  if (error) throw error;
-  const map = new Map<string, number>();
-  for (const row of (data ?? []) as Array<{ client_id: string }>) {
-    map.set(row.client_id, (map.get(row.client_id) ?? 0) + 1);
-  }
-  return map;
-}
-
 async function fetchTaskAggregatesByClient(): Promise<Map<string, TaskAgg>> {
   const { data, error } = await supabase
     .from('tasks')
@@ -138,8 +123,7 @@ async function fetchRecentDocumentCountByClient(): Promise<Map<string, number>> 
 // frontend por client_id. Escala bem para o volume atual da carteira; se a base crescer
 // muito, essas consultas devem ganhar paginacao/filtro por periodo mais estrito.
 export async function getClientAggregates(): Promise<Map<string, ClientAggregate>> {
-  const [services, tasks, updates, meetings, documents] = await Promise.all([
-    fetchServiceCountsByClient(),
+  const [tasks, updates, meetings, documents] = await Promise.all([
     fetchTaskAggregatesByClient(),
     fetchUpdateAggregatesByClient(),
     fetchMeetingAggregatesByClient(),
@@ -147,7 +131,6 @@ export async function getClientAggregates(): Promise<Map<string, ClientAggregate
   ]);
 
   const clientIds = new Set<string>([
-    ...services.keys(),
     ...tasks.keys(),
     ...updates.keys(),
     ...meetings.keys(),
@@ -161,7 +144,6 @@ export async function getClientAggregates(): Promise<Map<string, ClientAggregate
     const meetingAgg = meetings.get(clientId);
 
     result.set(clientId, {
-      activeServices: services.get(clientId) ?? 0,
       openTasks: taskAgg?.open ?? 0,
       overdueTasks: taskAgg?.overdue ?? 0,
       lastUpdateDate: updateAgg?.lastDate ?? null,

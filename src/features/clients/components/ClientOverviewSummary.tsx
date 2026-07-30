@@ -29,13 +29,6 @@ export function ClientOverviewSummary({ clientId, data, metrics }: ClientOvervie
     .sort((a, b) => (a.due_date ?? '').localeCompare(b.due_date ?? ''))
     .slice(0, 4);
 
-  const activeServiceNames = data.services
-    .filter((service) => service.status === 'ativo')
-    .map((service) => {
-      const serviceRef = Array.isArray(service.service) ? service.service[0] : service.service;
-      return serviceRef?.name ?? 'Servico';
-    });
-
   return (
     <div className="space-y-4">
       <Card className={risks.length > 0 ? 'border-warning/40 bg-warning/5' : 'border-success/40 bg-success/5'}>
@@ -137,24 +130,6 @@ export function ClientOverviewSummary({ clientId, data, metrics }: ClientOvervie
           </div>
         </Card>
       </div>
-
-      <Card>
-        <h3 className="text-sm font-semibold text-foreground">Servicos ativos</h3>
-        {activeServiceNames.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {activeServiceNames.map((name, index) => (
-              <span
-                key={`${name}-${index}`}
-                className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-3 text-sm text-muted-foreground">Nenhum servico ativo vinculado a este cliente.</p>
-        )}
-      </Card>
     </div>
   );
 }

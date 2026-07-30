@@ -16,7 +16,6 @@ import { ClientMeetingsTab } from './ClientMeetingsTab';
 import { ClientMetricsTab } from './ClientMetricsTab';
 import { ClientOperationSummary } from './ClientOperationSummary';
 import { ClientOverviewSummary } from './ClientOverviewSummary';
-import { ClientServicesTab } from './ClientServicesTab';
 import { ClientTasksTab } from './ClientTasksTab';
 import { ClientUpdatesTab } from './ClientUpdatesTab';
 
@@ -32,7 +31,6 @@ interface ClientOverviewTabsProps {
 const allTabs = [
   'Visao geral',
   'Operacao',
-  'Servicos',
   'Tarefas',
   'Acompanhamento',
   'Reunioes',
@@ -80,8 +78,6 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         ) : null
       ) : activeTab === 'Operacao' ? (
         <ClientOperationSummary client={client} />
-      ) : activeTab === 'Servicos' ? (
-        <ClientServicesTab clientId={client.id} canManage={role === 'admin'} />
       ) : activeTab === 'Tarefas' ? (
         <ClientTasksTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Acompanhamento' ? (

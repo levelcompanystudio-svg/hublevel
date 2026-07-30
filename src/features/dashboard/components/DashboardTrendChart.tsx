@@ -1,3 +1,5 @@
+import { useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { PerformanceDailyPoint } from '../../performance/performance.types';
 
 type SeriesKey = 'spend' | 'clicks' | 'leads';
@@ -22,7 +24,20 @@ interface DashboardTrendChartProps {
 interface Geometry {
   linePath: string;
   areaPath: string;
+  points: Array<{ x: number; y: number }>;
   last: { x: number; y: number };
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+function formatCount(value: number): string {
+  return new Intl.NumberFormat('pt-BR').format(value);
+}
+
+function formatSeriesValue(key: SeriesKey, value: number): string {
+  return key === 'spend' ? formatCurrency(value) : formatCount(value);
 }
 
 // Catmull-Rom -> Bezier: cada segmento usa os pontos vizinhos para calcular pontos de controle,
@@ -68,7 +83,7 @@ function buildGeometry(values: number[], width: number, height: number, padding:
     ? `${linePath} L${points[points.length - 1].x.toFixed(2)},${baseline} L${points[0].x.toFixed(2)},${baseline} Z`
     : '';
 
-  return { linePath, areaPath, last: points[points.length - 1] ?? { x: 0, y: 0 } };
+  return { linePath, areaPath, points, last: points[points.length - 1] ?? { x: 0, y: 0 } };
 }
 
 function formatDateShort(value: string): string {
@@ -80,16 +95,50 @@ function formatDateShort(value: string): string {
 // superficie analitica em vez de um SVG generico dentro de um card. Nao reaproveita
 // PerformanceTrendChart (usado em /app/performance e nas abas de cliente) para nao alterar o
 // visual dessas telas, fora do escopo desta missao.
+//
+// Interatividade (hover/touch): um <rect> transparente sobre a area do grafico captura pointer
+// events e converte a posicao do cursor (client space) para o espaco do viewBox, resolvendo o
+// indice do dia mais proximo pelo mesmo stepX/padding usados em buildGeometry - assim o crosshair,
+// os marcadores por serie e o tooltip HTML ficam sempre alinhados aos pontos reais da curva.
 export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   if (data.length === 0) return null;
 
   const width = 720;
   const padding = 24;
   const gridLines = 4;
+  const stepX = data.length > 1 ? (width - padding * 2) / (data.length - 1) : 0;
+
+  const seriesGeometry = SERIES.map((series) => ({
+    series,
+    geometry: buildGeometry(
+      data.map((point) => point[series.key]),
+      width,
+      height,
+      padding,
+    ),
+  }));
+
+  function updateHoveredIndex(event: ReactPointerEvent<SVGRectElement>) {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0) return;
+    const xInViewBox = ((event.clientX - rect.left) / rect.width) * width;
+    const index = stepX > 0 ? Math.round((xInViewBox - padding) / stepX) : 0;
+    setHoveredIndex(Math.min(Math.max(index, 0), data.length - 1));
+  }
+
+  const hovered = hoveredIndex !== null ? data[hoveredIndex] : null;
+  const hoveredX = hoveredIndex !== null ? padding + hoveredIndex * stepX : null;
+  const hoveredPercent = hoveredX !== null ? Math.min(Math.max((hoveredX / width) * 100, 8), 92) : null;
 
   return (
     <div className="relative">
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
         className="w-full"
@@ -123,26 +172,80 @@ export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartP
           );
         })}
 
-        {SERIES.map((series) => {
-          const values = data.map((point) => point[series.key]);
-          const geometry = buildGeometry(values, width, height, padding);
-          return (
-            <g key={series.key}>
-              <path d={geometry.areaPath} fill={`url(#dash-trend-fill-${series.key})`} stroke="none" />
-              <path
-                d={geometry.linePath}
-                fill="none"
-                stroke={series.color}
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        {hoveredX !== null && (
+          <line
+            x1={hoveredX}
+            y1={padding}
+            x2={hoveredX}
+            y2={height - padding}
+            stroke="var(--muted-foreground)"
+            strokeWidth="1"
+            strokeDasharray="3 4"
+            opacity="0.5"
+          />
+        )}
+
+        {seriesGeometry.map(({ series, geometry }) => (
+          <g key={series.key}>
+            <path d={geometry.areaPath} fill={`url(#dash-trend-fill-${series.key})`} stroke="none" />
+            <path
+              d={geometry.linePath}
+              fill="none"
+              stroke={series.color}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx={geometry.last.x} cy={geometry.last.y} r="7" fill={series.color} opacity="0.18" />
+            <circle cx={geometry.last.x} cy={geometry.last.y} r="3" fill={series.color} stroke="var(--card-elevated)" strokeWidth="1.5" />
+            {hoveredIndex !== null && geometry.points[hoveredIndex] && (
+              <circle
+                cx={geometry.points[hoveredIndex].x}
+                cy={geometry.points[hoveredIndex].y}
+                r="4"
+                fill={series.color}
+                stroke="var(--card-elevated)"
+                strokeWidth="1.5"
               />
-              <circle cx={geometry.last.x} cy={geometry.last.y} r="7" fill={series.color} opacity="0.18" />
-              <circle cx={geometry.last.x} cy={geometry.last.y} r="3" fill={series.color} stroke="var(--card-elevated)" strokeWidth="1.5" />
-            </g>
-          );
-        })}
+            )}
+          </g>
+        ))}
+
+        <rect
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          fill="transparent"
+          onPointerMove={updateHoveredIndex}
+          onPointerLeave={() => setHoveredIndex(null)}
+          className="cursor-crosshair"
+        />
       </svg>
+
+      {hovered && hoveredPercent !== null && (
+        <div
+          className="pointer-events-none absolute top-2 z-10 min-w-[132px] -translate-x-1/2 rounded-lg border border-border bg-card-elevated px-3 py-2 shadow-soft"
+          style={{ left: `${hoveredPercent}%` }}
+        >
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            {formatDateShort(hovered.date)}
+          </p>
+          <div className="mt-1.5 space-y-1">
+            {SERIES.map((series) => (
+              <div key={series.key} className="flex items-center justify-between gap-3 text-xs">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: series.color }} aria-hidden="true" />
+                  {series.label}
+                </span>
+                <span className="font-mono font-semibold tabular-nums text-foreground">
+                  {formatSeriesValue(series.key, hovered[series.key])}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-1 flex justify-between font-mono text-[11px] tracking-tight text-muted-foreground">
         <span>{formatDateShort(data[0].date)}</span>

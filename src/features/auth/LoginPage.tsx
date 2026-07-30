@@ -1,8 +1,13 @@
 import { AlertTriangle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackgroundBeams } from '../../components/ui';
 import { useAuth } from './useAuth';
+
+// Import dinamico: framer-motion (usado so por BackgroundBeams) e um efeito decorativo da tela
+// de login, sem motivo para entrar no bundle principal que todo usuario autenticado carrega.
+const BackgroundBeams = lazy(() =>
+  import('../../components/ui/BackgroundBeams').then((module) => ({ default: module.BackgroundBeams })),
+);
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +48,9 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="relative flex min-h-screen flex-1 flex-col items-center justify-center overflow-hidden bg-background px-6 py-12 text-foreground">
-      <BackgroundBeams />
+      <Suspense fallback={null}>
+        <BackgroundBeams />
+      </Suspense>
 
       <div className="relative z-10 w-full max-w-md animate-fade-in">
         <div className="mb-8 flex flex-col items-center text-center">

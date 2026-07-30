@@ -75,7 +75,17 @@ Deno.serve(async (req: Request) => {
     if (!profileId) return json({ error: 'profile_id is required.' }, 400);
     if (profileId === user.id) return json({ error: 'Voce nao pode excluir sua propria conta.' }, 400);
 
-    const adminClient = createClient(supabaseUrl, serviceRoleKey);
+    const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      global: {
+        headers: {
+          Authorization: `Bearer ${serviceRoleKey}`,
+        },
+      },
+    });
 
     const { data: targetProfile, error: targetError } = await adminClient
       .from('profiles')

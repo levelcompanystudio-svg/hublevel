@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { LoadingState } from '../../../components/feedback/LoadingState';
 import { useSidebarCollapsed } from '../../../lib/useSidebarCollapsed';
 import { useAuth } from '../../auth/useAuth';
 import { AppSidebar } from './AppSidebar';
@@ -62,7 +63,9 @@ export function AppLayout() {
         <SidebarAwareMain>
           <AppTopbar role={role} userName={profile?.name} onOpenMenu={() => setMobileMenuOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
           <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
-            <Outlet />
+            <Suspense fallback={<LoadingState />}>
+              <Outlet />
+            </Suspense>
           </main>
         </SidebarAwareMain>
 

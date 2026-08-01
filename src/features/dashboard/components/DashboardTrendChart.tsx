@@ -108,7 +108,7 @@ export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartP
 
   const width = 720;
   const padding = 24;
-  const gridLines = 4;
+  const gridLines = 3;
   const stepX = data.length > 1 ? (width - padding * 2) / (data.length - 1) : 0;
 
   const seriesGeometry = SERIES.map((series) => ({
@@ -147,12 +147,10 @@ export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartP
         aria-label="Grafico de tendencia diaria de performance"
       >
         <defs>
-          {SERIES.map((series) => (
-            <linearGradient key={series.key} id={`dash-trend-fill-${series.key}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={series.color} stopOpacity="0.24" />
-              <stop offset="100%" stopColor={series.color} stopOpacity="0" />
-            </linearGradient>
-            ))}
+          <linearGradient id="dash-trend-fill-spend" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--chart-1)" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="var(--chart-1)" stopOpacity="0" />
+          </linearGradient>
         </defs>
 
         {Array.from({ length: gridLines }).map((_, index) => {
@@ -172,44 +170,50 @@ export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartP
           );
         })}
 
-        {hoveredX !== null && (
-          <line
-            x1={hoveredX}
-            y1={padding}
-            x2={hoveredX}
-            y2={height - padding}
-            stroke="var(--muted-foreground)"
-            strokeWidth="1"
-            strokeDasharray="3 4"
-            opacity="0.5"
-          />
-        )}
+        <line
+          x1={hoveredX ?? 0}
+          y1={padding}
+          x2={hoveredX ?? 0}
+          y2={height - padding}
+          stroke="var(--muted-foreground)"
+          strokeWidth="1"
+          strokeDasharray="3 4"
+          opacity={hoveredX !== null ? 0.5 : 0}
+          className="transition-opacity duration-150"
+        />
 
-        {seriesGeometry.map(({ series, geometry }) => (
-          <g key={series.key}>
-            <path d={geometry.areaPath} fill={`url(#dash-trend-fill-${series.key})`} stroke="none" />
-            <path
-              d={geometry.linePath}
-              fill="none"
-              stroke={series.color}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx={geometry.last.x} cy={geometry.last.y} r="7" fill={series.color} opacity="0.18" />
-            <circle cx={geometry.last.x} cy={geometry.last.y} r="3" fill={series.color} stroke="var(--card-elevated)" strokeWidth="1.5" />
-            {hoveredIndex !== null && geometry.points[hoveredIndex] && (
+        {seriesGeometry.map(({ series, geometry }) => {
+          const isPrimary = series.key === 'spend';
+          const hoverPoint = hoveredIndex !== null ? geometry.points[hoveredIndex] : undefined;
+          return (
+            <g key={series.key}>
+              {isPrimary && <path d={geometry.areaPath} fill="url(#dash-trend-fill-spend)" stroke="none" />}
+              <path
+                d={geometry.linePath}
+                fill="none"
+                stroke={series.color}
+                strokeWidth={isPrimary ? 2.5 : 1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={isPrimary ? 1 : 0.75}
+              />
+              {isPrimary && (
+                <circle cx={geometry.last.x} cy={geometry.last.y} r="6" fill={series.color} opacity="0.35" className="animate-ping" style={{ transformOrigin: `${geometry.last.x}px ${geometry.last.y}px` }} />
+              )}
+              <circle cx={geometry.last.x} cy={geometry.last.y} r={isPrimary ? 3.5 : 2.5} fill={series.color} stroke="var(--card-elevated)" strokeWidth="1.5" />
               <circle
-                cx={geometry.points[hoveredIndex].x}
-                cy={geometry.points[hoveredIndex].y}
+                cx={hoverPoint?.x ?? geometry.last.x}
+                cy={hoverPoint?.y ?? geometry.last.y}
                 r="4"
                 fill={series.color}
                 stroke="var(--card-elevated)"
                 strokeWidth="1.5"
+                opacity={hoverPoint ? 1 : 0}
+                className="transition-opacity duration-150"
               />
-            )}
-          </g>
-        ))}
+            </g>
+          );
+        })}
 
         <rect
           x={0}
@@ -223,29 +227,33 @@ export function DashboardTrendChart({ data, height = 280 }: DashboardTrendChartP
         />
       </svg>
 
-      {hovered && hoveredPercent !== null && (
-        <div
-          className="pointer-events-none absolute top-2 z-10 min-w-[132px] -translate-x-1/2 rounded-lg border border-border bg-card-elevated px-3 py-2 shadow-soft"
-          style={{ left: `${hoveredPercent}%` }}
-        >
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {formatDateShort(hovered.date)}
-          </p>
-          <div className="mt-1.5 space-y-1">
-            {SERIES.map((series) => (
-              <div key={series.key} className="flex items-center justify-between gap-3 text-xs">
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: series.color }} aria-hidden="true" />
-                  {series.label}
-                </span>
-                <span className="font-mono font-semibold tabular-nums text-foreground">
-                  {formatSeriesValue(series.key, hovered[series.key])}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <div
+        className={`pointer-events-none absolute top-2 z-10 min-w-[136px] -translate-x-1/2 rounded-lg border border-l-2 border-border border-l-[var(--chart-1)] bg-card-elevated px-3 py-2 shadow-soft transition-opacity duration-150 ${
+          hovered ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ left: `${hoveredPercent ?? 50}%` }}
+      >
+        {hovered && (
+          <>
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {formatDateShort(hovered.date)}
+            </p>
+            <div className="mt-1.5 space-y-1">
+              {SERIES.map((series) => (
+                <div key={series.key} className="flex items-center justify-between gap-3 text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: series.color }} aria-hidden="true" />
+                    {series.label}
+                  </span>
+                  <span className="font-mono font-semibold tabular-nums text-foreground">
+                    {formatSeriesValue(series.key, hovered[series.key])}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="mt-1 flex justify-between font-mono text-[11px] tracking-tight text-muted-foreground">
         <span>{formatDateShort(data[0].date)}</span>

@@ -6,6 +6,7 @@ import type { User } from '@supabase/supabase-js';
 
 export type UserStatus = 'active' | 'inactive';
 export type RoleName = 'admin' | 'gestor' | 'colaborador';
+export type ProfileType = 'internal' | 'external';
 
 export interface UserProfile {
   id: string;
@@ -13,6 +14,7 @@ export interface UserProfile {
   name: string;
   email: string;
   status: UserStatus;
+  profile_type: ProfileType;
   created_at: string;
   updated_at: string;
   roles?: {

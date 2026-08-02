@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: data.name,
         email: data.email,
         status: data.status,
+        profile_type: data.profile_type,
         created_at: data.created_at,
         updated_at: data.updated_at,
         roles: {

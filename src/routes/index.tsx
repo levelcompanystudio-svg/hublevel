@@ -6,6 +6,8 @@ import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
 import { LoginPage } from '../features/auth/LoginPage';
 import { useAuth } from '../features/auth/useAuth';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { ExternalAccessPlaceholder } from '../features/external/ExternalAccessPlaceholder';
+import { getPostAuthRedirect } from './authRedirects';
 import { ProtectedRoute } from './ProtectedRoute';
 
 // Paginas atras do ProtectedRoute/AppLayout viram chunks separados (React.lazy) - so uma delas
@@ -116,15 +118,7 @@ export const AppRoutes: React.FC = () => {
     <Routes>
       <Route
         path="/login"
-        element={
-          user && profile?.status === 'active' ? (
-            <Navigate to="/app/dashboard" replace />
-          ) : user && profile?.status === 'inactive' ? (
-            <Navigate to="/inactive" replace />
-          ) : (
-            <LoginPage />
-          )
-        }
+        element={user && profile ? <Navigate to={getPostAuthRedirect(profile)} replace /> : <LoginPage />}
       />
 
       <Route
@@ -137,9 +131,18 @@ export const AppRoutes: React.FC = () => {
       />
 
       <Route
+        path="/cliente"
+        element={
+          <ProtectedRoute requireProfileType="external">
+            <ExternalAccessPlaceholder />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/app"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireProfileType="internal">
             <AppLayout />
           </ProtectedRoute>
         }
@@ -188,17 +191,7 @@ export const AppRoutes: React.FC = () => {
 
       <Route
         path="*"
-        element={
-          user ? (
-            profile?.status === 'inactive' ? (
-              <Navigate to="/inactive" replace />
-            ) : (
-              <Navigate to="/app/dashboard" replace />
-            )
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
+        element={user ? <Navigate to={getPostAuthRedirect(profile)} replace /> : <Navigate to="/login" replace />}
       />
     </Routes>
   );

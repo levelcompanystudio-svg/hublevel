@@ -64,6 +64,17 @@ O HubLevel evoluiu de template generico para uma plataforma interna de gestao de
 - Metricas reais de anuncios
 - Backend `/server` (preservado, sem alteracoes)
 
+### CRM V1 (incluido)
+
+CRM leve, escopado por cliente, adicionado apos a consolidacao (migrations 031-033):
+
+- Pipeline, etapas, contatos e oportunidades por cliente, dentro da aba "CRM" no detalhe do cliente (visivel apenas para Admin e Gestor).
+- Visualizacao em Kanban simples (mudanca de etapa via select, sem drag-and-drop) e totais por etapa.
+- Isolamento de acesso via `profile_type` (`internal`/`external`) em `profiles` e a tabela `client_user_memberships`, que vincula usuarios externos aos clientes que podem ver.
+- Portal externo minimo em `/cliente`: usuarios `profile_type='external'` sao redirecionados para essa rota (nunca acessam `/app/*`) e veem, somente leitura, o nome real do cliente vinculado, pipeline, etapas, oportunidades e contatos — sem nenhum botao de criar, editar, mover etapa ou trocar status.
+- O portal externo nao exibe financeiro, contratos, tarefas, reunioes, documentos, integracoes ou performance — apenas os dados de CRM do(s) cliente(s) vinculados via `client_user_memberships`.
+- Integracoes Meta/Google Ads, Performance e o backend `/server` nao foram alterados pelo CRM V1.
+
 ### Removido da interface
 
 Estes modulos foram implementados e depois removidos da interface por decisao de produto (duplicacao operacional com Tarefas, no caso de Checklist; fora do foco atual, nos demais casos):

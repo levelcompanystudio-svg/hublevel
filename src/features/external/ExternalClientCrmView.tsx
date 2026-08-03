@@ -3,13 +3,16 @@ import { EmptyState } from '../../components/feedback/EmptyState';
 import { ErrorState } from '../../components/feedback/ErrorState';
 import { LoadingState } from '../../components/feedback/LoadingState';
 import { SectionHeader } from '../../components/ui';
+import { ClientHealthBadge } from '../clients/components/ClientHealthBadge';
+import { ClientStatusBadge } from '../clients/components/ClientStatusBadge';
 import { CrmContactsSummary } from '../crm/components/CrmContactsSummary';
 import { CrmPipelineOverview } from '../crm/components/CrmPipelineOverview';
 import { listCrmContactsByClient, listCrmOpportunitiesByClient, listCrmPipelineStages, listCrmPipelinesByClient } from '../crm/crm.api';
 import type { CrmContact, CrmOpportunity, CrmPipeline, CrmPipelineStage } from '../crm/crm.types';
+import type { ExternalClientSummary } from './external.api';
 
 interface ExternalClientCrmViewProps {
-  clientId: string;
+  client: ExternalClientSummary;
 }
 
 const NOOP = () => {};
@@ -18,10 +21,14 @@ const NOOP = () => {};
 // da aba CRM interna (CrmPipelineOverview/CrmContactsSummary) com canManage=false - os proprios
 // componentes ja escondem todo botao de criar/editar/mover/trocar status quando canManage e
 // false, entao nenhuma logica de escrita fica acessivel aqui, sem duplicar nenhuma regra de
-// permissao no frontend. As queries (crm.api.ts) sao identicas as usadas pelo lado interno; a
-// RLS (user_can_access_crm_client, migration 031) ja cobre acesso externo com membership ativa -
-// nenhuma policy nova foi necessaria para isto funcionar.
-export function ExternalClientCrmView({ clientId }: ExternalClientCrmViewProps) {
+// permissao no frontend. As queries de CRM (crm.api.ts) sao identicas as usadas pelo lado
+// interno; a RLS (user_can_access_crm_client, migration 031) ja cobre acesso externo com
+// membership ativa. O nome/segmento/status do cliente vem de external.api.ts, que le
+// public.clients sob a RLS "external user can read own linked clients" (migration 033). Nenhum
+// financeiro, contrato, tarefa, reuniao, documento, integracao ou performance e exibido aqui -
+// so o que foi pedido: identificacao basica do cliente, pipeline, etapas, oportunidades e
+// contatos.
+export function ExternalClientCrmView({ client }: ExternalClientCrmViewProps) {
   const [pipelines, setPipelines] = useState<CrmPipeline[]>([]);
   const [stages, setStages] = useState<CrmPipelineStage[]>([]);
   const [opportunities, setOpportunities] = useState<CrmOpportunity[]>([]);
@@ -35,8 +42,8 @@ export function ExternalClientCrmView({ clientId }: ExternalClientCrmViewProps) 
       setError(null);
 
       const [pipelinesResult, contactsResult] = await Promise.all([
-        listCrmPipelinesByClient(clientId),
-        listCrmContactsByClient(clientId),
+        listCrmPipelinesByClient(client.id),
+        listCrmContactsByClient(client.id),
       ]);
       setPipelines(pipelinesResult);
       setContacts(contactsResult);
@@ -46,7 +53,7 @@ export function ExternalClientCrmView({ clientId }: ExternalClientCrmViewProps) 
       if (defaultPipeline) {
         const [stagesResult, opportunitiesResult] = await Promise.all([
           listCrmPipelineStages(defaultPipeline.id),
-          listCrmOpportunitiesByClient(clientId),
+          listCrmOpportunitiesByClient(client.id),
         ]);
         setStages(stagesResult);
         setOpportunities(opportunitiesResult.filter((opportunity) => opportunity.pipeline_id === defaultPipeline.id));
@@ -59,42 +66,58 @@ export function ExternalClientCrmView({ clientId }: ExternalClientCrmViewProps) 
     } finally {
       setLoading(false);
     }
-  }, [clientId]);
+  }, [client.id]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  if (loading) return <LoadingState title="Carregando dados do cliente" />;
-  if (error) return <ErrorState description={error} />;
-
   const defaultPipeline = pipelines.find((pipeline) => pipeline.is_default) ?? pipelines[0] ?? null;
 
   return (
     <div className="space-y-5">
-      {!defaultPipeline ? (
-        <EmptyState
-          title="Nenhum pipeline configurado"
-          description="Ainda nao ha um pipeline de oportunidades configurado para este cliente."
-        />
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
+        <div className="min-w-0">
+          <h1 className="truncate text-h1 text-foreground">{client.trade_name || client.company_name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <ClientStatusBadge status={client.status} />
+          <ClientHealthBadge status={client.health_status} />
+        </div>
+      </div>
+
+      {loading ? (
+        <LoadingState title="Carregando dados do cliente" />
+      ) : error ? (
+        <ErrorState description={error} />
       ) : (
         <>
-          <SectionHeader
-            title={defaultPipeline.name}
-            caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
-          />
-          <CrmPipelineOverview
-            stages={stages}
-            opportunities={opportunities}
-            canManage={false}
-            onEditOpportunity={NOOP}
-            onStatusChange={NOOP}
-            onMoveStage={NOOP}
-          />
+          {!defaultPipeline ? (
+            <EmptyState
+              title="Nenhum pipeline configurado"
+              description="Ainda nao ha um pipeline de oportunidades configurado para este cliente."
+            />
+          ) : (
+            <>
+              <SectionHeader
+                title={defaultPipeline.name}
+                caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
+              />
+              <CrmPipelineOverview
+                stages={stages}
+                opportunities={opportunities}
+                canManage={false}
+                onEditOpportunity={NOOP}
+                onStatusChange={NOOP}
+                onMoveStage={NOOP}
+              />
+            </>
+          )}
+
+          <CrmContactsSummary contacts={contacts} canManage={false} onCreateContact={NOOP} onEditContact={NOOP} />
         </>
       )}
-
-      <CrmContactsSummary contacts={contacts} canManage={false} onCreateContact={NOOP} onEditContact={NOOP} />
     </div>
   );
 }

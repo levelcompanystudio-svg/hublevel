@@ -43,6 +43,16 @@ Esta secao reflete o escopo real da interface apos a consolidacao registrada em 
 - Metricas reais de anuncios
 - Backend `/server` (preservado, sem alteracoes)
 
+### CRM V1
+
+CRM leve e escopado por cliente (migrations 031-033), construido em etapas apos a consolidacao:
+
+- Aba "CRM" no detalhe do cliente (pipeline, etapas, contatos, oportunidades), visivel apenas para Admin e Gestor, com Kanban simples (mudanca de etapa via select, sem drag-and-drop).
+- Isolamento de acesso: `profile_type` (`internal`/`external`) em `profiles` + tabela `client_user_memberships`, vinculando usuarios externos aos clientes que podem ver. Helpers de RLS ficam centralizados na migration 031 (`is_internal_user`, `is_external_user`, `user_has_client_membership`, `user_can_access_crm_client`, `user_can_manage_crm_client`) e sao reutilizados em toda RLS de CRM — nao duplicar essa logica no frontend.
+- Portal externo minimo em `/cliente`: usuarios `profile_type='external'` sao redirecionados para essa rota e nunca acessam `/app/*` (e vice-versa, via `ProtectedRoute requireProfileType` e `getPostAuthRedirect`). O portal mostra, somente leitura, o nome real do cliente vinculado (RLS "external user can read own linked clients", migration 033), pipeline, etapas, oportunidades e contatos — sem nenhum controle de criar, editar, mover etapa ou trocar status.
+- O portal externo nao expoe financeiro, contratos, tarefas, reunioes, documentos, integracoes ou performance.
+- Integracoes Meta/Google Ads, Performance e o backend `/server` nao foram alterados pelo CRM V1.
+
 ### Removido da interface
 
 Os modulos abaixo foram implementados, avaliados e removidos da interface por decisao de produto (duplicacao operacional ou fora do foco atual):

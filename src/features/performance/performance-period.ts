@@ -65,6 +65,22 @@ export function getDefaultPerformancePeriod(): PerformancePeriodRange {
   return resolvePerformancePeriodRange({ preset: 'last_30_days' });
 }
 
+// Periodo imediatamente anterior, com a mesma duracao em dias do periodo atual - usado so para
+// comparacao visual (mesma fonte real de dados, chamada de novo com datas deslocadas; nenhuma
+// query ou calculo novo e introduzido).
+export function getPreviousPeriodRange(period: PerformancePeriodRange): PerformancePeriodRange {
+  const start = new Date(`${period.startDate}T00:00:00`);
+  const end = new Date(`${period.endDate}T00:00:00`);
+  const spanDays = Math.round((end.getTime() - start.getTime()) / 86_400_000);
+
+  const previousEnd = new Date(start);
+  previousEnd.setDate(previousEnd.getDate() - 1);
+  const previousStart = new Date(previousEnd);
+  previousStart.setDate(previousStart.getDate() - spanDays);
+
+  return { preset: 'custom', startDate: formatLocalDateOnly(previousStart), endDate: formatLocalDateOnly(previousEnd) };
+}
+
 function formatDateOnlyPtBr(value: string): string {
   return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR');
 }

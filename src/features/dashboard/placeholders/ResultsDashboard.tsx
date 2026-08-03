@@ -11,7 +11,7 @@ import type { ActivityItem } from '../dashboard-activity.api';
 import { getDashboardOperationalOverview } from '../dashboard.api';
 import type { DashboardOperationalOverview } from '../dashboard.api';
 import { getPortfolioPerformanceOverview } from '../../performance/performance.api';
-import { getDefaultPerformancePeriod } from '../../performance/performance-period';
+import { getDefaultPerformancePeriod, getPreviousPeriodRange } from '../../performance/performance-period';
 import type { PerformancePeriodRange } from '../../performance/performance-period';
 import type { PerformanceOverview } from '../../performance/performance.types';
 import { emptyPerformanceOverview } from '../../performance/performance.types';
@@ -43,7 +43,9 @@ export function ResultsDashboard() {
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [period, setPeriod] = useState<PerformancePeriodRange>(getDefaultPerformancePeriod());
   const [performance, setPerformance] = useState<PerformanceOverview>(emptyPerformanceOverview);
+  const [previousPerformance, setPreviousPerformance] = useState<PerformanceOverview | null>(null);
   const [performanceLoading, setPerformanceLoading] = useState(true);
+  const [performanceError, setPerformanceError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,9 +87,25 @@ export function ResultsDashboard() {
 
     let active = true;
     setPerformanceLoading(true);
-    getPortfolioPerformanceOverview(period)
-      .then((result) => {
-        if (active) setPerformance(result);
+    setPerformanceError(null);
+
+    // Periodo anterior e buscado com a mesma funcao real (getPortfolioPerformanceOverview),
+    // so com o range deslocado - usada exclusivamente para a comparacao visual no painel de
+    // Performance; nenhum calculo ou fonte de dado novo.
+    Promise.all([
+      getPortfolioPerformanceOverview(period),
+      getPortfolioPerformanceOverview(getPreviousPeriodRange(period)),
+    ])
+      .then(([currentResult, previousResult]) => {
+        if (!active) return;
+        setPerformance(currentResult);
+        setPreviousPerformance(previousResult);
+      })
+      .catch((err: unknown) => {
+        if (!active) return;
+        setPerformanceError(err instanceof Error ? err.message : 'Erro ao carregar performance.');
+        setPerformance(emptyPerformanceOverview);
+        setPreviousPerformance(null);
       })
       .finally(() => {
         if (active) setPerformanceLoading(false);
@@ -128,7 +146,14 @@ export function ResultsDashboard() {
       />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <PerformanceCommandPanel overview={performance} loading={performanceLoading} period={period} onPeriodChange={setPeriod} />
+        <PerformanceCommandPanel
+          overview={performance}
+          previousOverview={previousPerformance}
+          loading={performanceLoading}
+          error={performanceError}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
         <PortfolioPulse groups={healthGroups} total={totalClientsForHealth} />
       </div>
 

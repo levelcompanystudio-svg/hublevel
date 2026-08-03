@@ -7,6 +7,7 @@ import type { RoleName } from '../../auth/auth.types';
 import type { ClientOverviewData, ClientOverviewMetrics } from '../client-overview.types';
 import type { Client } from '../clients.types';
 import { ClientContractsTab } from './ClientContractsTab';
+import { ClientCrmTab } from './ClientCrmTab';
 import { ClientDeliverablesTab } from './ClientDeliverablesTab';
 import { ClientDocumentsTab } from './ClientDocumentsTab';
 import { ClientFinanceTab } from './ClientFinanceTab';
@@ -38,6 +39,7 @@ const allTabs = [
   'Documentos',
   'Metricas',
   'Integracoes',
+  'CRM',
   'Financeiro',
   'Contratos',
   'Historico',
@@ -46,10 +48,16 @@ const allTabs = [
 type TabName = (typeof allTabs)[number];
 
 const ADMIN_ONLY_TABS: TabName[] = ['Financeiro', 'Contratos'];
+const ADMIN_AND_GESTOR_TABS: TabName[] = ['CRM'];
 
 export function ClientOverviewTabs({ client, role, overview, metrics, overviewLoading, overviewError }: ClientOverviewTabsProps) {
   const visibleTabs = useMemo(
-    () => allTabs.filter((tab) => !ADMIN_ONLY_TABS.includes(tab) || role === 'admin'),
+    () =>
+      allTabs.filter((tab) => {
+        if (ADMIN_ONLY_TABS.includes(tab)) return role === 'admin';
+        if (ADMIN_AND_GESTOR_TABS.includes(tab)) return role === 'admin' || role === 'gestor';
+        return true;
+      }),
     [role],
   );
 
@@ -96,6 +104,8 @@ export function ClientOverviewTabs({ client, role, overview, metrics, overviewLo
         <ClientMetricsTab clientId={client.id} />
       ) : activeTab === 'Integracoes' ? (
         <ClientIntegrationsTab clientId={client.id} />
+      ) : activeTab === 'CRM' && (role === 'admin' || role === 'gestor') ? (
+        <ClientCrmTab clientId={client.id} canManage={role === 'admin' || role === 'gestor'} />
       ) : activeTab === 'Financeiro' && role === 'admin' ? (
         <ClientFinanceTab clientId={client.id} />
       ) : activeTab === 'Contratos' && role === 'admin' ? (

@@ -1,16 +1,19 @@
 import { Badge, Card } from '../../../components/ui';
-import type { CrmOpportunity, CrmPipelineStage } from '../crm.types';
+import type { CrmOpportunity, CrmOpportunityStatus, CrmPipelineStage } from '../crm.types';
 import { CrmOpportunityList } from './CrmOpportunityList';
 
 interface CrmPipelineOverviewProps {
   stages: CrmPipelineStage[];
   opportunities: CrmOpportunity[];
+  canManage: boolean;
+  onEditOpportunity: (opportunity: CrmOpportunity) => void;
+  onStatusChange: (opportunityId: string, status: CrmOpportunityStatus) => void;
 }
 
 // Etapas lado a lado com as oportunidades agrupadas dentro de cada uma - layout simples (nao e
 // um Kanban: sem drag and drop, sem mover cartao). Scroll horizontal em telas estreitas, igual ao
 // padrao ja usado em Tabs/tabelas do produto.
-export function CrmPipelineOverview({ stages, opportunities }: CrmPipelineOverviewProps) {
+export function CrmPipelineOverview({ stages, opportunities, canManage, onEditOpportunity, onStatusChange }: CrmPipelineOverviewProps) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-2">
       {stages.map((stage) => {
@@ -25,7 +28,12 @@ export function CrmPipelineOverview({ stages, opportunities }: CrmPipelineOvervi
               {stageOpportunities.length} {stageOpportunities.length === 1 ? 'oportunidade' : 'oportunidades'}
             </p>
             <div className="mt-3">
-              <CrmOpportunityList opportunities={stageOpportunities} />
+              <CrmOpportunityList
+                opportunities={stageOpportunities}
+                canManage={canManage}
+                onEdit={onEditOpportunity}
+                onStatusChange={onStatusChange}
+              />
             </div>
           </Card>
         );

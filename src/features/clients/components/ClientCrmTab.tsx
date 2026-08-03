@@ -8,6 +8,7 @@ import { CrmContactForm } from '../../crm/components/CrmContactForm';
 import { CrmContactsSummary } from '../../crm/components/CrmContactsSummary';
 import { CrmOpportunityForm } from '../../crm/components/CrmOpportunityForm';
 import { CrmPipelineOverview } from '../../crm/components/CrmPipelineOverview';
+import { ExternalAccessManager } from '../../crm/components/ExternalAccessManager';
 import {
   createCrmPipeline,
   createCrmPipelineStage,
@@ -210,6 +211,8 @@ export function ClientCrmTab({ clientId, canManage }: ClientCrmTabProps) {
         onCreateContact={() => setContactForm({ open: true, contact: null })}
         onEditContact={(contact) => setContactForm({ open: true, contact })}
       />
+
+      {profile && <ExternalAccessManager clientId={clientId} canManage={canManage} userId={profile.id} />}
 
       {contactForm.open && profile && (
         <CrmContactForm

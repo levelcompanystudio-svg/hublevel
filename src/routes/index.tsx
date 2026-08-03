@@ -1,14 +1,21 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { LoadingState } from '../components/feedback/LoadingState';
 import { AppLayout } from '../features/app/layout/AppLayout';
 import { NotFoundPlaceholder } from '../features/app/placeholders/NotFoundPlaceholder';
 import { InactiveAccountPage } from '../features/auth/InactiveAccountPage';
 import { LoginPage } from '../features/auth/LoginPage';
 import { useAuth } from '../features/auth/useAuth';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
-import { ExternalAccessPlaceholder } from '../features/external/ExternalAccessPlaceholder';
 import { getPostAuthRedirect } from './authRedirects';
 import { ProtectedRoute } from './ProtectedRoute';
+
+// ExternalClientPortal fica lazy (nao no bundle principal): reaproveita os mesmos componentes de
+// CRM da aba interna (CrmPipelineOverview/CrmContactsSummary), e sem isso esse codigo entraria no
+// chunk que todo usuario interno tambem baixa, mesmo nunca passando por /cliente.
+const ExternalClientPortal = lazy(() =>
+  import('../features/external/ExternalClientPortal').then((m) => ({ default: m.ExternalClientPortal })),
+);
 
 // Paginas atras do ProtectedRoute/AppLayout viram chunks separados (React.lazy) - so uma delas
 // carrega por vez, dependendo da rota visitada. Exports nomeados (nao default), entao cada import
@@ -134,7 +141,9 @@ export const AppRoutes: React.FC = () => {
         path="/cliente"
         element={
           <ProtectedRoute requireProfileType="external">
-            <ExternalAccessPlaceholder />
+            <Suspense fallback={<LoadingState title="Carregando" />}>
+              <ExternalClientPortal />
+            </Suspense>
           </ProtectedRoute>
         }
       />

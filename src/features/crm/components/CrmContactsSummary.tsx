@@ -26,7 +26,7 @@ export function CrmContactsSummary({ contacts, canManage, onCreateContact, onEdi
       />
 
       {contacts.length === 0 ? (
-        <EmptyState title="Nenhum contato registrado" description="Os contatos deste cliente aparecerão aqui assim que forem cadastrados no CRM." />
+        <EmptyState title="Nenhum contato registrado" description="Os contatos deste cliente aparecerao aqui assim que forem cadastrados no CRM." />
       ) : (
         <Card className="overflow-hidden p-0">
           <div className="divide-y divide-border">

@@ -15,6 +15,7 @@ import {
   listCrmOpportunitiesByClient,
   listCrmPipelineStages,
   listCrmPipelinesByClient,
+  moveCrmOpportunityStage,
   updateCrmOpportunity,
 } from '../../crm/crm.api';
 import type { CrmContact, CrmOpportunity, CrmOpportunityStatus, CrmPipeline, CrmPipelineStage } from '../../crm/crm.types';
@@ -133,6 +134,16 @@ export function ClientCrmTab({ clientId, canManage }: ClientCrmTabProps) {
     }
   }
 
+  async function handleMoveStage(opportunityId: string, stageId: string) {
+    if (!profile) return;
+    try {
+      await moveCrmOpportunityStage(opportunityId, stageId, profile.id);
+      await load();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao mover a oportunidade de etapa.');
+    }
+  }
+
   function handleContactSaved() {
     setContactForm(CLOSED_CONTACT_FORM);
     void load();
@@ -188,6 +199,7 @@ export function ClientCrmTab({ clientId, canManage }: ClientCrmTabProps) {
             canManage={canManage}
             onEditOpportunity={(opportunity) => setOpportunityForm({ open: true, opportunity })}
             onStatusChange={(opportunityId, status) => void handleQuickStatusChange(opportunityId, status)}
+            onMoveStage={(opportunityId, stageId) => void handleMoveStage(opportunityId, stageId)}
           />
         </>
       )}

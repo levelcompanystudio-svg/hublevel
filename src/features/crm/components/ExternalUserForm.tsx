@@ -104,19 +104,29 @@ export function ExternalUserForm({ clientId, userId, existingProfileIds, onClose
           </Button>
         </header>
 
-        <div className="flex gap-2 border-b border-border px-5 py-3">
-          <Button type="button" variant={mode === 'new' ? 'primary' : 'secondary'} size="sm" onClick={() => setMode('new')} disabled={saving}>
-            Novo usuario
-          </Button>
-          <Button
-            type="button"
-            variant={mode === 'existing' ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => setMode('existing')}
-            disabled={saving}
-          >
-            Usuario existente
-          </Button>
+        <div className="border-b border-border px-5 py-3">
+          <div className="inline-flex rounded-md border border-border bg-surface p-0.5">
+            <button
+              type="button"
+              onClick={() => setMode('new')}
+              disabled={saving}
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition-colors duration-150 disabled:cursor-not-allowed ${
+                mode === 'new' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Novo usuario
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('existing')}
+              disabled={saving}
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition-colors duration-150 disabled:cursor-not-allowed ${
+                mode === 'existing' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Usuario existente
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">

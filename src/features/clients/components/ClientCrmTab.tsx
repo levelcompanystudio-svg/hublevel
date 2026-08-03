@@ -161,58 +161,66 @@ export function ClientCrmTab({ clientId, canManage }: ClientCrmTabProps) {
   const defaultPipeline = pipelines.find((pipeline) => pipeline.is_default) ?? pipelines[0] ?? null;
 
   return (
-    <div className="space-y-5">
-      {!defaultPipeline ? (
-        <>
-          <EmptyState
-            title="CRM ainda nao configurado para este cliente"
-            description="Crie o pipeline inicial para comecar a organizar oportunidades e contatos deste cliente."
-          />
-          {canManage && (
-            <div className="flex justify-center">
-              <Button type="button" variant="primary" onClick={() => void handleCreateInitialPipeline()} disabled={creatingPipeline}>
-                {creatingPipeline ? 'Criando...' : 'Criar pipeline inicial'}
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <SectionHeader
-            title={defaultPipeline.name}
-            caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
-            action={
-              canManage && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  onClick={() => setOpportunityForm({ open: true, opportunity: null })}
-                >
-                  Nova oportunidade
+    <div className="space-y-8">
+      <section aria-label="Pipeline comercial" className="space-y-3">
+        {!defaultPipeline ? (
+          <div className="space-y-3">
+            <EmptyState
+              title="CRM ainda nao configurado para este cliente"
+              description="Crie o pipeline inicial para comecar a organizar oportunidades e contatos deste cliente."
+            />
+            {canManage && (
+              <div className="flex justify-center">
+                <Button type="button" variant="primary" onClick={() => void handleCreateInitialPipeline()} disabled={creatingPipeline}>
+                  {creatingPipeline ? 'Criando...' : 'Criar pipeline inicial'}
                 </Button>
-              )
-            }
-          />
-          <CrmPipelineOverview
-            stages={stages}
-            opportunities={opportunities}
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <SectionHeader
+              title={defaultPipeline.name}
+              caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
+              action={
+                canManage && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setOpportunityForm({ open: true, opportunity: null })}
+                  >
+                    Nova oportunidade
+                  </Button>
+                )
+              }
+            />
+            <CrmPipelineOverview
+              stages={stages}
+              opportunities={opportunities}
+              canManage={canManage}
+              onEditOpportunity={(opportunity) => setOpportunityForm({ open: true, opportunity })}
+              onStatusChange={(opportunityId, status) => void handleQuickStatusChange(opportunityId, status)}
+              onMoveStage={(opportunityId, stageId) => void handleMoveStage(opportunityId, stageId)}
+            />
+          </>
+        )}
+      </section>
+
+      <div className="grid gap-6 border-t border-border/60 pt-8 lg:grid-cols-2">
+        <section aria-label="Contatos">
+          <CrmContactsSummary
+            contacts={contacts}
             canManage={canManage}
-            onEditOpportunity={(opportunity) => setOpportunityForm({ open: true, opportunity })}
-            onStatusChange={(opportunityId, status) => void handleQuickStatusChange(opportunityId, status)}
-            onMoveStage={(opportunityId, stageId) => void handleMoveStage(opportunityId, stageId)}
+            onCreateContact={() => setContactForm({ open: true, contact: null })}
+            onEditContact={(contact) => setContactForm({ open: true, contact })}
           />
-        </>
-      )}
+        </section>
 
-      <CrmContactsSummary
-        contacts={contacts}
-        canManage={canManage}
-        onCreateContact={() => setContactForm({ open: true, contact: null })}
-        onEditContact={(contact) => setContactForm({ open: true, contact })}
-      />
-
-      {profile && <ExternalAccessManager clientId={clientId} canManage={canManage} userId={profile.id} />}
+        <section aria-label="Acesso externo">
+          {profile && <ExternalAccessManager clientId={clientId} canManage={canManage} userId={profile.id} />}
+        </section>
+      </div>
 
       {contactForm.open && profile && (
         <CrmContactForm

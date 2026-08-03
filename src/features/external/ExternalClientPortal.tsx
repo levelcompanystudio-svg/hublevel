@@ -46,36 +46,43 @@ export function ExternalClientPortal() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between border-b border-border px-6 py-4">
-        <div>
-          <p className="text-sm font-semibold text-foreground">HubLevel</p>
-          <p className="text-xs text-muted-foreground">
-            {selectedLink ? selectedLink.client.trade_name || selectedLink.client.company_name : 'Area do cliente'}
-            {profile?.name ? ` - ${profile.name}` : ''}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {links.length > 1 && selectedClientId && (
+      <header className="border-b border-border bg-card/60">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card p-1 shadow-soft">
+              <img src="/branding/level-hub-favicon.png" alt="Level Hub" className="h-full w-full object-contain" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold tracking-tight text-foreground">HubLevel</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {selectedLink ? selectedLink.client.trade_name || selectedLink.client.company_name : 'Area do cliente'}
+                {profile?.name ? ` - ${profile.name}` : ''}
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-3">
+            {links.length > 1 && selectedClientId && (
+              <button
+                type="button"
+                onClick={() => setSelectedClientId(null)}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                Trocar cliente
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => setSelectedClientId(null)}
-              className="text-xs font-semibold text-primary hover:underline"
+              onClick={() => void signOut()}
+              disabled={authLoading}
+              className="rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-foreground transition-colors duration-150 hover:bg-card-elevated disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Trocar cliente
+              {authLoading ? 'Saindo...' : 'Sair'}
             </button>
-          )}
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            disabled={authLoading}
-            className="rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-foreground transition-colors duration-150 hover:bg-card-elevated disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {authLoading ? 'Saindo...' : 'Sair'}
-          </button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
         {loading ? (
           <LoadingState title="Carregando seus dados" />
         ) : error ? (

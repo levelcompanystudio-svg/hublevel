@@ -75,8 +75,8 @@ export function ExternalClientCrmView({ client }: ExternalClientCrmViewProps) {
   const defaultPipeline = pipelines.find((pipeline) => pipeline.is_default) ?? pipelines[0] ?? null;
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-5">
         <div className="min-w-0">
           <h1 className="truncate text-h1 text-foreground">{client.trade_name || client.company_name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{client.segment ?? 'Sem segmento'}</p>
@@ -93,29 +93,33 @@ export function ExternalClientCrmView({ client }: ExternalClientCrmViewProps) {
         <ErrorState description={error} />
       ) : (
         <>
-          {!defaultPipeline ? (
-            <EmptyState
-              title="Nenhum pipeline configurado"
-              description="Ainda nao ha um pipeline de oportunidades configurado para este cliente."
-            />
-          ) : (
-            <>
-              <SectionHeader
-                title={defaultPipeline.name}
-                caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
+          <section aria-label="Pipeline comercial" className="space-y-3">
+            {!defaultPipeline ? (
+              <EmptyState
+                title="Nenhum pipeline configurado"
+                description="Ainda nao ha um pipeline de oportunidades configurado para este cliente."
               />
-              <CrmPipelineOverview
-                stages={stages}
-                opportunities={opportunities}
-                canManage={false}
-                onEditOpportunity={NOOP}
-                onStatusChange={NOOP}
-                onMoveStage={NOOP}
-              />
-            </>
-          )}
+            ) : (
+              <>
+                <SectionHeader
+                  title={defaultPipeline.name}
+                  caption={`${opportunities.length} ${opportunities.length === 1 ? 'oportunidade' : 'oportunidades'} neste pipeline`}
+                />
+                <CrmPipelineOverview
+                  stages={stages}
+                  opportunities={opportunities}
+                  canManage={false}
+                  onEditOpportunity={NOOP}
+                  onStatusChange={NOOP}
+                  onMoveStage={NOOP}
+                />
+              </>
+            )}
+          </section>
 
-          <CrmContactsSummary contacts={contacts} canManage={false} onCreateContact={NOOP} onEditContact={NOOP} />
+          <section aria-label="Contatos" className="border-t border-border/60 pt-8">
+            <CrmContactsSummary contacts={contacts} canManage={false} onCreateContact={NOOP} onEditContact={NOOP} />
+          </section>
         </>
       )}
     </div>

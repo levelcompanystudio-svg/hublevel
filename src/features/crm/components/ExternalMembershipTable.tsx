@@ -1,8 +1,16 @@
 import { EmptyState } from '../../../components/feedback/EmptyState';
 import { Card } from '../../../components/ui';
 import type { ExternalMembership, ExternalMembershipRole, ExternalMembershipStatus } from '../externalAccess.types';
-import { EXTERNAL_MEMBERSHIP_ROLE_OPTIONS } from './ExternalMembershipRoleBadge';
-import { EXTERNAL_MEMBERSHIP_STATUS_OPTIONS } from './ExternalMembershipStatusBadge';
+import { EXTERNAL_MEMBERSHIP_ROLE_OPTIONS, ExternalMembershipRoleBadge } from './ExternalMembershipRoleBadge';
+import { EXTERNAL_MEMBERSHIP_STATUS_OPTIONS, ExternalMembershipStatusBadge } from './ExternalMembershipStatusBadge';
+
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  const first = parts[0][0] ?? '';
+  const last = parts.length > 1 ? (parts[parts.length - 1][0] ?? '') : '';
+  return (first + last).toUpperCase();
+}
 
 interface ExternalMembershipTableProps {
   memberships: ExternalMembership[];
@@ -39,21 +47,30 @@ export function ExternalMembershipTable({
       <div className="divide-y divide-border">
         {memberships.map((membership) => {
           const saving = savingMembershipId === membership.id;
+          const name = membership.profile?.name ?? 'Usuario sem perfil visivel';
           return (
-            <div key={membership.id} className="flex flex-wrap items-center justify-between gap-3 p-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{membership.profile?.name ?? 'Usuario sem perfil visivel'}</p>
-                <p className="mt-0.5 truncate text-xs text-muted-foreground">{membership.profile?.email ?? '-'}</p>
+            <div key={membership.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold text-muted-foreground"
+                  aria-hidden="true"
+                >
+                  {initials(name)}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{membership.profile?.email ?? '-'}</p>
+                </div>
               </div>
 
               {canManage ? (
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
                   <select
                     value={membership.membership_role}
                     disabled={saving}
                     onChange={(event) => onRoleChange(membership.id, event.target.value as ExternalMembershipRole)}
                     className={selectClassName}
-                    aria-label={`Papel de ${membership.profile?.name ?? 'usuario'}`}
+                    aria-label={`Papel de ${name}`}
                   >
                     {EXTERNAL_MEMBERSHIP_ROLE_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -66,7 +83,7 @@ export function ExternalMembershipTable({
                     disabled={saving}
                     onChange={(event) => onStatusChange(membership.id, event.target.value as ExternalMembershipStatus)}
                     className={selectClassName}
-                    aria-label={`Status de ${membership.profile?.name ?? 'usuario'}`}
+                    aria-label={`Status de ${name}`}
                   >
                     {EXTERNAL_MEMBERSHIP_STATUS_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -76,10 +93,9 @@ export function ExternalMembershipTable({
                   </select>
                 </div>
               ) : (
-                <div className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                  {EXTERNAL_MEMBERSHIP_ROLE_OPTIONS.find((option) => option.value === membership.membership_role)?.label}
-                  {' - '}
-                  {EXTERNAL_MEMBERSHIP_STATUS_OPTIONS.find((option) => option.value === membership.status)?.label}
+                <div className="flex shrink-0 items-center gap-2">
+                  <ExternalMembershipRoleBadge role={membership.membership_role} />
+                  <ExternalMembershipStatusBadge status={membership.status} />
                 </div>
               )}
             </div>

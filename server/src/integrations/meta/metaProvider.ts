@@ -7,6 +7,7 @@ import type {
   DailyMetric,
   DateRange,
   ProviderAccountRef,
+  SyncResult,
 } from '../core/types.js';
 import { ProviderNotImplementedError } from '../core/types.js';
 import { fetchMetaDailyInsights, listMetaAdAccounts, MetaApiError } from './metaApiClient.js';
@@ -64,7 +65,7 @@ export const metaProvider: AdsProvider = {
 
   // credentials precisa trazer hublevelClientId e clientIntegrationId (setados pela rota que
   // dispara o sync) - sem isso nao ha como saber em qual linha de client_integrations gravar.
-  async syncAccount(accountId: string, credentials: AdsProviderCredentials): Promise<void> {
+  async syncAccount(accountId: string, credentials: AdsProviderCredentials): Promise<SyncResult> {
     const clientIntegrationId = credentials.clientIntegrationId;
     if (typeof clientIntegrationId !== 'string' || !clientIntegrationId) {
       throw new Error('syncAccount (meta): credentials.clientIntegrationId e obrigatorio.');
@@ -108,6 +109,14 @@ export const metaProvider: AdsProvider = {
     });
 
     await upsertDailyMetrics(records);
+
+    return {
+      rowsFetched: rows.length,
+      rowsNormalized: records.length,
+      rowsSaved: records.length,
+      dateFrom: since,
+      dateTo: until,
+    };
   },
 
   async disconnect(_accountId: string): Promise<void> {

@@ -5,6 +5,7 @@ import type {
   DailyMetric,
   DateRange,
   ProviderAccountRef,
+  SyncResult,
 } from '../core/types.js';
 import { ProviderNotImplementedError } from '../core/types.js';
 
@@ -23,7 +24,7 @@ export const googleProvider: AdsProvider = {
     throw new ProviderNotImplementedError(PROVIDER_NAME, 'listAccounts');
   },
 
-  async syncAccount(_accountId: string, _credentials: AdsProviderCredentials): Promise<void> {
+  async syncAccount(_accountId: string, _credentials: AdsProviderCredentials): Promise<SyncResult> {
     throw new ProviderNotImplementedError(PROVIDER_NAME, 'syncAccount');
   },
 

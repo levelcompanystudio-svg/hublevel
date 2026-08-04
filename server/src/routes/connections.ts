@@ -40,12 +40,14 @@ export async function connectionsRoutes(app: FastifyInstance) {
     const actorId = request.authUser!.id;
 
     try {
-      await provider.syncAccount(connection.external_account_id, {
+      const result = await provider.syncAccount(connection.external_account_id, {
         hublevelClientId: connection.client_id,
         clientIntegrationId: connection.id,
         currencyCode: connection.currency_code ?? undefined,
         actorId,
       });
+
+      const hasRows = result.rowsSaved > 0;
 
       await markSyncSuccess(connection.id, actorId);
       await insertSyncLog({
@@ -53,9 +55,18 @@ export async function connectionsRoutes(app: FastifyInstance) {
         clientId: connection.client_id,
         provider: connection.provider,
         status: 'success',
-        message: 'Sincronizacao concluida.',
+        message: hasRows ? 'Sincronizacao concluida.' : 'Sync completed with no metrics returned',
         errorMessage: null,
-        metadata: {},
+        metadata: {
+          provider: connection.provider,
+          externalAccountId: connection.external_account_id,
+          dateFrom: result.dateFrom,
+          dateTo: result.dateTo,
+          rowsFetched: result.rowsFetched,
+          rowsNormalized: result.rowsNormalized,
+          rowsSaved: result.rowsSaved,
+          ...(hasRows ? {} : { reason: 'no_metrics_returned' }),
+        },
         actorId,
       });
 

@@ -32,6 +32,19 @@ export interface DateRange {
   end: string; // YYYY-MM-DD
 }
 
+// Resultado de syncAccount - permite ao caller (routes/connections.ts) registrar no
+// integration_sync_logs.metadata quantas linhas realmente vieram/foram gravadas, em vez de so
+// saber que a promise resolveu sem lancar. rowsFetched/rowsNormalized coincidem hoje (todo
+// provider mapeia 1:1 linha bruta -> registro normalizado), mas ficam separados no contrato para
+// nao esconder o dado se um provider futuro passar a descartar linhas na normalizacao.
+export interface SyncResult {
+  rowsFetched: number;
+  rowsNormalized: number;
+  rowsSaved: number;
+  dateFrom: string;
+  dateTo: string;
+}
+
 // Credenciais de uma conta especifica. Nunca deve conter valores reais neste Bloco 1 -
 // os providers placeholder nao leem nem validam nada aqui de fato.
 export interface AdsProviderCredentials {
@@ -46,7 +59,7 @@ export interface AdsProvider {
 
   validateConnection(credentials: AdsProviderCredentials): Promise<boolean>;
   listAccounts(credentials: AdsProviderCredentials): Promise<ProviderAccountRef[]>;
-  syncAccount(accountId: string, credentials: AdsProviderCredentials): Promise<void>;
+  syncAccount(accountId: string, credentials: AdsProviderCredentials): Promise<SyncResult>;
   fetchDailyMetrics(accountId: string, range: DateRange, credentials: AdsProviderCredentials): Promise<DailyMetric[]>;
   disconnect(accountId: string): Promise<void>;
   refreshCredentials(credentials: AdsProviderCredentials): Promise<AdsProviderCredentials>;

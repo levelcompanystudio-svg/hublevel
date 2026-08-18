@@ -7,6 +7,7 @@ import { Card } from '../../../components/ui';
 import { AccessDeniedPlaceholder } from '../../app/placeholders/AccessDeniedPlaceholder';
 import { useAuth } from '../../auth/useAuth';
 import { getPortfolioPerformanceOverview } from '../performance.api';
+import { calculateCpl } from '../performance-metrics';
 import { getDefaultPerformancePeriod } from '../performance-period';
 import type { PerformancePeriodRange } from '../performance-period';
 import type { PerformanceOverview } from '../performance.types';
@@ -146,9 +147,7 @@ export function PerformanceOverviewPage() {
                         <td className="py-2 pr-4 text-foreground">{formatCurrency(point.spend)}</td>
                         <td className="py-2 pr-4 text-foreground">{formatCount(point.clicks)}</td>
                         <td className="py-2 pr-4 text-foreground">{formatCount(point.leads)}</td>
-                        <td className="py-2 pr-4 text-foreground">
-                          {point.leads > 0 ? formatCurrency(point.spend / point.leads) : '-'}
-                        </td>
+                        <td className="py-2 pr-4 text-foreground">{ratio(calculateCpl(point.spend, point.leads), formatCurrency)}</td>
                       </tr>
                     ))}
                   </tbody>

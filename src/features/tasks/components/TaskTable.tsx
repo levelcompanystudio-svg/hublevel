@@ -7,6 +7,14 @@ import { TaskStatusBadge } from './TaskStatusBadge';
 
 const CLOSED_STATUSES: TaskStatus[] = ['concluida', 'cancelada'];
 
+function todayDateOnly(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isOverdue(task: Task): boolean {
+  return Boolean(task.due_date) && task.due_date! < todayDateOnly() && !CLOSED_STATUSES.includes(task.status);
+}
+
 interface TaskTableProps {
   tasks: Task[];
   canEdit: boolean;
@@ -83,7 +91,12 @@ export function TaskTable({
                   <td className="px-4 py-3 text-sm text-muted-foreground">{profileName(task.assignee)}</td>
                   <td className="px-4 py-3"><TaskPriorityBadge priority={task.priority} /></td>
                   <td className="px-4 py-3"><TaskStatusBadge status={task.status} /></td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(task.due_date)}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={isOverdue(task) ? 'font-semibold text-destructive' : 'text-muted-foreground'}>
+                      {formatDate(task.due_date)}
+                    </span>
+                    {isOverdue(task) && <span className="ml-1.5 text-xs font-semibold text-destructive">Vencida</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-1.5">
                       <Link to={`/app/tarefas/${task.id}`}>

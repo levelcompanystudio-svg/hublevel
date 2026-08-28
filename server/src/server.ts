@@ -5,6 +5,7 @@ import { connectionsRoutes } from './routes/connections.js';
 import { healthRoutes } from './routes/health.js';
 import { integrationsRoutes } from './routes/integrations.js';
 import { metaIntegrationsRoutes } from './routes/metaIntegrations.js';
+import { mcpRoutes } from './routes/mcp.js';
 
 // Allowlist explicita - nunca wildcard, especialmente em producao. localhost:5173 so entra fora
 // de producao (dev local do frontend Vite); FRONTEND_URL e o dominio real do frontend deployado.
@@ -49,6 +50,7 @@ export function buildServer() {
   app.register(integrationsRoutes);
   app.register(metaIntegrationsRoutes);
   app.register(connectionsRoutes);
+  app.register(mcpRoutes);
 
   return app;
 }

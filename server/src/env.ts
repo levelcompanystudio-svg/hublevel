@@ -23,6 +23,10 @@ const envSchema = z.object({
   META_APP_SECRET: z.string().optional(),
   META_API_VERSION: z.string().default('v21.0'),
 
+  // Credencial privada para o endpoint MCP remoto. Nunca expor no frontend ou no repositorio.
+  // Em producao, o endpoint MCP fica indisponivel ate esta variavel ser configurada no Railway.
+  MCP_ACCESS_TOKEN: z.string().min(1).optional(),
+
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
 
